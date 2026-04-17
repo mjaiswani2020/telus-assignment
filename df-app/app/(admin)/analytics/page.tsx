@@ -178,7 +178,7 @@ export default function AnalyticsPage() {
       />
 
       {/* IAA Trend Chart */}
-      <div className="mt-6 rounded-comfortable border border-level-2 bg-white p-6">
+      <div className="mt-4 rounded-comfortable border border-level-2 bg-white p-5">
         <div className="mb-4 flex items-center justify-between">
           <h3 className="font-inter text-[14px] font-semibold text-ink">
             Inter-Annotator Agreement Trend
@@ -265,9 +265,9 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Annotator Performance Table */}
-      <div className="mt-6">
+      <div className="mt-4">
         <div className="rounded-comfortable border border-level-2 bg-white">
-          <div className="border-b border-level-2 px-6 py-4">
+          <div className="border-b border-level-2 px-5 py-4">
             <h3 className="font-inter text-[14px] font-semibold text-ink">
               Annotator Performance
             </h3>
@@ -281,20 +281,20 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Bias Detection */}
-      <div className="mt-6">
+      <div className="mt-4">
         <h3 className="mb-4 font-inter text-[14px] font-semibold text-ink">
           Bias Detection
         </h3>
-        <div className="stagger-children grid grid-cols-3 gap-4">
+        <div className="stagger-children grid grid-cols-3 gap-3">
           {biasCards.map((card) => (
             <div
               key={card.title}
-              className="rounded-comfortable border border-level-2 bg-white p-5"
+              className="rounded-comfortable border border-level-2 bg-white p-4"
             >
               <h4 className="font-inter text-[14px] font-medium text-ink">
                 {card.title}
               </h4>
-              <p className="mt-1 font-inter text-body-md text-tertiary-text">
+              <p className="mt-1 font-inter text-[13px] text-tertiary-text">
                 {card.description}
               </p>
               <div className="mt-3 flex items-center gap-2">

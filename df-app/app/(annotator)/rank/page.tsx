@@ -85,7 +85,7 @@ export default function RankPage() {
         onGuidelines={() => setGuidelinesOpen(true)}
       />
 
-      <div className="stagger-children mx-auto max-w-[1440px] space-y-6 px-8 py-6">
+      <div className="stagger-children mx-auto max-w-[1440px] space-y-4 px-8 py-6">
         {/* Prompt */}
         <div>
           <p className="mb-2 font-inter text-label-sm uppercase tracking-[0.5px] text-secondary-text">
@@ -104,7 +104,7 @@ export default function RankPage() {
         </div>
 
         {/* Ranking cards */}
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           {items.map((item, index) => (
             <div
               key={item.id}

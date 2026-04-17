@@ -23,9 +23,9 @@ const taskBreakdown = [
 
 export default function ProfilePage() {
   return (
-    <div className="stagger-children mx-auto max-w-[1440px] px-8 py-8 space-y-8">
+    <div className="stagger-children mx-auto max-w-[1440px] px-8 py-8 space-y-6">
       {/* Profile header */}
-      <div className="flex items-center gap-5 rounded-comfortable border border-level-2 bg-white px-6 py-5">
+      <div className="flex items-center gap-5 rounded-comfortable border border-level-2 bg-white px-5 py-4">
         <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#B45309] text-white">
           <span className="font-inter text-[20px] font-bold">MT</span>
         </div>
@@ -41,7 +41,7 @@ export default function ProfilePage() {
       </div>
 
       {/* Stat cards */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-4 gap-3">
         <StatCard label="Gold Accuracy" value={82} format="percent" trend={{ value: "+3%", direction: "up" }} />
         <StatCard label="Peer IAA" value="0.76" trend={{ value: "+0.04", direction: "up" }} />
         <StatCard label="Tasks (30D)" value={847} trend={{ value: "+12%", direction: "up" }} />
@@ -49,7 +49,7 @@ export default function ProfilePage() {
       </div>
 
       {/* Skills & Qualifications */}
-      <div className="space-y-4">
+      <div className="space-y-3">
         <h2 className="font-literata text-title-lg text-ink">Skills &amp; Qualifications</h2>
         <div className="rounded-comfortable border border-level-2 bg-white">
           {qualifications.map((qual, idx) => (
@@ -85,7 +85,7 @@ export default function ProfilePage() {
       </div>
 
       {/* Task Breakdown */}
-      <div className="space-y-4">
+      <div className="space-y-3">
         <h2 className="font-literata text-title-lg text-ink">Task Breakdown</h2>
         <div className="overflow-hidden rounded-comfortable border border-level-2 bg-white">
           <table className="w-full">
@@ -131,10 +131,10 @@ export default function ProfilePage() {
       </div>
 
       {/* Earnings */}
-      <div className="space-y-4">
+      <div className="space-y-3">
         <h2 className="font-literata text-title-lg text-ink">Earnings</h2>
-        <div className="rounded-comfortable border border-level-2 bg-white p-5">
-          <div className="grid grid-cols-3 gap-6">
+        <div className="rounded-comfortable border border-level-2 bg-white p-4">
+          <div className="grid grid-cols-3 gap-4">
             <div>
               <p className="font-inter text-label-sm uppercase tracking-[0.14em] text-secondary-text">
                 Pay Model
@@ -155,7 +155,7 @@ export default function ProfilePage() {
             </div>
           </div>
           <hr className="my-4 border-level-2" />
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="font-inter text-label-sm uppercase tracking-[0.14em] text-secondary-text">
                 April 2026 (MTD)

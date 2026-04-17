@@ -91,13 +91,13 @@ export default function NewTaskPage() {
         subtitle="Choose a template to get started, or build from scratch."
       />
 
-      <div className="stagger-children mt-8 grid grid-cols-4 gap-5">
+      <div className="stagger-children mt-4 grid grid-cols-4 gap-3">
         {templates.map((t) => {
           const Icon = t.icon;
           return (
             <div
               key={t.slug}
-              className="flex flex-col rounded-comfortable border border-level-2 bg-white p-5"
+              className="flex flex-col rounded-comfortable border border-level-2 bg-white p-4"
             >
               <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-standard bg-selected-bg">
                 <Icon className="h-5 w-5 text-deep-teal" />
@@ -105,10 +105,10 @@ export default function NewTaskPage() {
               <h3 className="font-inter text-[16px] font-medium text-ink">
                 {t.name}
               </h3>
-              <p className="mt-1.5 flex-1 font-inter text-[14px] leading-relaxed text-tertiary-text">
+              <p className="mt-1.5 flex-1 font-inter text-[13px] leading-relaxed text-tertiary-text">
                 {t.description}
               </p>
-              <p className="mt-2 font-inter text-[12px] italic text-tertiary-text">
+              <p className="mt-2 font-inter text-[11px] italic text-tertiary-text">
                 {t.methodology}
               </p>
               <Link
@@ -126,13 +126,13 @@ export default function NewTaskPage() {
 
       {/* Start from Scratch */}
       <motion.div
-        className="mt-5"
+        className="mt-4"
         initial={{ opacity: 0, y: 4 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3, duration: 0.2 }}
       >
         <Link href="/tasks/new/configure?template=scratch">
-          <div className="flex items-center justify-center gap-3 rounded-comfortable border-2 border-dashed border-level-2 bg-white p-6 transition-colors hover:border-deep-teal hover:bg-selected-bg">
+          <div className="flex items-center justify-center gap-3 rounded-comfortable border-2 border-dashed border-level-2 bg-white p-5 transition-colors hover:border-deep-teal hover:bg-selected-bg">
             <Plus className="h-5 w-5 text-tertiary-text" />
             <span className="font-inter text-[14px] font-medium text-secondary-text">
               Start from Scratch

@@ -93,9 +93,9 @@ export default function ReviewDetailPage() {
         {item.description}
       </p>
 
-      <div className="stagger-children mt-6 space-y-6">
+      <div className="stagger-children mt-4 space-y-4">
         {/* Prompt card */}
-        <div className="rounded-comfortable bg-level-1 p-4">
+        <div className="rounded-comfortable bg-level-1 px-3 py-2.5">
           <p className="font-inter text-label-sm uppercase tracking-[0.5px] text-secondary-text">
             Prompt
           </p>
@@ -105,27 +105,27 @@ export default function ReviewDetailPage() {
         </div>
 
         {/* Two response panels */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="rounded-comfortable border border-level-2 bg-white p-5">
+        <div className="grid grid-cols-2 gap-3">
+          <div className="rounded-comfortable border border-level-2 bg-white p-4">
             <p className="font-inter text-label-sm uppercase tracking-[0.5px] text-secondary-text">
               Response A
             </p>
-            <p className="mt-3 font-inter text-body-md text-ink leading-relaxed">
+            <p className="mt-3 font-inter text-[13px] text-ink leading-relaxed">
               {detail.responseA}
             </p>
           </div>
-          <div className="rounded-comfortable border border-level-2 bg-white p-5">
+          <div className="rounded-comfortable border border-level-2 bg-white p-4">
             <p className="font-inter text-label-sm uppercase tracking-[0.5px] text-secondary-text">
               Response B
             </p>
-            <p className="mt-3 font-inter text-body-md text-ink leading-relaxed">
+            <p className="mt-3 font-inter text-[13px] text-ink leading-relaxed">
               {detail.responseB}
             </p>
           </div>
         </div>
 
         {/* Annotator's choice */}
-        <div className="rounded-comfortable border border-level-2 bg-white p-5">
+        <div className="rounded-comfortable border border-level-2 bg-white p-4">
           <p className="font-inter text-label-sm uppercase tracking-[0.5px] text-secondary-text">
             Annotator&apos;s Choice
           </p>
@@ -136,7 +136,7 @@ export default function ReviewDetailPage() {
             <span className="text-tertiary-text">chose</span>
             <Badge variant="info">{detail.choice}</Badge>
           </div>
-          <p className="mt-3 font-inter text-body-md text-tertiary-text leading-relaxed">
+          <p className="mt-3 font-inter text-[13px] text-tertiary-text leading-relaxed">
             {detail.justification}
           </p>
         </div>

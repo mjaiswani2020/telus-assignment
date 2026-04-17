@@ -102,13 +102,13 @@ export default function ChatPage() {
         onGuidelines={() => setGuidelinesOpen(true)}
       />
 
-      <div className="stagger-children mx-auto max-w-[1440px] space-y-6 px-8 py-6">
+      <div className="stagger-children mx-auto max-w-[1440px] space-y-4 px-8 py-6">
         {/* Conversation history */}
         <div>
           <p className="mb-3 font-inter text-label-sm uppercase tracking-[0.5px] text-secondary-text">
             Conversation History
           </p>
-          <div className="space-y-3 rounded-comfortable border border-level-2 bg-white p-4">
+          <div className="space-y-2.5 rounded-comfortable border border-level-2 bg-white p-4">
             {conversationHistory.map((msg, idx) => (
               <div
                 key={idx}
@@ -159,7 +159,7 @@ export default function ChatPage() {
         </div>
 
         {/* Response comparison */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">
             <ResponsePanel
               label="A"

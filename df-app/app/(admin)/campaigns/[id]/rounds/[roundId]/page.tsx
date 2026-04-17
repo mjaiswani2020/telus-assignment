@@ -144,9 +144,9 @@ export default function CampaignRoundDetailPage() {
       </div>
 
       {/* Progress Cards */}
-      <div className="stagger-children mt-6 grid grid-cols-3 gap-4">
+      <div className="stagger-children mt-4 grid grid-cols-3 gap-3">
         {/* Progress */}
-        <div className="rounded-comfortable border border-level-2 bg-white p-5">
+        <div className="rounded-comfortable border border-level-2 bg-white p-4">
           <p className="font-inter text-label-sm uppercase tracking-[0.14em] text-secondary-text">
             Progress
           </p>
@@ -168,7 +168,7 @@ export default function CampaignRoundDetailPage() {
         </div>
 
         {/* IAA */}
-        <div className="rounded-comfortable border border-level-2 bg-white p-5">
+        <div className="rounded-comfortable border border-level-2 bg-white p-4">
           <p className="font-inter text-label-sm uppercase tracking-[0.14em] text-secondary-text">
             IAA (AC2)
           </p>
@@ -190,11 +190,11 @@ export default function CampaignRoundDetailPage() {
         </div>
 
         {/* Preference Distribution */}
-        <div className="rounded-comfortable border border-level-2 bg-white p-5">
+        <div className="rounded-comfortable border border-level-2 bg-white p-4">
           <p className="font-inter text-label-sm uppercase tracking-[0.14em] text-secondary-text">
             Preference Distribution
           </p>
-          <div className="mt-4 space-y-3">
+          <div className="mt-4 space-y-2.5">
             {prefBars.map((bar) => (
               <div key={bar.label} className="flex items-center gap-3">
                 <span className="w-16 shrink-0 font-inter text-[12px] text-tertiary-text">
@@ -220,17 +220,17 @@ export default function CampaignRoundDetailPage() {
       </div>
 
       {/* Model Versions */}
-      <div className="mt-8">
+      <div className="mt-4">
         <h3 className="font-inter text-[14px] font-semibold text-ink">
           Model Versions
         </h3>
-        <div className="mt-3 grid grid-cols-2 gap-4">
+        <div className="mt-3 grid grid-cols-2 gap-3">
           {modelEndpoints.map((ep) => (
             <div
               key={ep.id}
-              className="rounded-comfortable border border-level-2 bg-white p-5"
+              className="rounded-comfortable border border-level-2 bg-white p-4"
             >
-              <p className="font-inter text-body-md font-medium text-ink">
+              <p className="font-inter text-[13px] font-medium text-ink">
                 {ep.name}
               </p>
               <div className="mt-2 space-y-1">
@@ -251,7 +251,7 @@ export default function CampaignRoundDetailPage() {
       </div>
 
       {/* Cross-Round Comparison */}
-      <div className="mt-8 rounded-comfortable border border-level-2 bg-white">
+      <div className="mt-4 rounded-comfortable border border-level-2 bg-white">
         <div className="px-5 pt-5 pb-3">
           <h3 className="font-inter text-[14px] font-semibold text-ink">
             Cross-Round Comparison
@@ -265,7 +265,7 @@ export default function CampaignRoundDetailPage() {
       </div>
 
       {/* Action buttons */}
-      <div className="mt-8 flex items-center gap-3">
+      <div className="mt-4 flex items-center gap-3">
         <Button icon={<ArrowRight className="h-4 w-4" />}>
           Advance to Review
         </Button>

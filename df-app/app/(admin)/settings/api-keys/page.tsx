@@ -129,7 +129,7 @@ export default function ApiKeysPage() {
     <div>
       <PageHeader title="Settings" />
 
-      <div className="mt-6">
+      <div className="mt-4">
         <Tabs
           tabs={settingsTabs}
           activeTab={activeTab}
@@ -139,7 +139,7 @@ export default function ApiKeysPage() {
       </div>
 
       {activeTab === "api-keys" ? (
-        <div className="stagger-children mt-6 space-y-6">
+        <div className="stagger-children mt-4 space-y-4">
           {/* API Keys section */}
           <div>
             <div className="flex items-center justify-between">
@@ -168,7 +168,7 @@ export default function ApiKeysPage() {
             <h3 className="mb-4 font-inter text-[14px] font-semibold text-ink">
               API Usage
             </h3>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-3 gap-3">
               <StatCard label="Requests" value={142531} />
               <StatCard label="Avg Latency" value="230ms" />
               <StatCard label="Error Rate" value="0.02%" />

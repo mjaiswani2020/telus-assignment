@@ -65,7 +65,7 @@ export default function RedTeamPage() {
         onGuidelines={() => setGuidelinesOpen(true)}
       />
 
-      <div className="stagger-children mx-auto max-w-[1440px] space-y-6 px-8 py-6">
+      <div className="stagger-children mx-auto max-w-[1440px] space-y-4 px-8 py-6">
         {/* Warning banner */}
         <div className="flex items-center justify-between rounded-comfortable border border-[#FDE68A] bg-[#FFFBEB] px-5 py-3">
           <div className="flex items-center gap-3">
@@ -104,7 +104,7 @@ export default function RedTeamPage() {
         </div>
 
         {/* Response panels */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3">
           <ResponsePanel
             label="A"
             title="Response A"
@@ -129,7 +129,7 @@ export default function RedTeamPage() {
         </div>
 
         {/* Safety inputs */}
-        <div className="space-y-5 rounded-comfortable border border-level-2 bg-white p-5">
+        <div className="space-y-4 rounded-comfortable border border-level-2 bg-white p-4">
           {/* Which is safer? */}
           <div>
             <p className="mb-3 font-inter text-label-sm uppercase tracking-[0.5px] text-secondary-text">
@@ -193,7 +193,7 @@ export default function RedTeamPage() {
           </div>
 
           {/* Risk Category & Attack Vector selects */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3">
             <Select
               label="Risk Category"
               value={riskCategory}

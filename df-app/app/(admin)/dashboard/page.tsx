@@ -56,49 +56,53 @@ export default function DashboardPage() {
       <PageHeader title="Dashboard" subtitle="Last 7 days" />
 
       {/* KPI Cards */}
-      <div className="stagger-children mt-6 grid grid-cols-4 gap-4">
+      <div className="stagger-children mt-4 grid grid-cols-4 gap-3">
         <StatCard
           label="Annotations"
           value={12847}
           trend={{ value: "14% WoW", direction: "up" }}
+          className="p-4"
         />
         <StatCard
           label="Active Annotators"
           value={24}
           trend={{ value: "3 new", direction: "up" }}
+          className="p-4"
         />
         <StatCard
           label="Avg IAA (AC2)"
           value="0.72"
           trend={{ value: "+0.03", direction: "up" }}
+          className="p-4"
         />
         <StatCard
           label="Active Campaigns"
           value={3}
           trend={{ value: "7 rounds total", direction: "neutral" }}
+          className="p-4"
         />
       </div>
 
       {/* Campaign Progress + Quality Alerts */}
-      <div className="mt-6 grid grid-cols-[1fr_380px] gap-4">
+      <div className="mt-4 grid grid-cols-[1fr_360px] gap-3">
         {/* Campaign Progress */}
-        <div className="rounded-comfortable border border-level-2 bg-white p-6">
+        <div className="rounded-comfortable border border-level-2 bg-white p-5">
           <h3 className="font-inter text-[14px] font-semibold text-ink">
             Campaign Progress
           </h3>
-          <div className="mt-5 space-y-6">
+          <div className="mt-4 space-y-4">
             {campaigns.map((c) => (
               <div key={c.name}>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-inter text-body-md font-medium text-ink">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="font-inter text-[13px] font-medium text-ink">
                     {c.name}
                   </span>
-                  <span className="font-inter text-body-md text-tertiary-text">
+                  <span className="font-inter text-[13px] text-tertiary-text">
                     {c.percent}%
                   </span>
                 </div>
-                <ProgressBar value={c.current} max={c.total} color={c.color} size="md" />
-                <p className="mt-1.5 font-inter text-[12px] text-tertiary-text">
+                <ProgressBar value={c.current} max={c.total} color={c.color} size="sm" />
+                <p className="mt-1 font-inter text-[11px] text-tertiary-text">
                   {c.current.toLocaleString()} / {c.total.toLocaleString()} annotations
                 </p>
               </div>
@@ -107,20 +111,20 @@ export default function DashboardPage() {
         </div>
 
         {/* Quality Alerts */}
-        <div className="rounded-comfortable border border-level-2 bg-white p-6">
+        <div className="rounded-comfortable border border-level-2 bg-white p-5">
           <h3 className="font-inter text-[14px] font-semibold text-ink">
             Quality Alerts
           </h3>
-          <div className="mt-5 space-y-3">
+          <div className="mt-4 space-y-2.5">
             {alerts.map((alert) => (
               <div
                 key={alert.title}
-                className={`rounded-standard border-l-4 ${alert.borderColor} ${alert.bg} p-4`}
+                className={`rounded-standard border-l-4 ${alert.borderColor} ${alert.bg} px-3 py-2.5`}
               >
-                <p className="font-inter text-body-md font-medium text-ink">
+                <p className="font-inter text-[13px] font-medium text-ink">
                   {alert.title}
                 </p>
-                <p className="mt-0.5 font-inter text-[12px] text-tertiary-text">
+                <p className="mt-0.5 font-inter text-[11px] text-tertiary-text">
                   {alert.description}
                 </p>
               </div>
@@ -130,7 +134,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Annotation Volume Chart */}
-      <div className="mt-6">
+      <div className="mt-4">
         <AnnotationVolumeChart />
       </div>
     </div>

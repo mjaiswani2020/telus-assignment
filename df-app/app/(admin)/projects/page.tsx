@@ -33,7 +33,7 @@ export default function ProjectsPage() {
         }
       />
 
-      <div className="stagger-children mt-6 grid grid-cols-3 gap-4">
+      <div className="stagger-children mt-4 grid grid-cols-3 gap-3">
         {projects.map((project) => {
           const initial = project.name.charAt(0).toUpperCase();
           const color = avatarColors[initial] ?? "#005151";
@@ -41,7 +41,7 @@ export default function ProjectsPage() {
           return (
             <div key={project.id}>
               <Link href={`/projects/${project.id}`}>
-                <div className="rounded-comfortable border border-level-2 bg-white p-5 transition-colors duration-150 hover:bg-level-1">
+                <div className="rounded-comfortable border border-level-2 bg-white p-4 transition-colors duration-150 hover:bg-level-1">
                   {/* Header row */}
                   <div className="flex items-center gap-3">
                     <div
@@ -61,7 +61,7 @@ export default function ProjectsPage() {
                   </div>
 
                   {/* Description */}
-                  <p className="mt-3 line-clamp-2 font-inter text-body-md text-tertiary-text">
+                  <p className="mt-3 line-clamp-2 font-inter text-[13px] text-tertiary-text">
                     {project.description}
                   </p>
 

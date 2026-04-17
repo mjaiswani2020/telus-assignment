@@ -168,14 +168,14 @@ export default function AnnotatorsPage() {
         }
       />
 
-      <div className="stagger-children mt-6 grid grid-cols-4 gap-4">
+      <div className="stagger-children mt-4 grid grid-cols-4 gap-3">
         <StatCard label="Total" value={total} />
         <StatCard label="Active" value={counts.Active} />
         <StatCard label="In Review" value={counts["In Review"]} />
         <StatCard label="Onboarding" value={counts.Onboarding} />
       </div>
 
-      <div className="stagger-children mt-6 rounded-comfortable border border-level-2 bg-white">
+      <div className="stagger-children mt-4 rounded-comfortable border border-level-2 bg-white">
         <DataTable<Row>
           columns={columns}
           data={filtered as Row[]}

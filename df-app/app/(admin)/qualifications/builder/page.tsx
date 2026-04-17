@@ -105,9 +105,9 @@ export default function QualificationBuilderPage() {
         />
       </div>
 
-      <div className="stagger-children mt-6 space-y-6">
+      <div className="stagger-children mt-4 space-y-4">
         {/* Basic Info */}
-        <div className="rounded-comfortable border border-level-2 bg-white p-6">
+        <div className="rounded-comfortable border border-level-2 bg-white p-5">
           <h3 className="font-inter text-[14px] font-semibold text-ink">
             Basic Information
           </h3>
@@ -128,14 +128,14 @@ export default function QualificationBuilderPage() {
         </div>
 
         {/* Stage Configuration */}
-        <div className="rounded-comfortable border border-level-2 bg-white p-6">
+        <div className="rounded-comfortable border border-level-2 bg-white p-5">
           <h3 className="font-inter text-[14px] font-semibold text-ink">
             Stage Configuration
           </h3>
-          <p className="mt-1 font-inter text-body-md text-tertiary-text">
+          <p className="mt-1 font-inter text-[13px] text-tertiary-text">
             Qualification tests follow a 4-stage pipeline
           </p>
-          <div className="mt-4 space-y-3">
+          <div className="mt-4 space-y-2.5">
             {stages.map((stage, index) => (
               <div
                 key={stage.id}
@@ -161,11 +161,11 @@ export default function QualificationBuilderPage() {
         </div>
 
         {/* Question Types */}
-        <div className="rounded-comfortable border border-level-2 bg-white p-6">
+        <div className="rounded-comfortable border border-level-2 bg-white p-5">
           <h3 className="font-inter text-[14px] font-semibold text-ink">
             Question Types
           </h3>
-          <p className="mt-1 font-inter text-body-md text-tertiary-text">
+          <p className="mt-1 font-inter text-[13px] text-tertiary-text">
             Select which question formats to include
           </p>
           <div className="mt-4 space-y-2">
@@ -184,11 +184,11 @@ export default function QualificationBuilderPage() {
         </div>
 
         {/* Thresholds */}
-        <div className="rounded-comfortable border border-level-2 bg-white p-6">
+        <div className="rounded-comfortable border border-level-2 bg-white p-5">
           <h3 className="font-inter text-[14px] font-semibold text-ink">
             Pass Threshold & Recertification
           </h3>
-          <div className="mt-4 space-y-5">
+          <div className="mt-4 space-y-4">
             <div>
               <label className="font-inter text-label-sm uppercase tracking-[0.5px] text-secondary-text">
                 Pass Threshold

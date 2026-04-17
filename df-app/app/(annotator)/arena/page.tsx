@@ -94,7 +94,7 @@ export default function ArenaPage() {
         onGuidelines={() => setGuidelinesOpen(true)}
       />
 
-      <div className="stagger-children mx-auto max-w-[1440px] space-y-6 px-8 py-6">
+      <div className="stagger-children mx-auto max-w-[1440px] space-y-4 px-8 py-6">
         {/* Blind badge */}
         <div className="flex justify-center">
           <Badge variant="arena" animate={false}>
@@ -113,7 +113,7 @@ export default function ArenaPage() {
         </div>
 
         {/* Response panels */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3">
           <div className="relative">
             <ResponsePanel
               label="A"

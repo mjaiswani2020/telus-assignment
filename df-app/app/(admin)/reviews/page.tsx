@@ -110,14 +110,14 @@ export default function ReviewsPage() {
     <div>
       <PageHeader title="Review Queue" />
 
-      <div className="stagger-children mt-6 grid grid-cols-4 gap-4">
+      <div className="stagger-children mt-4 grid grid-cols-4 gap-3">
         <StatCard label="Pending" value={counts.total} />
         <StatCard label="Flagged" value={counts.flaggedByAnnotator} />
         <StatCard label="Auto-flagged" value={counts.autoFlagged} />
         <StatCard label="Resolved Today" value={counts.resolvedToday} />
       </div>
 
-      <div className="mt-6">
+      <div className="mt-4">
         <Tabs
           tabs={tabs}
           activeTab={activeTab}

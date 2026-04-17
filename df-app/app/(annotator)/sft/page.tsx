@@ -80,7 +80,7 @@ export default function SftPage() {
         onGuidelines={() => setGuidelinesOpen(true)}
       />
 
-      <div className="stagger-children mx-auto max-w-[1440px] space-y-6 px-8 py-6">
+      <div className="stagger-children mx-auto max-w-[1440px] space-y-4 px-8 py-6">
         {/* Category and difficulty */}
         <div className="flex items-center gap-3">
           <Badge variant="safety" animate={false}>Safety</Badge>
@@ -88,7 +88,7 @@ export default function SftPage() {
         </div>
 
         {/* Three column layout */}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-3">
           {/* Left: Prompt */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">

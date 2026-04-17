@@ -115,7 +115,7 @@ export default function ExportsPage() {
         }
       />
 
-      <div className="stagger-children mt-6 rounded-comfortable border border-level-2 bg-white">
+      <div className="stagger-children mt-4 rounded-comfortable border border-level-2 bg-white">
         <DataTable<Row>
           columns={columns}
           data={exports as Row[]}

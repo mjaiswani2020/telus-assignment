@@ -104,7 +104,7 @@ export default function CampaignsPage() {
         }
       />
 
-      <div className="stagger-children mt-6 grid grid-cols-4 gap-4">
+      <div className="stagger-children mt-4 grid grid-cols-4 gap-3">
         <StatCard label="Total Campaigns" value={totalCampaigns} />
         <StatCard label="Active" value={activeCampaigns} />
         <StatCard label="Complete" value={completeCampaigns} />
@@ -114,7 +114,7 @@ export default function CampaignsPage() {
         />
       </div>
 
-      <div className="mt-6 rounded-comfortable border border-level-2 bg-white">
+      <div className="mt-4 rounded-comfortable border border-level-2 bg-white">
         <DataTable
           columns={columns}
           data={campaigns as unknown as Record<string, unknown>[]}

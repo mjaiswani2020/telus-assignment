@@ -163,14 +163,14 @@ export default function ProjectDetailPage() {
       </div>
 
       {/* Stat Cards */}
-      <div className="stagger-children mt-6 grid grid-cols-3 gap-4">
+      <div className="stagger-children mt-4 grid grid-cols-3 gap-3">
         <StatCard label="Campaigns" value={project.campaignCount} />
         <StatCard label="Active Rounds" value={project.activeRounds} />
         <StatCard label="Total Annotations" value={project.totalAnnotations} />
       </div>
 
       {/* Campaigns Table */}
-      <div className="mt-8 rounded-comfortable border border-level-2 bg-white">
+      <div className="mt-4 rounded-comfortable border border-level-2 bg-white">
         <div className="px-5 pt-5 pb-3">
           <h3 className="font-inter text-[14px] font-semibold text-ink">
             Campaigns
@@ -185,7 +185,7 @@ export default function ProjectDetailPage() {
       </div>
 
       {/* Task Configurations Table */}
-      <div className="mt-8 rounded-comfortable border border-level-2 bg-white">
+      <div className="mt-4 rounded-comfortable border border-level-2 bg-white">
         <div className="px-5 pt-5 pb-3">
           <h3 className="font-inter text-[14px] font-semibold text-ink">
             Task Configurations

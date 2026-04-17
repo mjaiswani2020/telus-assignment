@@ -80,7 +80,7 @@ export default function QualificationPage() {
   const [answer, setAnswer] = useState<"a" | "b" | null>(null);
 
   return (
-    <div className="stagger-children mx-auto max-w-[1440px] px-8 py-8 space-y-6">
+    <div className="stagger-children mx-auto max-w-[1440px] px-8 py-8 space-y-4">
       {/* Segmented progress bar */}
       <div className="flex gap-2">
         {STAGES.map((stage, idx) => (
@@ -131,7 +131,7 @@ export default function QualificationPage() {
       </div>
 
       {/* Two code response panels */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-3">
         <ResponsePanel
           label="A"
           title="Response A"

@@ -120,7 +120,7 @@ export default function TasksPage() {
       />
 
       {/* Stat Cards */}
-      <div className="stagger-children mt-6 grid grid-cols-4 gap-4">
+      <div className="stagger-children mt-4 grid grid-cols-4 gap-3">
         <StatCard label="Total Tasks" value={counts.total} />
         <StatCard label="Active" value={counts.active} />
         <StatCard label="Draft" value={counts.draft} />
@@ -128,7 +128,7 @@ export default function TasksPage() {
       </div>
 
       {/* Tasks Table */}
-      <div className="mt-8 rounded-comfortable border border-level-2 bg-white">
+      <div className="mt-4 rounded-comfortable border border-level-2 bg-white">
         <DataTable<Task & Record<string, unknown>>
           columns={taskColumns as { key: string; header: string; className?: string; render?: (item: Task & Record<string, unknown>) => React.ReactNode }[]}
           data={tasks as (Task & Record<string, unknown>)[]}

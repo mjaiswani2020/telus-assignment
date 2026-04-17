@@ -8,7 +8,7 @@ import Link from "next/link";
 
 export default function AnnotatorHomePage() {
   return (
-    <div className="stagger-children mx-auto max-w-[1440px] space-y-8 px-8 py-8">
+    <div className="stagger-children mx-auto max-w-[1440px] space-y-6 px-8 py-8">
       {/* Page heading */}
       <div>
         <h1 className="font-literata text-headline-md text-ink">Welcome back, Marcus</h1>
@@ -18,9 +18,9 @@ export default function AnnotatorHomePage() {
       </div>
 
       {/* Performance cards */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-3">
         {/* Today */}
-        <div className="rounded-comfortable border border-level-2 bg-white p-5">
+        <div className="rounded-comfortable border border-level-2 bg-white p-4">
           <p className="font-inter text-label-sm uppercase tracking-[0.14em] text-secondary-text">
             Today
           </p>
@@ -30,7 +30,7 @@ export default function AnnotatorHomePage() {
         </div>
 
         {/* This week */}
-        <div className="rounded-comfortable border border-level-2 bg-white p-5">
+        <div className="rounded-comfortable border border-level-2 bg-white p-4">
           <p className="font-inter text-label-sm uppercase tracking-[0.14em] text-secondary-text">
             This Week
           </p>
@@ -40,7 +40,7 @@ export default function AnnotatorHomePage() {
         </div>
 
         {/* Quality */}
-        <div className="rounded-comfortable border border-level-2 bg-white p-5">
+        <div className="rounded-comfortable border border-level-2 bg-white p-4">
           <p className="font-inter text-label-sm uppercase tracking-[0.14em] text-secondary-text">
             Quality
           </p>
@@ -58,10 +58,10 @@ export default function AnnotatorHomePage() {
       </div>
 
       {/* Task Queue */}
-      <section className="space-y-4">
+      <section className="space-y-3">
         <h2 className="font-literata text-title-lg text-ink">Your Task Queue</h2>
 
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           {/* Task 1 - Pairwise */}
           <div className="flex items-center justify-between rounded-comfortable border border-level-2 bg-white px-5 py-4">
             <div className="flex-1">
@@ -140,7 +140,7 @@ export default function AnnotatorHomePage() {
       </section>
 
       {/* Qualification Tests */}
-      <section className="space-y-4">
+      <section className="space-y-3">
         <h2 className="font-literata text-title-lg text-ink">Qualification Tests</h2>
 
         <div className="rounded-comfortable border border-level-2 bg-white px-5 py-4">
@@ -161,10 +161,10 @@ export default function AnnotatorHomePage() {
       </section>
 
       {/* Recent Activity */}
-      <section className="space-y-4">
+      <section className="space-y-3">
         <h2 className="font-literata text-title-lg text-ink">Recent Activity</h2>
 
-        <div className="space-y-3 rounded-comfortable border border-level-2 bg-white px-5 py-4">
+        <div className="space-y-2.5 rounded-comfortable border border-level-2 bg-white px-5 py-4">
           <div className="flex items-center gap-3">
             <span className="h-2 w-2 rounded-full bg-success" />
             <span className="font-inter text-body-md text-ink">

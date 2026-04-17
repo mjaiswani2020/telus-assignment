@@ -83,9 +83,9 @@ export default function EditPage() {
         onGuidelines={() => setGuidelinesOpen(true)}
       />
 
-      <div className="stagger-children mx-auto max-w-[1440px] space-y-6 px-8 py-6">
+      <div className="stagger-children mx-auto max-w-[1440px] space-y-4 px-8 py-6">
         {/* Two panels */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3">
           {/* Original - read only */}
           <div className="space-y-2">
             <div className="flex items-center gap-2">
@@ -126,7 +126,7 @@ export default function EditPage() {
         </div>
 
         {/* Diff view toggle */}
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           <Tabs
             tabs={[
               { id: "inline", label: "Inline" },
@@ -137,7 +137,7 @@ export default function EditPage() {
             variant="pill"
           />
 
-          <div className="rounded-comfortable border border-level-2 bg-white p-5">
+          <div className="rounded-comfortable border border-level-2 bg-white p-4">
             {diffView === "inline" ? (
               <div className="space-y-2">
                 {diff.removed.length > 0 && (
@@ -171,7 +171,7 @@ export default function EditPage() {
                 )}
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
                   <p className="mb-2 font-inter text-label-sm uppercase text-error">Original</p>
                   <p className="whitespace-pre-wrap font-inter text-body-md text-ink leading-relaxed">

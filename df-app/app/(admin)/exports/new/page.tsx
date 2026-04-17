@@ -84,7 +84,7 @@ export default function ExportBuilderPage() {
         }
       />
 
-      <div className="stagger-children mt-6 space-y-8">
+      <div className="stagger-children mt-4 space-y-6">
         {/* Format selector */}
         <div>
           <p className="mb-3 font-inter text-label-sm uppercase tracking-[0.5px] text-secondary-text">
@@ -130,7 +130,7 @@ export default function ExportBuilderPage() {
         </div>
 
         {/* Source Data */}
-        <div className="rounded-comfortable border border-level-2 bg-white p-6">
+        <div className="rounded-comfortable border border-level-2 bg-white p-5">
           <h3 className="font-inter text-[14px] font-semibold text-ink">
             Source Data
           </h3>
@@ -145,7 +145,7 @@ export default function ExportBuilderPage() {
               <p className="mb-2 font-inter text-label-sm uppercase tracking-[0.5px] text-secondary-text">
                 Rounds
               </p>
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 {(["r1", "r2", "r3"] as const).map((r, i) => (
                   <div key={r} className="flex items-center gap-4">
                     <label className="flex items-center gap-2">
@@ -182,7 +182,7 @@ export default function ExportBuilderPage() {
         </div>
 
         {/* Filters */}
-        <div className="rounded-comfortable border border-level-2 bg-white p-6">
+        <div className="rounded-comfortable border border-level-2 bg-white p-5">
           <h3 className="font-inter text-[14px] font-semibold text-ink">
             Filters
           </h3>
@@ -239,11 +239,11 @@ export default function ExportBuilderPage() {
         </div>
 
         {/* Quality Gates */}
-        <div className="rounded-comfortable border border-level-2 bg-white p-6">
+        <div className="rounded-comfortable border border-level-2 bg-white p-5">
           <h3 className="font-inter text-[14px] font-semibold text-ink">
             Quality Gates
           </h3>
-          <div className="mt-4 space-y-3">
+          <div className="mt-4 space-y-2.5">
             {[
               { label: "IAA >= 0.65 for all included rounds", checked: gateIaa, set: setGateIaa },
               { label: "Gold accuracy >= 75% for all annotators", checked: gateGold, set: setGateGold },
@@ -265,7 +265,7 @@ export default function ExportBuilderPage() {
         </div>
 
         {/* Preview bar */}
-        <div className="rounded-comfortable bg-[#ECFDF5] p-4">
+        <div className="rounded-comfortable bg-[#ECFDF5] px-3 py-2.5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <span className="font-inter text-body-md font-medium text-ink">

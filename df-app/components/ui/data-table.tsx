@@ -56,7 +56,7 @@ export function DataTable<T extends Record<string, unknown>>({
                 <td
                   key={col.key}
                   className={cn(
-                    "px-4 py-3.5 font-inter text-body-md text-ink",
+                    "px-4 py-3 font-inter text-body-md text-ink",
                     col.className
                   )}
                 >

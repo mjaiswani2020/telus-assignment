@@ -143,7 +143,7 @@ export default function RubricPage() {
         onGuidelines={() => setGuidelinesOpen(true)}
       />
 
-      <div className="stagger-children mx-auto max-w-[1440px] space-y-6 px-8 py-6">
+      <div className="stagger-children mx-auto max-w-[1440px] space-y-4 px-8 py-6">
         {/* Prompt */}
         <div>
           <p className="mb-2 font-inter text-label-sm uppercase tracking-[0.5px] text-secondary-text">
@@ -170,7 +170,7 @@ export default function RubricPage() {
         </div>
 
         {/* Scoring dimensions */}
-        <div className="space-y-6 rounded-comfortable border border-level-2 bg-white p-6">
+        <div className="space-y-4 rounded-comfortable border border-level-2 bg-white p-5">
           <h3 className="font-literata text-title-lg text-ink">Scoring Dimensions</h3>
 
           <SliderDimension

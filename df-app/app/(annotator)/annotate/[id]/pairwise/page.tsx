@@ -120,7 +120,7 @@ export default function PairwisePage() {
         onGuidelines={() => setGuidelinesOpen(true)}
       />
 
-      <div className="stagger-children mx-auto max-w-[1440px] space-y-6 px-8 py-6">
+      <div className="stagger-children mx-auto max-w-[1440px] space-y-4 px-8 py-6">
         {/* Prompt */}
         <div>
           <p className="mb-2 font-inter text-label-sm uppercase tracking-[0.5px] text-secondary-text">
@@ -132,7 +132,7 @@ export default function PairwisePage() {
         </div>
 
         {/* Response panels */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3">
           <ResponsePanel
             label="A"
             title="Response A"
