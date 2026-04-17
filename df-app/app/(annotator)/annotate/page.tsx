@@ -1,5 +1,6 @@
 "use client";
 
+import { HeaderBar } from "@/components/annotator/header-bar";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,8 +9,10 @@ import Link from "next/link";
 
 export default function AnnotatorHomePage() {
   return (
-    <div className="stagger-children mx-auto max-w-[1440px] space-y-6 px-8 py-8">
-      {/* Page heading */}
+    <>
+      <HeaderBar />
+      <div className="stagger-children mx-auto max-w-[1440px] space-y-6 px-8 py-8">
+        {/* Page heading */}
       <div>
         <h1 className="font-literata text-headline-md text-ink">Welcome back, Marcus</h1>
         <p className="mt-1 font-inter text-body-md text-secondary-text">
@@ -202,6 +205,7 @@ export default function AnnotatorHomePage() {
           </div>
         </div>
       </section>
-    </div>
+      </div>
+    </>
   );
 }

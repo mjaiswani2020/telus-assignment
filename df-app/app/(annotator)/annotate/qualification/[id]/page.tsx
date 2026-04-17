@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { HeaderBar } from "@/components/annotator/header-bar";
 import { ResponsePanel } from "@/components/annotator/response-panel";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -80,8 +81,10 @@ export default function QualificationPage() {
   const [answer, setAnswer] = useState<"a" | "b" | null>(null);
 
   return (
-    <div className="stagger-children mx-auto max-w-[1440px] px-8 py-8 space-y-4">
-      {/* Segmented progress bar */}
+    <>
+      <HeaderBar />
+      <div className="stagger-children mx-auto max-w-[1440px] px-8 py-8 space-y-4">
+        {/* Segmented progress bar */}
       <div className="flex gap-2">
         {STAGES.map((stage, idx) => (
           <div key={stage.label} className="flex-1">
@@ -185,6 +188,7 @@ export default function QualificationPage() {
           Next Question
         </Button>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

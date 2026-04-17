@@ -1,5 +1,6 @@
 "use client";
 
+import { HeaderBar } from "@/components/annotator/header-bar";
 import { StatCard } from "@/components/ui/stat-card";
 import { Badge } from "@/components/ui/badge";
 import { Check, X, Hourglass } from "lucide-react";
@@ -23,8 +24,10 @@ const taskBreakdown = [
 
 export default function ProfilePage() {
   return (
-    <div className="stagger-children mx-auto max-w-[1440px] px-8 py-8 space-y-6">
-      {/* Profile header */}
+    <>
+      <HeaderBar />
+      <div className="stagger-children mx-auto max-w-[1440px] px-8 py-8 space-y-6">
+        {/* Profile header */}
       <div className="flex items-center gap-5 rounded-comfortable border border-level-2 bg-white px-5 py-4">
         <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#B45309] text-white">
           <span className="font-inter text-[20px] font-bold">MT</span>
@@ -177,6 +180,7 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

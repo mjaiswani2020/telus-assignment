@@ -1,6 +1,5 @@
 "use client";
 
-import { HeaderBar } from "@/components/annotator/header-bar";
 import { ToastProvider } from "@/components/ui/toast";
 
 export default function AnnotatorLayout({
@@ -11,8 +10,7 @@ export default function AnnotatorLayout({
   return (
     <ToastProvider>
       <div className="min-h-screen bg-off-white">
-        <HeaderBar />
-        <main>{children}</main>
+        {children}
       </div>
     </ToastProvider>
   );
