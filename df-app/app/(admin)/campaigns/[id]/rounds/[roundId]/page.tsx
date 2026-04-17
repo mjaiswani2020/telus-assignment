@@ -221,7 +221,7 @@ export default function CampaignRoundDetailPage() {
 
       {/* Model Versions */}
       <div className="mt-8">
-        <h3 className="font-inter text-[16px] font-medium text-ink">
+        <h3 className="font-inter text-[14px] font-semibold text-ink">
           Model Versions
         </h3>
         <div className="mt-3 grid grid-cols-2 gap-4">
@@ -253,7 +253,7 @@ export default function CampaignRoundDetailPage() {
       {/* Cross-Round Comparison */}
       <div className="mt-8 rounded-comfortable border border-level-2 bg-white">
         <div className="px-5 pt-5 pb-3">
-          <h3 className="font-inter text-[16px] font-medium text-ink">
+          <h3 className="font-inter text-[14px] font-semibold text-ink">
             Cross-Round Comparison
           </h3>
         </div>

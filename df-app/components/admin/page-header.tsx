@@ -13,7 +13,7 @@ export function PageHeader({ title, subtitle, action, className }: PageHeaderPro
   return (
     <div className={cn("flex items-start justify-between", className)}>
       <div className="flex items-baseline gap-3">
-        <h1 className="font-literata text-[28px] font-semibold uppercase tracking-[0.01em] text-ink">
+        <h1 className="font-literata text-[28px] font-semibold uppercase tracking-[-0.02em] leading-[34px] text-ink">
           {title}
         </h1>
         {subtitle && (

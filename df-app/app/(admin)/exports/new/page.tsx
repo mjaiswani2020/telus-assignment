@@ -131,7 +131,7 @@ export default function ExportBuilderPage() {
 
         {/* Source Data */}
         <div className="rounded-comfortable border border-level-2 bg-white p-6">
-          <h3 className="font-inter text-[16px] font-medium text-ink">
+          <h3 className="font-inter text-[14px] font-semibold text-ink">
             Source Data
           </h3>
           <div className="mt-4 space-y-4">
@@ -183,7 +183,7 @@ export default function ExportBuilderPage() {
 
         {/* Filters */}
         <div className="rounded-comfortable border border-level-2 bg-white p-6">
-          <h3 className="font-inter text-[16px] font-medium text-ink">
+          <h3 className="font-inter text-[14px] font-semibold text-ink">
             Filters
           </h3>
           <div className="mt-4 space-y-4">
@@ -240,7 +240,7 @@ export default function ExportBuilderPage() {
 
         {/* Quality Gates */}
         <div className="rounded-comfortable border border-level-2 bg-white p-6">
-          <h3 className="font-inter text-[16px] font-medium text-ink">
+          <h3 className="font-inter text-[14px] font-semibold text-ink">
             Quality Gates
           </h3>
           <div className="mt-4 space-y-3">

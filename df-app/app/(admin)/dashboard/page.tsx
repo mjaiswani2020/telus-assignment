@@ -83,7 +83,7 @@ export default function DashboardPage() {
       <div className="mt-6 grid grid-cols-[1fr_380px] gap-4">
         {/* Campaign Progress */}
         <div className="rounded-comfortable border border-level-2 bg-white p-6">
-          <h3 className="font-inter text-[16px] font-medium text-ink">
+          <h3 className="font-inter text-[14px] font-semibold text-ink">
             Campaign Progress
           </h3>
           <div className="mt-5 space-y-6">
@@ -108,7 +108,7 @@ export default function DashboardPage() {
 
         {/* Quality Alerts */}
         <div className="rounded-comfortable border border-level-2 bg-white p-6">
-          <h3 className="font-inter text-[16px] font-medium text-ink">
+          <h3 className="font-inter text-[14px] font-semibold text-ink">
             Quality Alerts
           </h3>
           <div className="mt-5 space-y-3">

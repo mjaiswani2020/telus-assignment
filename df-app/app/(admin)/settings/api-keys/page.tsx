@@ -143,7 +143,7 @@ export default function ApiKeysPage() {
           {/* API Keys section */}
           <div>
             <div className="flex items-center justify-between">
-              <h3 className="font-inter text-[16px] font-medium text-ink">
+              <h3 className="font-inter text-[14px] font-semibold text-ink">
                 API Keys
               </h3>
               <Button
@@ -165,7 +165,7 @@ export default function ApiKeysPage() {
 
           {/* API Usage */}
           <div>
-            <h3 className="mb-4 font-inter text-[16px] font-medium text-ink">
+            <h3 className="mb-4 font-inter text-[14px] font-semibold text-ink">
               API Usage
             </h3>
             <div className="grid grid-cols-3 gap-4">

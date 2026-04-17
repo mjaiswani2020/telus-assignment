@@ -108,7 +108,7 @@ export default function QualificationBuilderPage() {
       <div className="stagger-children mt-6 space-y-6">
         {/* Basic Info */}
         <div className="rounded-comfortable border border-level-2 bg-white p-6">
-          <h3 className="font-inter text-[16px] font-medium text-ink">
+          <h3 className="font-inter text-[14px] font-semibold text-ink">
             Basic Information
           </h3>
           <div className="mt-4 space-y-4">
@@ -129,7 +129,7 @@ export default function QualificationBuilderPage() {
 
         {/* Stage Configuration */}
         <div className="rounded-comfortable border border-level-2 bg-white p-6">
-          <h3 className="font-inter text-[16px] font-medium text-ink">
+          <h3 className="font-inter text-[14px] font-semibold text-ink">
             Stage Configuration
           </h3>
           <p className="mt-1 font-inter text-body-md text-tertiary-text">
@@ -162,7 +162,7 @@ export default function QualificationBuilderPage() {
 
         {/* Question Types */}
         <div className="rounded-comfortable border border-level-2 bg-white p-6">
-          <h3 className="font-inter text-[16px] font-medium text-ink">
+          <h3 className="font-inter text-[14px] font-semibold text-ink">
             Question Types
           </h3>
           <p className="mt-1 font-inter text-body-md text-tertiary-text">
@@ -185,7 +185,7 @@ export default function QualificationBuilderPage() {
 
         {/* Thresholds */}
         <div className="rounded-comfortable border border-level-2 bg-white p-6">
-          <h3 className="font-inter text-[16px] font-medium text-ink">
+          <h3 className="font-inter text-[14px] font-semibold text-ink">
             Pass Threshold & Recertification
           </h3>
           <div className="mt-4 space-y-5">

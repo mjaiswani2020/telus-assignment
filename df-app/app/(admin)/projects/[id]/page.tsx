@@ -172,7 +172,7 @@ export default function ProjectDetailPage() {
       {/* Campaigns Table */}
       <div className="mt-8 rounded-comfortable border border-level-2 bg-white">
         <div className="px-5 pt-5 pb-3">
-          <h3 className="font-inter text-[16px] font-medium text-ink">
+          <h3 className="font-inter text-[14px] font-semibold text-ink">
             Campaigns
           </h3>
         </div>
@@ -187,7 +187,7 @@ export default function ProjectDetailPage() {
       {/* Task Configurations Table */}
       <div className="mt-8 rounded-comfortable border border-level-2 bg-white">
         <div className="px-5 pt-5 pb-3">
-          <h3 className="font-inter text-[16px] font-medium text-ink">
+          <h3 className="font-inter text-[14px] font-semibold text-ink">
             Task Configurations
           </h3>
         </div>

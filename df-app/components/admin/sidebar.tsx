@@ -70,7 +70,7 @@ export function Sidebar() {
       <nav className="flex-1 overflow-y-auto px-3 pb-4">
         {navSections.map((section) => (
           <div key={section.label} className="mt-6 first:mt-2">
-            <p className="px-3 pb-2 font-inter text-[11px] font-medium uppercase tracking-[0.14em] text-secondary-text">
+            <p className="px-3 pb-2 font-inter text-[11px] font-medium uppercase tracking-[0.06em] leading-[14px] text-tertiary-text">
               {section.label}
             </p>
             <div className="flex flex-col gap-0.5">

@@ -39,7 +39,7 @@ export function AnnotationVolumeChart() {
   return (
     <div className="rounded-comfortable border border-level-2 bg-white p-6">
       <div className="mb-4 flex items-center justify-between">
-        <h3 className="font-inter text-[16px] font-medium text-ink">
+        <h3 className="font-inter text-[14px] font-semibold text-ink">
           Annotation Volume — Last 30 Days
         </h3>
         <div className="flex items-center gap-4">
