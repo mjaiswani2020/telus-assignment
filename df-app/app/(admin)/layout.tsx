@@ -13,7 +13,7 @@ export default function AdminLayout({
     <ToastProvider>
       <div className="min-h-screen bg-off-white">
         <Sidebar />
-        <div className="ml-[200px]">
+        <div className="ml-[240px]">
           <TopBar />
           <main className="px-8 pb-8">{children}</main>
         </div>

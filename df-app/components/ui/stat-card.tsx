@@ -103,16 +103,16 @@ export function StatCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
     >
-      <p className="font-inter text-label-sm uppercase tracking-[0.14em] text-secondary-text">
+      <p className="font-inter text-[11px] font-medium uppercase tracking-[0.06em] leading-[14px] text-tertiary-text">
         {label}
       </p>
-      <div className="mt-2 flex items-end gap-3">
-        <span className="font-literata text-display-lg text-ink">
+      <div className="mt-1 flex items-end gap-3">
+        <span className="font-literata text-[32px] font-semibold leading-[40px] tracking-[-0.02em] text-ink">
           {displayValue}
         </span>
         {trend && (
           <span
-            className={cn("flex items-center gap-1 pb-1 text-label-md", {
+            className={cn("flex items-center gap-1 pb-1 text-[12px] font-medium", {
               "text-success": trend.direction === "up",
               "text-error": trend.direction === "down",
               "text-tertiary-text": trend.direction === "neutral",
