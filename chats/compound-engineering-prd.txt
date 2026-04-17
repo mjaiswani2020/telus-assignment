@@ -1,0 +1,531 @@
+╭─── Claude Code v2.1.92 ──────────────────────────────────────────────────────╮
+│                                                    │ Tips for getting        │
+│                 Welcome back Mohit!                │ started                 │
+│                                                    │ Run /init to create a … │
+│                       ▐▛███▜▌                      │ ─────────────────────── │
+│                      ▝▜█████▛▘                     │ Recent activity         │
+│                        ▘▘ ▝▝                       │ No recent activity      │
+│        Opus 4.6 (1M context) · Claude Max ·        │                         │
+│        mohit@tectonic.so's Organization            │                         │
+│              ~/repos/telus-assignment              │                         │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+❯ /compound-engineering:ce-brainstorm You are a senior product manager at an AI 
+ data services company that creates high-quality training data for fine-tuning  
+large language models (LLMs). Your task is to write a comprehensive Product     
+Requirements Document (PRD) for "RLHF DataForge" — a unified task configuration 
+ and data collection platform that enables human annotators to create training  
+data for LLM alignment using Reinforcement Learning from Human Feedback (RLHF). 
+This platform has two interfaces:                                               
+                                                                                
+1. Task Configuration Tool (Admin Interface): An admin-facing tool where ML     
+engineers and data managers define the parameters for annotation tasks —        
+analogous to a Google Form creation screen but purpose-built for RLHF.          
+2. Data Collection Interface (Annotator Interface): The annotator-facing tool   
+where human workers interact with AI models, compare responses, and provide     
+preference feedback — this is the "form" that annotators fill out.              
+The platform must be flexible enough to support the data collection             
+methodologies used by both Anthropic and Meta in their landmark RLHF research,  
+as well as hybrid and custom approaches.                                        
+                                                                                
+                                                                                
+PRODUCT REQUIREMENTS                                                            
+Using the research context above, write a comprehensive PRD                     
+                                                                                
+* Executive Summary                                                             
+                                                                                
+* Problem Statement                                                             
+* User Personas                                                                 
+   * Define at least three personas:                                            
+      * Task Administrator / ML Engineer (configures tasks)                     
+      * Human Annotator / Crowdworker (performs annotations)                    
+      * Data Consumer / Training Engineer (consumes exported data for model     
+training) Include their goals, pain points, and how they interact with the      
+platform.                                                                       
+* Product Scope & Core Modules                                                  
+   * Module 1 — Task Configuration Engine (Admin Interface): template library   
+for known configurations of data needs and configurable parameters for custom   
+task types                                                                      
+   * Module 2 — Data Collection Interface (Annotator Interface) This interface  
+should support interface for different tasks type                               
+   * Module 3 — Quality & Analytics Dashboard                                   
+   * Module 4 — Data Export & Pipeline Integration                              
+   * Any other module that should be included but I may have missed.            
+* Detailed Feature Specifications                                               
+* Information Architecture & Wireframe Descriptions.                            
+                                                                                
+Think from first principles and do not try to one shot this requirement         
+document. I gave you the outline upfront so that we know what is in scope. Go   
+through the research paper and start by listing  goals we want to achieve and   
+list of usecases. Identify core data needs based on the research papers         
+attached so that we can model the platform in a way that supports meeting       
+generic data of any LLM provider out there. It is a brainstorming so ask me     
+questions if needed.                                                            
+                                                                                
+Both the papers are attached here:                                              
+  @assignment/                                                                  
+                                                                                
+  spawn a team of agents to go in depth and read through the research papers.   
+Also research the web for any                                                   
+  tools which already do this that may help guide the requirement gathering.    
+  ⎿  Listed directory assignment/
+
+⏺ This is a substantial brainstorm — I'm classifying it as Deep scope given the
+  cross-cutting nature, multiple user personas, and the need to synthesize
+  research papers into platform requirements.
+
+  Let me spawn a team of agents to work in parallel: two to deeply analyze each
+  research paper, and one to research existing tools in this space.
+
+⏺ 3 agents finished (ctrl+o to expand)
+   ├─ Read Anthropic RLHF paper · 30 tool uses · 66.8k tokens
+   │  ⎿  Done
+   ├─ Read Meta RLHF paper · 28 tool uses · 58.9k tokens
+   │  ⎿  Done
+   └─ Research existing RLHF tools · 0 tool uses
+      ⎿  Done
+
+⏺ All three research streams are complete. Let me synthesize the findings before
+   we dive in.
+
+  ---
+  Research Synthesis
+
+  Key Findings from Papers
+
+  Anthropic (2204.05862v1) — "Training a Helpful and Harmless Assistant with
+  RLHF":
+  - Core format: pairwise comparison in multi-turn, real-time conversations with
+   models
+  - Two task modes: helpfulness (pick better response) and red-teaming (pick
+  more harmful response)
+  - Preference strength captured but only used to filter near-ties
+  - Lightweight QC: writing-quality spot-checks, no IAA-based filtering. ~63%
+  agreement was "sufficient"
+  - Weekly model hot-swapping during online data collection phase
+  - Annotators could edit model responses (late addition, <10% of data)
+  - 3 data tranches: base (86k), rejection sampling (54k), online (22k)
+
+  Meta/Llama 2 (2307.09288v2) — "Llama 2: Open Foundation and Fine-Tuned Chat
+  Models":
+  - Also pairwise comparison, but with a 4-point preference degree scale
+  (significantly better → negligibly better)
+  - Preference margin fed directly into reward model loss — richer signal
+  - Two separate reward models (helpfulness RM + safety RM)
+  - Rigorous 4-step annotator qualification process + manual QA review by
+  content managers
+  - Annotators write their own prompts (not selected from a pool)
+  - 14 weekly batches, 1.4M+ comparisons total
+  - Safety annotations include a 3-bin safety label + risk category taxonomy
+  - Curriculum strategy: simple prompts early, complex later
+  - Key insight: "Quality is all you need" — 27k high-quality SFT annotations
+  beat millions of low-quality ones
+
+  Critical Differences to Support
+
+  ┌─────────────┬──────────────────┬──────────────────┬────────────────────┐
+  │  Dimension  │    Anthropic     │       Meta       │     Platform       │
+  │             │                  │                  │    Implication     │
+  ├─────────────┼──────────────────┼──────────────────┼────────────────────┤
+  │ Model       │ Real-time,       │ Pre-generated    │ Must support both  │
+  │ interaction │ streaming        │ responses        │ modes              │
+  ├─────────────┼──────────────────┼──────────────────┼────────────────────┤
+  │ Preference  │ Binary (+        │ 4-point degree   │ Configurable scale │
+  │ scale       │ strength filter) │                  │                    │
+  ├─────────────┼──────────────────┼──────────────────┼────────────────────┤
+  │ Red-teaming │ Pick MORE        │ Pick SAFER       │ Configurable       │
+  │  direction  │ harmful          │ response         │ polarity           │
+  ├─────────────┼──────────────────┼──────────────────┼────────────────────┤
+  │             │ Lightweight      │ 4-step           │ Pluggable QC       │
+  │ QC approach │ spot-checks      │ qualification +  │ pipeline           │
+  │             │                  │ review           │                    │
+  ├─────────────┼──────────────────┼──────────────────┼────────────────────┤
+  │ Reward      │                  │ Separate         │ Support            │
+  │ models      │ Single combined  │ helpfulness +    │ multi-dimensional  │
+  │             │                  │ safety           │ labels             │
+  ├─────────────┼──────────────────┼──────────────────┼────────────────────┤
+  │ Prompt      │ Worker free-form │ Worker-authored  │ Multiple prompt    │
+  │ source      │  +               │ with curriculum  │ strategies         │
+  │             │ model-generated  │                  │                    │
+  ├─────────────┼──────────────────┼──────────────────┼────────────────────┤
+  │ Data        │ Online (weekly   │ Batch (14 weekly │ Both online and    │
+  │ cadence     │ model updates)   │  batches)        │ batch modes        │
+  └─────────────┴──────────────────┴──────────────────┴────────────────────┘
+
+  Competitive Landscape
+
+  Gap in the market: No single tool combines a polished RLHF-specific annotation
+   UI + workforce management + configurable QC + training-framework integration.
+   Argilla is closest (open-source) but lacks workforce management and advanced
+  QC. Commercial platforms (Scale AI, Surge AI) are expensive, black-box, and
+  create vendor lock-in.
+
+  ---
+  Proposed Goals & Use Cases
+
+  Based on the research, here are the core goals and use cases I see for RLHF
+  DataForge:
+
+  Goals
+
+  1. Methodology-agnostic: Support Anthropic-style (real-time multi-turn),
+  Meta-style (batch pre-generated), and hybrid approaches from a single
+  configurable platform
+  2. Full RLHF data lifecycle: Prompt curation → response generation →
+  annotation → quality analysis → export → iteration
+  3. Configurable annotation dimensions: Binary preference, n-point scales,
+  multi-dimensional rubrics, safety labels, free-text justifications — all
+  mix-and-matchable per task
+  4. Production-grade quality pipeline: From lightweight crowd approaches to
+  rigorous qualification-gated expert workflows
+  5. Training-framework-native export: DPO, PPO, reward model formats out of the
+   box (TRL/HuggingFace compatible)
+
+  Core Use Cases (derived from papers)
+
+  1. SFT data collection — Annotators write prompt-response pairs (Meta Stage 1)
+  2. Pairwise preference annotation — Compare two model responses, pick
+  preferred (both papers)
+  3. Multi-turn conversational RLHF — Real-time multi-turn dialogue with
+  comparison at each turn (Anthropic)
+  4. Safety/red-teaming data collection — Adversarial prompts + safety
+  classification (both papers)
+  5. Response editing/rewriting — Annotators improve model outputs (Anthropic,
+  late feature)
+  6. Model evaluation (Elo/Arena) — Blind head-to-head model comparison
+  (Anthropic Elo, LMSYS-style)
+  7. Iterative campaign management — Multiple RLHF rounds with model improvement
+   between batches (Meta V1-V5, Anthropic online)
+  8. Annotator qualification & routing — Skill-based assignment with
+  qualification tests (Meta 4-step)
+
+  ---
+  Now before I go further, I want to pressure-test the scope with you.
+
+⏺ User answered Claude's questions:
+  ⎿  · The research reveals a wide spectrum of RLHF data collection patterns. 
+     Before I model the platform, what is the primary deployment context for 
+     RLHF DataForge? → SaaS product
+     · How should we handle the model integration layer? This affects whether 
+     DataForge is a 'bring your own model' platform or includes inference 
+     infrastructure. → BYOM only
+     · Which annotator workforce model should the platform primarily support? → 
+     Managed internal
+
+⏺ Good — that sharpens the scope significantly:
+
+  - SaaS multi-tenant — tenant isolation, self-service onboarding, billing
+  - BYOM — admins configure external model API endpoints, platform orchestrates
+  prompt/response flow
+  - Managed internal workforce — qualification, assignment, performance
+  tracking, payment all built in
+
+  Now let me dig into the data model, since this is the foundation everything
+  else sits on. Based on the two papers, I've identified these core annotation 
+  task types that the platform must support:
+
+  ┌─────┬──────────────────────┬─────────────────┬──────────────────────────┐
+  │  #  │      Task Type       │     Source      │   What Annotator Does    │
+  ├─────┼──────────────────────┼─────────────────┼──────────────────────────┤
+  │ 1   │ Pairwise Preference  │ Both papers     │ Compare 2 responses,     │
+  │     │                      │                 │ pick preferred           │
+  ├─────┼──────────────────────┼─────────────────┼──────────────────────────┤
+  │     │                      │                 │ Chat with live model,    │
+  │ 2   │ Multi-turn           │ Anthropic       │ compare 2 responses each │
+  │     │ Conversational RLHF  │                 │  turn, pick one to       │
+  │     │                      │                 │ continue                 │
+  ├─────┼──────────────────────┼─────────────────┼──────────────────────────┤
+  │ 3   │ SFT Data Authoring   │ Meta            │ Write both prompt and    │
+  │     │                      │                 │ ideal response           │
+  ├─────┼──────────────────────┼─────────────────┼──────────────────────────┤
+  │     │                      │                 │ Write adversarial        │
+  │ 4   │ Safety/Red-teaming   │ Both papers     │ prompts, classify        │
+  │     │                      │                 │ responses for safety     │
+  ├─────┼──────────────────────┼─────────────────┼──────────────────────────┤
+  │ 5   │ Response             │ Anthropic       │ Improve a model response │
+  │     │ Editing/Rewriting    │                 │  directly                │
+  ├─────┼──────────────────────┼─────────────────┼──────────────────────────┤
+  │ 6   │ Ranking (N           │ General RLHF    │ Rank N responses from    │
+  │     │ responses)           │                 │ best to worst            │
+  ├─────┼──────────────────────┼─────────────────┼──────────────────────────┤
+  │     │                      │                 │ Score response on        │
+  │ 7   │ Multi-dimensional    │ Industry trend  │ multiple axes            │
+  │     │ Rubric Scoring       │                 │ (helpfulness, accuracy,  │
+  │     │                      │                 │ safety, style)           │
+  ├─────┼──────────────────────┼─────────────────┼──────────────────────────┤
+  │     │ Model Arena/Elo      │                 │ Blind head-to-head model │
+  │ 8   │ Evaluation           │ Anthropic/LMSYS │  comparison for          │
+  │     │                      │                 │ evaluation               │
+  └─────┴──────────────────────┴─────────────────┴──────────────────────────┘
+
+⏺ User answered Claude's questions:
+  ⎿  · Which annotation task types should be in scope for the initial platform? 
+     Select all that apply. → All 8 task types
+     · For the Quality & Analytics module, which QC philosophy should be the 
+     default? Both papers took very different approaches. → Configurable per 
+     project
+
+⏺ Ambitious scope — all 8 task types with configurable QC. That makes sense for
+  a SaaS product targeting multiple AI labs with different methodologies.
+
+  A few more key questions before I start structuring the requirements:
+
+⏺ User answered Claude's questions:
+  ⎿  · How should iterative RLHF campaigns work? Both papers collected data in 
+     rounds as models improved. This is a key differentiator. → Full campaign 
+     mgmt
+     · The PRD outline mentions Information Architecture & Wireframes. How 
+     detailed should the wireframe descriptions be? → Detailed ASCII mockups
+     · Should the PRD address multi-modal RLHF (image/audio/video preference 
+     annotation) or stay text-only for now? → Text-only
+
+⏺ Excellent. I now have a clear picture of what to build. Let me summarize the
+  decisions before writing:
+
+  - SaaS multi-tenant with self-service onboarding
+  - BYOM (bring your own model via API endpoints)
+  - Managed internal workforce with qualification, assignment, performance,
+  payment
+  - All 8 annotation task types from day one
+  - Configurable QC per project (lightweight → rigorous)
+  - Full campaign management with RLHF round tracking and model versioning
+  - Detailed ASCII wireframes in the PRD
+  - Text-only (no multi-modal for now)
+
+  Let me now write the comprehensive requirements document.
+
+⏺ Bash(mkdir -p /Users/mohitjaiswani/repos/telus-assignment/docs/brainstorms)
+  ⎿  Done
+
+⏺ Write(docs/brainstorms/rlhf-dataforge-requirements.md)
+  ⎿  Wrote 1971 lines to docs/brainstorms/rlhf-dataforge-requirements.md
+       1 # RLHF DataForge — Product Requirements Document
+       2 
+       3 **Version:** 1.0
+       4 **Date:** 2026-04-16
+       5 **Author:** Product Management
+       6 **Status:** Draft
+       7 
+       8 ---
+       9 
+      10 ## Table of Contents
+     … +1961 lines (ctrl+o to expand)
+
+⏺ The comprehensive PRD has been written to
+  docs/brainstorms/rlhf-dataforge-requirements.md. Let me now run a document
+  review on it.
+
+⏺ 3 background agents launched (↓ to manage)
+   ├─ compound-engineering:document-review:coherence-reviewer (Review PRD for
+      coherence)
+   ├─ compound-engineering:document-review:feasibility-reviewer (Review PRD for
+      feasibility)
+   └─compound-engineering:document-review:scope-guardian-reviewer (Review PRD
+     for scope)
+
+⏺ The PRD is complete and I've launched three review agents in parallel
+  (coherence, feasibility, scope) to quality-check the document. I'll share
+  their findings when they finish.
+
+  Here's a summary of what was written to
+  docs/brainstorms/rlhf-dataforge-requirements.md:
+
+  Document Structure
+
+  1. Executive Summary — Platform overview, key differentiators, target market
+  2. Problem Statement — Current landscape pain points for ML engineers,
+  annotators, and training engineers; market gap analysis
+  3. User Personas — Three detailed personas:
+    - Priya (ML Engineer/Task Admin) — configures tasks, manages campaigns
+    - Marcus (Annotator) — completes annotation tasks, participates in
+  qualification
+    - Kai (Training Engineer) — consumes exported data, manages dataset
+  versioning
+  4. Product Scope — 6 Core Modules:
+    - Module 1: Task Configuration Engine — template library (9 templates based
+  on both papers), custom task builder, BYOM model integration, campaign/round
+  management
+    - Module 2: Data Collection Interface — 8 task-type-specific annotator UIs +
+   cross-cutting UX features
+    - Module 3: Workforce Management — qualification tests, skill-based routing,
+   performance tracking, compensation
+    - Module 4: Quality & Analytics Dashboard — configurable QC pipeline
+  (lightweight → rigorous), IAA metrics, bias detection, cross-round analytics
+    - Module 5: Data Export & Pipeline Integration — 7 export formats (DPO,
+  reward model, PPO, SFT, rubric, Elo, raw), dataset versioning, quality gates,
+  API/webhooks/cloud push
+    - Module 6: Platform Administration — multi-tenancy, billing, security, API
+  5. Detailed Feature Specs — Full schemas (task config, annotation records,
+  campaigns, annotator profiles), API contracts, interaction flows
+  6. Information Architecture & Wireframes — 17 detailed ASCII wireframes
+  covering every major screen
+
+  Key Design Decisions Captured
+
+  - All 8 task types grounded in Anthropic + Meta research methodologies
+  - Preference margin from Meta's 4-point scale mapped to numeric values for
+  reward model training
+  - Configurable QC pipeline with 8 building blocks from lightweight to rigorous
+  - Full campaign management with cross-round analytics (tracks the Meta finding
+   that "negligibly better" increases as models converge)
+  - Response positional bias detection and randomization
+
+  I'll report the review findings shortly. In the meantime — any areas you'd
+  like me to go deeper on, or any decisions you'd like to revisit?
+
+✻ Worked for 18m 46s
+⏺ Agent "Review PRD for coherence" completed
+
+⏺ The coherence review is back with 11 findings. Waiting for the feasibility and
+   scope reviews to complete before presenting a consolidated summary.
+
+⏺ Agent "Review PRD for scope" completed
+
+⏺ Scope review is in. Still waiting on feasibility. Let me check if it's done
+  yet.
+
+  Read 1 file (ctrl+o to expand)
+
+⏺ Still running. I'll wait for the notification. In the meantime, here are the
+  findings from the two completed reviews:
+
+  ---
+  Document Review Findings (2 of 3 complete)
+
+  Coherence Review — 11 findings
+
+  High confidence:
+  1. Campaign scope ambiguity — campaign_id is nullable on annotations, meaning
+  annotations can exist outside campaigns, contradicting the model where all
+  RLHF data is campaign-bound
+  2. Requirements scattered across sections — Real-time model interaction
+  requirements appear in 4 different sections with no single authoritative
+  location
+
+  Moderate confidence (actionable):
+  3. Data mixing vs. lineage traceability — Exporting mixed-round data with
+  weights obscures which round each point came from, contradicting the "full
+  traceability" promise
+  4. Non-streaming API fallback UX undefined — timeout, UX degradation, and
+  acceptability thresholds not specified
+  5. Full manual review process lacks execution details — who reviews, SLA, what
+   happens on rejection
+  6. Gold standards vs. qualification tests operate independently with no clear
+  interaction model
+  7. "Recalibration" vs. "recertification" — two different terms, unclear if
+  same or different process
+  8. Margin-based loss metadata — annotator agreement as training signal
+  referenced in persona goals but never defined
+  9. Managed internal workforce positioning contradicts the implicit need for
+  crowdsourcing at scale
+  10. Response editing — unclear if it's a standalone task type or a feature
+  within pairwise tasks
+  11. Preference polarity applicability to different task types not specified
+
+  Scope Review — 9 findings
+
+  Scope exceeds goals (HIGH):
+  1. Compensation management (Module 3.4) — payroll, bonus triggers, per-task
+  rates serve crowd-labor ops, not the internal-workforce personas described
+  2. Elo Model Arena — model evaluation, not data collection. No persona goal
+  served.
+  3. Demographics field in annotator profile has no consumer
+  4. Five simultaneous IAA algorithms — framework-ahead-of-need; one
+  configurable metric (Gwet's AC2 per research) suffices
+
+  Scope exceeds goals (MODERATE):
+  5. Qualification test builder is a full form-builder product nested inside an
+  annotation platform
+  6. Deduplication + train/test splitting in export layer duplicates training
+  pipeline responsibility
+  7. Python SDK adds no capability beyond REST API + OpenAPI spec
+
+  Missing from data model (HIGH):
+  8. No task_instance_id — needed to group overlapping annotator records for IAA
+   computation
+  9. No is_complete flag on responses — interrupted streaming responses could
+  silently enter training data
+
+  I'll share the feasibility review when it lands. Would you like me to start
+  addressing any of these findings now, or wait for the complete picture?
+
+⏺ Agent "Review PRD for feasibility" completed
+
+⏺ All three reviews are complete. Here's the consolidated picture:
+
+  ---
+  Consolidated Review Summary
+
+  Feasibility Review — 8 findings
+
+  Architecture blockers (HIGH):
+  1. No technology stack decisions — language, database, hosting, frontend
+  framework all unspecified. Several requirements (real-time streaming proxy,
+  multi-tenant isolation, async exports) implicitly constrain architecture
+  without acknowledging it.
+  2. Real-time model proxy underspecified — timeout asymmetry (Model A: 2s,
+  Model B: 45s), API rate limiting across concurrent annotators, and credential
+  rotation for customer API keys are all missing.
+  3. Multi-tenancy isolation strategy unresolved — tenant_id missing from
+  annotation record schema. Row-level vs. schema-per-tenant vs.
+  database-per-tenant not decided — affects every query and migration.
+
+  Implementation risks (MODERATE):
+  4. Compensation module has regulatory implications — worker classification,
+  tax reporting, payment processing vs. tracking-only not clarified
+  5. Dataset snapshot reproducibility — requires either full-copy storage
+  (expensive) or event-sourced architecture (complex). Neither specified.
+  6. N-way ranking decomposition — ties + pairwise decomposition behavior
+  undefined. N=8 produces 28 pairs per annotation, multiplying export volume.
+  7. Deduplication — "configurable similarity threshold" hides an algorithm
+  choice (hash, LSH, embedding) with major performance implications
+  8. Elo concurrent updates — sequential by nature, but concurrent annotators
+  need a consistency strategy
+
+  Positive note: The reviewer praised the document as "exceptionally thorough as
+   a product requirements document" with well-defined schemas, specific API
+  contracts, and unambiguous wireframes.
+
+  ---
+  Action Items — What to Address
+
+  Across all 3 reviews, the findings cluster into three categories:
+
+  A. Data Model Fixes (should fix now)
+
+  These are schema gaps that affect correctness:
+  - Add tenant_id to annotation record schema
+  - Add task_instance_id to group overlapping annotator records for IAA
+  - Add is_complete flag on responses for interrupted streams
+  - Clarify campaign_id nullability — can annotations exist outside campaigns?
+
+  B. Scope Questions (need your input)
+
+  - Compensation module — Keep, simplify to tracking-only, or defer?
+  - Elo Model Arena — Keep as data collection task type, or descope?
+  - 5 IAA algorithms — Ship all 5 or start with Gwet's AC2 only?
+  - Deduplication in export — Keep or leave to training pipeline?
+  - Demographics field — Keep or remove?
+
+  C. Feasibility Notes (address in technical design, not PRD)
+
+  The feasibility reviewer correctly identified that this is a PRD, not a
+  technical design doc. Stack selection, isolation strategy, streaming
+  architecture, and snapshot mechanisms are appropriately deferred to a
+  planning/architecture phase.
+
+⏺ User answered Claude's questions:
+  ⎿  · How would you like to handle the scope findings? I can apply data model 
+     fixes immediately, but need your direction on the scope questions. → I'll 
+     review first
+
+⏺ Sounds good. The document is at
+  docs/brainstorms/rlhf-dataforge-requirements.md. Take your time reviewing it
+  along with the findings.
+
+  When you're ready, just let me know which changes you'd like me to make —
+  whether that's data model fixes, scope adjustments, adding P0/P1/P2 phasing,
+  addressing coherence issues, or any other refinements. I'm also happy to go
+  deeper on any specific module or add sections that may be missing.
+
+✻ Brewed for 31s
