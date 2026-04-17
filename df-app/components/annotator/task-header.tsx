@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { BookOpen, Flag, SkipForward, Timer } from "lucide-react";
 import { cn } from "@/lib/cn";
 

@@ -52,7 +52,7 @@ export default function ExportBuilderPage() {
   const [gateCoverage, setGateCoverage] = useState(false);
 
   const matchCount = 28_531;
-  const allGatesPassed = gateIaa && gateGold;
+  const allGatesPassed = gateIaa && gateGold; // eslint-disable-line @typescript-eslint/no-unused-vars
 
   function handleExport() {
     const selectedCampaign = campaignOptions.find((c) => c.value === campaign);

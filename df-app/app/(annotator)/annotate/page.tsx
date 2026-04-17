@@ -3,7 +3,7 @@
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, ArrowRight, Clock, CheckCircle } from "lucide-react";
+import { AlertTriangle, ArrowRight, Clock } from "lucide-react";
 import Link from "next/link";
 
 export default function AnnotatorHomePage() {
