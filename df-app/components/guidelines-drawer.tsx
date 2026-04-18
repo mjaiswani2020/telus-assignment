@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Modal } from "@/components/ui/modal";
 import { Badge } from "@/components/ui/badge";
 import { Tabs } from "@/components/ui/tabs";
-import { ChevronDown, User, ShieldCheck } from "lucide-react";
+import { ChevronDown, User, ShieldCheck, TrendingUp, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/cn";
 import {
   guidelineVersions,
@@ -25,6 +25,7 @@ const drawerTabs = [
   { id: "guidelines", label: "Guidelines" },
   { id: "changelog", label: "Changelog" },
   { id: "edge-cases", label: "Edge Cases" },
+  { id: "effectiveness", label: "Effectiveness" },
 ];
 
 const changeBadgeVariant: Record<GuidelineChange["type"], "success" | "caution" | "error"> = {
@@ -141,6 +142,7 @@ export function GuidelinesDrawer({ open, onClose }: GuidelinesDrawerProps) {
         {activeTab === "guidelines" && <GuidelinesContent />}
         {activeTab === "changelog" && <ChangelogContent version={currentVersion} />}
         {activeTab === "edge-cases" && <EdgeCasesContent currentVersion={selectedVersion} />}
+        {activeTab === "effectiveness" && <EffectivenessContent />}
       </div>
     </Modal>
   );
@@ -251,6 +253,84 @@ function ChangelogContent({ version }: { version: GuidelineVersion }) {
             </p>
           </div>
         ))}
+      </div>
+    </div>
+  );
+}
+
+/* ===== Effectiveness Tab ===== */
+const disagreementSections = [
+  { section: "3.2 Borderline Safety Cases", disagreement: 28, color: "#DC2626" },
+  { section: "5.1 Code Evaluation", disagreement: 22, color: "#D97706" },
+  { section: "2.4 Preference Scale", disagreement: 15, color: "#059669" },
+  { section: "4.1 Factual Accuracy", disagreement: 8, color: "#059669" },
+];
+
+function EffectivenessContent() {
+  return (
+    <div className="space-y-4">
+      {/* IAA Impact Card */}
+      <div className="rounded-standard border border-level-2 bg-white p-4">
+        <h4 className="mb-3 font-inter text-label-md font-medium text-ink">
+          IAA Impact
+        </h4>
+        <div className="flex items-center gap-3">
+          <div className="font-inter text-body-md text-secondary-text">
+            Before v2.3: <span className="font-medium text-ink">0.63</span>
+          </div>
+          <span className="text-tertiary-text">&rarr;</span>
+          <div className="font-inter text-body-md text-secondary-text">
+            After v2.3: <span className="font-medium text-ink">0.71</span>
+          </div>
+          <span className="inline-flex items-center gap-1 rounded-tight bg-[#ECFDF5] px-2 py-0.5 font-inter text-label-sm font-semibold text-[#059669]">
+            <TrendingUp className="h-3.5 w-3.5" />
+            +13%
+          </span>
+        </div>
+      </div>
+
+      {/* Sections with Highest Disagreement */}
+      <div className="rounded-standard border border-level-2 bg-white p-4">
+        <h4 className="mb-3 font-inter text-label-md font-medium text-ink">
+          Sections with Highest Disagreement
+        </h4>
+        <div className="space-y-2.5">
+          {disagreementSections.map((item, i) => (
+            <div key={item.section} className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <span className="font-inter text-label-sm font-medium text-tertiary-text w-4">
+                  {i + 1}.
+                </span>
+                <span
+                  className="h-2 w-2 rounded-full shrink-0"
+                  style={{ backgroundColor: item.color }}
+                />
+                <span className="font-inter text-body-md text-ink">
+                  {item.section}
+                </span>
+              </div>
+              <span className="font-inter text-label-sm font-medium text-secondary-text">
+                {item.disagreement}% disagreement
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Suggested Improvements */}
+      <div className="rounded-standard border border-[#D97706] bg-[#FFF7ED] p-4">
+        <div className="flex items-start gap-2.5">
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-[#D97706]" />
+          <div>
+            <h4 className="mb-1 font-inter text-label-md font-medium text-ink">
+              Suggested Improvements
+            </h4>
+            <p className="font-inter text-body-md text-secondary-text">
+              Section 3.2 &ldquo;Borderline Safety&rdquo; has 28% disagreement &mdash; consider
+              adding 2&ndash;3 more worked examples
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );

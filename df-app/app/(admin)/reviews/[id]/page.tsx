@@ -8,6 +8,8 @@ import {
   XCircle,
   AlertTriangle,
   Lightbulb,
+  ShieldAlert,
+  Check,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
@@ -414,6 +416,60 @@ export default function ReviewDetailPage() {
             Escalate
           </Button>
         </div>
+
+        {/* ── Unit 17: Automated Safety Classification (only for safety/red-team items) ── */}
+        {(item.taskType === "Safety") && (
+          <motion.div
+            className="rounded-comfortable border border-level-2 bg-white p-5"
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2, delay: 0.12 }}
+          >
+            <div className="flex items-center gap-2 mb-4">
+              <ShieldAlert className="h-5 w-5 text-[#DC2626]" />
+              <p className="font-literata text-label-sm uppercase tracking-[0.5px] text-secondary-text">
+                Automated Safety Classification
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              {/* AI-predicted category */}
+              <div className="flex items-center justify-between rounded-standard bg-[#F7F8F8] px-4 py-3">
+                <span className="font-inter text-[13px] text-tertiary-text">AI-Predicted Category</span>
+                <div className="flex items-center gap-2">
+                  <span className="font-inter text-[14px] font-medium text-ink">Hate Speech</span>
+                  <span className="inline-flex items-center rounded-tight border border-[#B3D9D9] bg-[#E6F2F2] px-2 py-0.5 font-inter text-label-sm font-medium text-[#005151]">
+                    87% confidence
+                  </span>
+                </div>
+              </div>
+
+              {/* Severity */}
+              <div className="flex items-center justify-between rounded-standard bg-[#F7F8F8] px-4 py-3">
+                <span className="font-inter text-[13px] text-tertiary-text">Severity</span>
+                <span className="inline-flex items-center rounded-tight border border-[#FECACA] bg-[#FEF2F2] px-2 py-0.5 font-inter text-label-sm font-medium text-[#DC2626]">
+                  High
+                </span>
+              </div>
+
+              {/* Match indicator */}
+              <div className="flex items-center justify-between rounded-standard bg-[#F7F8F8] px-4 py-3">
+                <span className="font-inter text-[13px] text-tertiary-text">Annotator Agreement</span>
+                <div className="flex items-center gap-1.5">
+                  <Check className="h-4 w-4 text-[#059669]" />
+                  <span className="font-inter text-[14px] font-medium text-[#059669]">
+                    Agrees with annotator
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Model info */}
+            <p className="mt-3 font-inter text-[11px] text-tertiary-text">
+              Classification model: safety-classifier-v3, trained on 240K examples
+            </p>
+          </motion.div>
+        )}
 
         {/* ── Data Provenance Section ── */}
         <motion.div

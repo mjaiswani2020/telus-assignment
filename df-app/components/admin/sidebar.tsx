@@ -9,9 +9,12 @@ import {
   Megaphone,
   RefreshCw,
   ListChecks,
+  FlaskConical,
   Server,
   Users,
   Award,
+  UserPlus,
+  Store,
   BarChart3,
   ClipboardCheck,
   Database,
@@ -28,6 +31,7 @@ const navSections = [
       { name: "Campaigns", href: "/campaigns", icon: Megaphone },
       { name: "Iterations", href: "/iterations", icon: RefreshCw },
       { name: "Tasks", href: "/tasks", icon: ListChecks },
+      { name: "Experiments", href: "/tasks/experiments", icon: FlaskConical },
       { name: "Models", href: "/models", icon: Server },
     ],
   },
@@ -36,6 +40,8 @@ const navSections = [
     items: [
       { name: "Annotators", href: "/annotators", icon: Users },
       { name: "Qualifications", href: "/qualifications", icon: Award },
+      { name: "Onboarding", href: "/annotators/onboarding", icon: UserPlus },
+      { name: "Marketplace", href: "/annotators/marketplace", icon: Store },
     ],
   },
   {
@@ -50,6 +56,7 @@ const navSections = [
     items: [
       { name: "Prompts", href: "/prompts", icon: Database },
       { name: "Exports", href: "/exports", icon: Download },
+      { name: "Data Analysis", href: "/exports/analysis", icon: BarChart3 },
       { name: "API Keys", href: "/settings/api-keys", icon: Key },
     ],
   },
@@ -81,7 +88,13 @@ export function Sidebar() {
               {section.items.map((item) => {
                 const isActive =
                   pathname === item.href ||
-                  (item.href !== "/dashboard" && pathname.startsWith(item.href));
+                  (item.href !== "/dashboard" &&
+                    item.href !== "/annotators" &&
+                    pathname.startsWith(item.href) &&
+                    // Avoid /tasks matching /tasks/experiments
+                    !(item.href === "/tasks" && pathname.startsWith("/tasks/experiments")) &&
+                    // Avoid /exports matching /exports/analysis
+                    !(item.href === "/exports" && pathname.startsWith("/exports/analysis")));
                 const Icon = item.icon;
                 return (
                   <Link

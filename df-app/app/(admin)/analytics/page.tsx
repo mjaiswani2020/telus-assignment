@@ -6,6 +6,9 @@ import {
   Line,
   AreaChart,
   Area,
+  BarChart,
+  Bar,
+  Cell,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -13,7 +16,17 @@ import {
   ResponsiveContainer,
   ReferenceLine,
 } from "recharts";
-import { CheckCircle, AlertTriangle, Sparkles } from "lucide-react";
+import {
+  CheckCircle,
+  AlertTriangle,
+  Sparkles,
+  AlertCircle,
+  TrendingDown,
+  DollarSign,
+  Target,
+  Trophy,
+  XCircle,
+} from "lucide-react";
 import { PageHeader } from "@/components/admin/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Select } from "@/components/ui/select";
@@ -23,8 +36,13 @@ import {
   signalDegradation,
   metricToggleOptions,
   playbookRecommendations,
+  trainingResults,
+  rmAccuracyTrend,
+  eloRankings,
+  costMetrics,
   type IterationMetricKey,
   type IterationMetric,
+  type EloRankingRow,
 } from "@/data/iteration-analytics";
 
 // --- Mock IAA trend data ---
@@ -94,6 +112,23 @@ const biasCards = [
   },
 ];
 
+// --- Rubric ambiguity detection data (Unit 17) ---
+interface RubricAmbiguityRow {
+  dimension: string;
+  disagreement: number;
+  status: "red" | "orange" | "amber" | "green";
+  action: string;
+}
+
+type AmbiguityRow = RubricAmbiguityRow & Record<string, unknown>;
+
+const rubricAmbiguityData: RubricAmbiguityRow[] = [
+  { dimension: "Borderline safety cases", disagreement: 34, status: "red", action: "Add 3+ worked examples" },
+  { dimension: "Code quality vs. correctness", disagreement: 28, status: "orange", action: "Refine scoring criteria" },
+  { dimension: "Tone appropriateness", disagreement: 22, status: "amber", action: "Add edge case examples" },
+  { dimension: "Factual accuracy", disagreement: 8, status: "green", action: "No action needed" },
+];
+
 const projectOptions = [
   { value: "all", label: "All Projects" },
   { value: "helpfulness", label: "Helpfulness Track" },
@@ -127,6 +162,7 @@ export default function AnalyticsPage() {
   const [project, setProject] = useState("all");
   const [dateRange, setDateRange] = useState("12w");
   const [selectedMetric, setSelectedMetric] = useState<IterationMetricKey>("rmAccuracy");
+  const [trainingRound, setTrainingRound] = useState("5");
 
   const perfColumns: { key: string; header: string; className?: string; render?: (item: PerfRow) => React.ReactNode }[] = [
     {
@@ -340,6 +376,77 @@ export default function AnalyticsPage() {
               </div>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* ================================================================== */}
+      {/* Unit 17: Rubric Ambiguity Detection                               */}
+      {/* ================================================================== */}
+      <div className="mt-8">
+        <h2 className="font-literata text-[14px] font-semibold uppercase tracking-[0.06em] text-ink">
+          Rubric Ambiguity
+        </h2>
+
+        <div className="mt-4 rounded-comfortable border border-level-2 bg-white">
+          <DataTable<AmbiguityRow>
+            columns={[
+              {
+                key: "dimension",
+                header: "Dimension",
+                render: (item) => (
+                  <span className="font-medium text-ink">{item.dimension}</span>
+                ),
+              },
+              {
+                key: "disagreement",
+                header: "Disagreement",
+                render: (item) => (
+                  <span className="font-medium text-ink">{item.disagreement}%</span>
+                ),
+              },
+              {
+                key: "status",
+                header: "Status",
+                render: (item) => {
+                  const dotColor =
+                    item.status === "red"
+                      ? "bg-[#DC2626]"
+                      : item.status === "orange"
+                        ? "bg-[#EA580C]"
+                        : item.status === "amber"
+                          ? "bg-[#D97706]"
+                          : "bg-[#059669]";
+                  return (
+                    <span className={`inline-block h-2.5 w-2.5 rounded-full ${dotColor}`} />
+                  );
+                },
+              },
+              {
+                key: "action",
+                header: "Action",
+                render: (item) => (
+                  <span className="text-tertiary-text">{item.action}</span>
+                ),
+              },
+            ]}
+            data={rubricAmbiguityData as AmbiguityRow[]}
+            keyExtractor={(item) => item.dimension}
+          />
+        </div>
+
+        {/* Guideline gap alert */}
+        <div className="mt-4 rounded-comfortable border border-[#D97706] bg-white p-5">
+          <div className="flex gap-3">
+            <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-[#D97706]" />
+            <div>
+              <p className="font-inter text-[14px] font-medium text-ink">
+                Auto-detected guideline gap
+              </p>
+              <p className="mt-1 font-inter text-[13px] text-tertiary-text">
+                12 annotators flagged confusion about &lsquo;partially correct&rsquo; responses &mdash; consider adding a scoring rubric for partial credit
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -647,7 +754,7 @@ export default function AnalyticsPage() {
       {/* ================================================================== */}
       {/* Section 3: Iteration Playbook Recommendation                       */}
       {/* ================================================================== */}
-      <div className="mt-8 mb-8">
+      <div className="mt-8">
         <div className="rounded-comfortable border border-[#C4B5FD] bg-[#F5F3FF] p-6">
           <div className="flex items-center gap-2.5">
             <Sparkles className="h-5 w-5 text-[#7C3AED]" />
@@ -676,6 +783,486 @@ export default function AnalyticsPage() {
             >
               Apply to Next Iteration
             </button>
+          </div>
+        </div>
+      </div>
+
+      {/* ================================================================== */}
+      {/* Unit 19 Section 1: Training Results Dashboard                      */}
+      {/* ================================================================== */}
+      <div className="mt-8">
+        <div className="flex items-center justify-between">
+          <h2 className="font-literata text-[14px] font-semibold uppercase tracking-[0.06em] text-ink">
+            Training Results
+          </h2>
+          <Select
+            options={[
+              { value: "1", label: "Round 1" },
+              { value: "2", label: "Round 2" },
+              { value: "3", label: "Round 3" },
+              { value: "4", label: "Round 4" },
+              { value: "5", label: "Round 5" },
+            ]}
+            value={trainingRound}
+            onChange={(e) => setTrainingRound(e.target.value)}
+            className="w-36"
+          />
+        </div>
+
+        {/* Gauge displays */}
+        <div className="mt-4 grid grid-cols-2 gap-4">
+          {/* Helpfulness RM Gauge */}
+          <div className="flex flex-col items-center rounded-comfortable border border-level-2 bg-white p-5">
+            <div className="relative h-32 w-32">
+              <svg viewBox="0 0 120 120" className="h-full w-full -rotate-90">
+                <circle
+                  cx="60"
+                  cy="60"
+                  r="52"
+                  fill="none"
+                  stroke="#EBEEED"
+                  strokeWidth="10"
+                />
+                <circle
+                  cx="60"
+                  cy="60"
+                  r="52"
+                  fill="none"
+                  stroke="#005151"
+                  strokeWidth="10"
+                  strokeLinecap="round"
+                  strokeDasharray={`${(trainingResults.helpfulnessRM / 100) * 2 * Math.PI * 52} ${2 * Math.PI * 52}`}
+                />
+                {/* Target marker */}
+                <circle
+                  cx="60"
+                  cy="60"
+                  r="52"
+                  fill="none"
+                  stroke="#059669"
+                  strokeWidth="2"
+                  strokeDasharray={`2 ${2 * Math.PI * 52 - 2}`}
+                  strokeDashoffset={`${-(trainingResults.helpfulnessTarget / 100) * 2 * Math.PI * 52}`}
+                  opacity="0.6"
+                />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <span className="font-inter text-[22px] font-bold text-ink">
+                  {trainingResults.helpfulnessRM}%
+                </span>
+              </div>
+            </div>
+            <p className="mt-3 font-inter text-[14px] font-medium text-ink">
+              Helpfulness RM
+            </p>
+            <p className="mt-1 font-inter text-[12px] text-tertiary-text">
+              Target: {trainingResults.helpfulnessTarget}%
+            </p>
+          </div>
+
+          {/* Safety RM Gauge */}
+          <div className="flex flex-col items-center rounded-comfortable border border-level-2 bg-white p-5">
+            <div className="relative h-32 w-32">
+              <svg viewBox="0 0 120 120" className="h-full w-full -rotate-90">
+                <circle
+                  cx="60"
+                  cy="60"
+                  r="52"
+                  fill="none"
+                  stroke="#EBEEED"
+                  strokeWidth="10"
+                />
+                <circle
+                  cx="60"
+                  cy="60"
+                  r="52"
+                  fill="none"
+                  stroke="#D97706"
+                  strokeWidth="10"
+                  strokeLinecap="round"
+                  strokeDasharray={`${(trainingResults.safetyRM / 100) * 2 * Math.PI * 52} ${2 * Math.PI * 52}`}
+                />
+                {/* Target marker */}
+                <circle
+                  cx="60"
+                  cy="60"
+                  r="52"
+                  fill="none"
+                  stroke="#059669"
+                  strokeWidth="2"
+                  strokeDasharray={`2 ${2 * Math.PI * 52 - 2}`}
+                  strokeDashoffset={`${-(trainingResults.safetyTarget / 100) * 2 * Math.PI * 52}`}
+                  opacity="0.6"
+                />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <span className="font-inter text-[22px] font-bold text-ink">
+                  {trainingResults.safetyRM}%
+                </span>
+              </div>
+            </div>
+            <p className="mt-3 font-inter text-[14px] font-medium text-ink">
+              Safety RM
+            </p>
+            <p className="mt-1 font-inter text-[12px] text-[#D97706]">
+              Below target ({trainingResults.safetyTarget}%)
+            </p>
+          </div>
+        </div>
+
+        {/* RM Accuracy Trend */}
+        <div className="mt-4 rounded-comfortable border border-level-2 bg-white p-5">
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="font-inter text-[14px] font-semibold text-ink">
+              RM Accuracy Trend
+            </h3>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-1.5">
+                <span className="h-0.5 w-4 rounded-full bg-[#005151]" />
+                <span className="font-inter text-[12px] text-tertiary-text">
+                  Helpfulness
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="h-0.5 w-4 rounded-full bg-[#D97706]" />
+                <span className="font-inter text-[12px] text-tertiary-text">
+                  Safety
+                </span>
+              </div>
+            </div>
+          </div>
+          <ResponsiveContainer width="100%" height={260}>
+            <LineChart data={rmAccuracyTrend}>
+              <CartesianGrid
+                strokeDasharray="0"
+                stroke="#EBEEED"
+                vertical={false}
+              />
+              <XAxis
+                dataKey="round"
+                tick={{ fontSize: 12, fill: "#6F7A77" }}
+                axisLine={{ stroke: "#EBEEED" }}
+                tickLine={false}
+              />
+              <YAxis
+                domain={[50, 90]}
+                tick={{ fontSize: 12, fill: "#6F7A77" }}
+                axisLine={false}
+                tickLine={false}
+                width={40}
+                tickFormatter={(v: number) => `${v}%`}
+              />
+              <Tooltip
+                contentStyle={{
+                  fontSize: 12,
+                  borderRadius: 6,
+                  border: "1px solid #EBEEED",
+                  boxShadow: "none",
+                }}
+                formatter={(value) => `${value}%`}
+              />
+              <Line
+                type="monotone"
+                dataKey="helpfulness"
+                stroke="#005151"
+                strokeWidth={2}
+                dot={{ r: 3, fill: "#005151", strokeWidth: 0 }}
+                name="Helpfulness"
+              />
+              <Line
+                type="monotone"
+                dataKey="safety"
+                stroke="#D97706"
+                strokeWidth={2}
+                dot={{ r: 3, fill: "#D97706", strokeWidth: 0 }}
+                name="Safety"
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* False Refusal Rate */}
+        <div className="mt-4 flex items-center gap-4 rounded-comfortable border border-level-2 bg-white p-4">
+          <TrendingDown className="h-5 w-5 text-[#059669]" />
+          <div>
+            <span className="font-inter text-[14px] font-semibold text-ink">
+              False Refusal Rate: {trainingResults.falseRefusalRate}%
+            </span>
+            <span className="ml-3 font-inter text-[13px] text-[#059669]">
+              &#8595; down from {trainingResults.priorFalseRefusalRate}%
+            </span>
+          </div>
+        </div>
+
+        {/* Capability Regression Checklist */}
+        <div className="mt-4 rounded-comfortable border border-level-2 bg-white p-5">
+          <h3 className="mb-3 font-inter text-[14px] font-semibold text-ink">
+            Capability Regression Checklist
+          </h3>
+          <div className="space-y-2.5">
+            {trainingResults.regressions.map((item) => (
+              <div key={item.area} className="flex items-center gap-2.5">
+                {item.status === "passed" ? (
+                  <CheckCircle className="h-4 w-4 text-[#059669]" />
+                ) : (
+                  <XCircle className="h-4 w-4 text-[#DC2626]" />
+                )}
+                <span
+                  className={`font-inter text-[14px] ${item.status === "passed" ? "text-ink" : "text-[#DC2626]"}`}
+                >
+                  {item.area}:{" "}
+                  {item.status === "passed"
+                    ? "Passed"
+                    : `Regressed ${item.delta}%`}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ================================================================== */}
+      {/* Unit 19 Section 2: Human Elo Evaluation                            */}
+      {/* ================================================================== */}
+      <div className="mt-8">
+        <h2 className="font-literata text-[14px] font-semibold uppercase tracking-[0.06em] text-ink">
+          Elo Rankings
+        </h2>
+
+        {/* Elo Table */}
+        <div className="mt-4 rounded-comfortable border border-level-2 bg-white">
+          <DataTable<EloRankingRow & Record<string, unknown>>
+            columns={[
+              {
+                key: "model",
+                header: "Model",
+                render: (item) => (
+                  <span className="font-medium text-ink">{item.model}</span>
+                ),
+              },
+              {
+                key: "elo",
+                header: "Elo",
+                render: (item) => (
+                  <span className="font-inter text-[14px] font-semibold text-ink">
+                    {item.elo}
+                  </span>
+                ),
+              },
+              {
+                key: "delta",
+                header: "Delta",
+                render: (item) => (
+                  <span
+                    className={`font-inter text-[14px] font-medium ${item.delta > 0 ? "text-[#059669]" : "text-tertiary-text"}`}
+                  >
+                    {item.delta > 0 ? `+${item.delta}` : "\u2014"}
+                  </span>
+                ),
+              },
+              {
+                key: "winRate",
+                header: "Win Rate",
+                render: (item) => (
+                  <span className="font-inter text-[14px] text-ink">
+                    {item.winRate}%
+                  </span>
+                ),
+              },
+              {
+                key: "matches",
+                header: "Matches",
+                render: (item) => (
+                  <span className="font-inter text-[14px] text-ink">
+                    {item.matches}
+                  </span>
+                ),
+              },
+            ]}
+            data={eloRankings as (EloRankingRow & Record<string, unknown>)[]}
+            keyExtractor={(item) => item.model}
+          />
+        </div>
+
+        {/* Elo Progression BarChart */}
+        <div className="mt-4 rounded-comfortable border border-level-2 bg-white p-5">
+          <h3 className="mb-4 font-inter text-[14px] font-semibold text-ink">
+            Elo Progression
+          </h3>
+          <ResponsiveContainer width="100%" height={260}>
+            <BarChart data={eloRankings} barSize={48}>
+              <CartesianGrid
+                strokeDasharray="0"
+                stroke="#EBEEED"
+                vertical={false}
+              />
+              <XAxis
+                dataKey="model"
+                tick={{ fontSize: 11, fill: "#6F7A77" }}
+                axisLine={{ stroke: "#EBEEED" }}
+                tickLine={false}
+              />
+              <YAxis
+                domain={[1000, 1300]}
+                tick={{ fontSize: 12, fill: "#6F7A77" }}
+                axisLine={false}
+                tickLine={false}
+                width={50}
+              />
+              <Tooltip
+                contentStyle={{
+                  fontSize: 12,
+                  borderRadius: 6,
+                  border: "1px solid #EBEEED",
+                  boxShadow: "none",
+                }}
+              />
+              <Bar dataKey="elo" name="Elo Rating" radius={[4, 4, 0, 0]}>
+                {[...eloRankings].reverse().map((_, idx) => (
+                  <Cell
+                    key={idx}
+                    fill={`rgba(0, 81, 81, ${0.4 + (idx / (eloRankings.length - 1)) * 0.6})`}
+                  />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Evaluation confidence */}
+        <div className="mt-4 flex items-center gap-3 rounded-comfortable border border-level-2 bg-white p-4">
+          <Trophy className="h-5 w-5 text-[#005151]" />
+          <span className="font-inter text-[14px] text-ink">
+            Evaluation confidence:{" "}
+            <span className="font-semibold">94%</span>{" "}
+            <span className="text-tertiary-text">
+              (based on 420 head-to-head matches)
+            </span>
+          </span>
+        </div>
+      </div>
+
+      {/* ================================================================== */}
+      {/* Unit 19 Section 3: Cost-Per-Improvement                            */}
+      {/* ================================================================== */}
+      <div className="mt-8 mb-8">
+        <h2 className="font-literata text-[14px] font-semibold uppercase tracking-[0.06em] text-ink">
+          Cost Efficiency
+        </h2>
+
+        {/* 4 KPI cards */}
+        <div className="mt-4 grid grid-cols-4 gap-3">
+          <div className="rounded-comfortable border border-level-2 bg-white p-4">
+            <p className="font-inter text-[12px] text-tertiary-text">
+              Cost/Annotation
+            </p>
+            <p className="mt-1 font-inter text-[22px] font-bold text-ink">
+              ${costMetrics.costPerAnnotation.toFixed(2)}
+            </p>
+          </div>
+          <div className="rounded-comfortable border border-level-2 bg-white p-4">
+            <p className="font-inter text-[12px] text-tertiary-text">
+              Cost/1% RM Improvement
+            </p>
+            <p className="mt-1 font-inter text-[22px] font-bold text-[#D97706]">
+              ${costMetrics.costPerRMPercent.toLocaleString()}
+            </p>
+            <p className="mt-0.5 font-inter text-[11px] text-[#D97706]">
+              Increasing
+            </p>
+          </div>
+          <div className="rounded-comfortable border border-level-2 bg-white p-4">
+            <p className="font-inter text-[12px] text-tertiary-text">
+              Total Iteration Cost
+            </p>
+            <p className="mt-1 font-inter text-[22px] font-bold text-ink">
+              ${costMetrics.totalIterationCost.toLocaleString()}
+            </p>
+          </div>
+          <div className="rounded-comfortable border border-level-2 bg-white p-4">
+            <p className="font-inter text-[12px] text-tertiary-text">
+              ROI Score
+            </p>
+            <p className="mt-1 font-inter text-[22px] font-bold text-ink">
+              {costMetrics.roiScore}x
+            </p>
+          </div>
+        </div>
+
+        {/* Cost per 1% improvement trend */}
+        <div className="mt-4 rounded-comfortable border border-level-2 bg-white p-5">
+          <h3 className="mb-4 font-inter text-[14px] font-semibold text-ink">
+            Cost per 1% RM Improvement Over Rounds
+          </h3>
+          <ResponsiveContainer width="100%" height={260}>
+            <LineChart data={costMetrics.trend}>
+              <CartesianGrid
+                strokeDasharray="0"
+                stroke="#EBEEED"
+                vertical={false}
+              />
+              <XAxis
+                dataKey="round"
+                tick={{ fontSize: 12, fill: "#6F7A77" }}
+                axisLine={{ stroke: "#EBEEED" }}
+                tickLine={false}
+              />
+              <YAxis
+                tick={{ fontSize: 12, fill: "#6F7A77" }}
+                axisLine={false}
+                tickLine={false}
+                width={60}
+                tickFormatter={(v: number) => `$${(v / 1000).toFixed(1)}k`}
+              />
+              <Tooltip
+                contentStyle={{
+                  fontSize: 12,
+                  borderRadius: 6,
+                  border: "1px solid #EBEEED",
+                  boxShadow: "none",
+                }}
+                formatter={(value) =>
+                  `$${Number(value).toLocaleString()}`
+                }
+              />
+              <Line
+                type="monotone"
+                dataKey="costPerPercent"
+                stroke="#D97706"
+                strokeWidth={2}
+                dot={{ r: 4, fill: "#D97706", strokeWidth: 0 }}
+                name="Cost per 1%"
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Breakdown card */}
+        <div className="mt-4 rounded-comfortable border border-level-2 bg-white p-5">
+          <div className="flex gap-3">
+            <DollarSign className="mt-0.5 h-5 w-5 flex-shrink-0 text-[#005151]" />
+            <p className="font-inter text-[14px] leading-relaxed text-ink">
+              Safety annotations cost{" "}
+              <span className="font-semibold">$0.62 each</span> but yield{" "}
+              <span className="font-semibold text-[#059669]">2.1x</span> the RM
+              improvement per dollar vs. helpfulness
+            </p>
+          </div>
+        </div>
+
+        {/* Budget recommendation card */}
+        <div className="mt-4 rounded-comfortable border border-[#C4B5FD] bg-[#F5F3FF] p-5">
+          <div className="flex gap-3">
+            <Target className="mt-0.5 h-5 w-5 flex-shrink-0 text-[#7C3AED]" />
+            <p className="font-inter text-[14px] leading-relaxed text-ink">
+              At current efficiency, reaching{" "}
+              <span className="font-semibold">82% safety RM accuracy</span>{" "}
+              requires{" "}
+              <span className="font-semibold text-[#5B21B6]">
+                ~$8,400 additional spend
+              </span>{" "}
+              (est. 2,000 more safety annotations)
+            </p>
           </div>
         </div>
       </div>

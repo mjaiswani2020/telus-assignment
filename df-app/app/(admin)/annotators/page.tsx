@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { motion } from "framer-motion";
 import {
   Plus,
   TrendingUp,
@@ -11,6 +12,10 @@ import {
   AlertTriangle,
   Clock,
   Activity,
+  DollarSign,
+  ShieldAlert,
+  Award,
+  Zap,
 } from "lucide-react";
 import {
   BarChart,
@@ -603,6 +608,121 @@ export default function AnnotatorsPage() {
               );
             })}
           </div>
+        </div>
+      </div>
+
+      {/* ---- Compensation Section ---- */}
+      <div className="mt-6">
+        <h2 className="font-literata text-[13px] font-semibold uppercase tracking-[1.5px] text-secondary-text mb-4">
+          Compensation
+        </h2>
+
+        {/* Rate Cards 2x2 */}
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          {[
+            {
+              icon: DollarSign,
+              label: "Base Rate",
+              value: "$18/hr",
+              subtitle: null,
+              color: "#005151",
+            },
+            {
+              icon: ShieldAlert,
+              label: "Safety Premium",
+              value: "+$4/hr",
+              subtitle: "Hazard pay for red-teaming",
+              color: "#D97706",
+            },
+            {
+              icon: Award,
+              label: "Quality Bonus",
+              value: "+15%",
+              subtitle: "For gold accuracy > 90%",
+              color: "#059669",
+            },
+            {
+              icon: Zap,
+              label: "Volume Bonus",
+              value: "+10%",
+              subtitle: "For > 80 annotations/day",
+              color: "#2563EB",
+            },
+          ].map((card) => {
+            const Icon = card.icon;
+            return (
+              <div
+                key={card.label}
+                className="rounded-comfortable border border-[#EBEEED] bg-white p-5"
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <Icon className="h-4 w-4" style={{ color: card.color }} />
+                  <span className="font-inter text-[11px] font-medium uppercase tracking-[0.06em] text-tertiary-text">
+                    {card.label}
+                  </span>
+                </div>
+                <p className="font-literata text-[28px] font-semibold leading-[34px] tracking-[-0.02em] text-ink">
+                  {card.value}
+                </p>
+                {card.subtitle && (
+                  <p className="mt-1 font-inter text-[12px] text-secondary-text">
+                    {card.subtitle}
+                  </p>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Pay by Task Type Table */}
+        <div className="mt-4 rounded-comfortable border border-[#EBEEED] bg-white p-5">
+          <h3 className="font-inter text-[14px] font-semibold text-ink mb-3">
+            Pay by Task Type
+          </h3>
+          <div className="grid grid-cols-4 gap-x-6 gap-y-2 lg:grid-cols-8">
+            {[
+              { type: "Pairwise", rate: "$0.45" },
+              { type: "Safety", rate: "$0.62" },
+              { type: "SFT", rate: "$0.85" },
+              { type: "Conversational", rate: "$0.55" },
+              { type: "Editing", rate: "$0.50" },
+              { type: "Ranking", rate: "$0.48" },
+              { type: "Rubric", rate: "$0.52" },
+              { type: "Arena", rate: "$0.45" },
+            ].map((item) => (
+              <div key={item.type} className="flex flex-col">
+                <span className="font-inter text-[11px] text-tertiary-text uppercase tracking-[0.06em]">
+                  {item.type}
+                </span>
+                <span className="font-inter text-[14px] font-semibold text-ink">
+                  {item.rate}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Monthly Budget Bar */}
+        <div className="mt-4 rounded-comfortable border border-[#EBEEED] bg-white p-5">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="font-inter text-[14px] font-semibold text-ink">
+              Monthly Spend
+            </h3>
+            <span className="font-inter text-[13px] text-secondary-text">
+              $42,300 / $50,000 budget
+            </span>
+          </div>
+          <div className="relative h-3 w-full rounded-full bg-[#F7F8F8]">
+            <motion.div
+              className="h-full rounded-full bg-[#005151]"
+              initial={{ width: 0 }}
+              animate={{ width: "84.6%" }}
+              transition={{ duration: 0.7, ease: "easeOut" }}
+            />
+          </div>
+          <p className="mt-1.5 font-inter text-[12px] text-tertiary-text">
+            85% of budget utilized
+          </p>
         </div>
       </div>
 

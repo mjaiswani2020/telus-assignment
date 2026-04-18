@@ -55,3 +55,64 @@ export const playbookRecommendations: string[] = [
   'Include top 15% annotations from Rounds 3-5 in training mix — prevents capability regression',
   'Deploy model v3.2 alongside v3.1 at temperature 0.9 — increase response diversity',
 ];
+
+// ---------------------------------------------------------------------------
+// Unit 19: Training Results & Cost Analytics
+// ---------------------------------------------------------------------------
+
+export interface RegressionItem {
+  area: string;
+  status: 'passed' | 'regressed';
+  delta?: number;
+}
+
+export const trainingResults = {
+  helpfulnessRM: 78.3,
+  helpfulnessTarget: 82,
+  safetyRM: 74.1,
+  safetyTarget: 80,
+  falseRefusalRate: 4.2,
+  priorFalseRefusalRate: 7.8,
+  regressions: [
+    { area: 'Math reasoning', status: 'passed' as const },
+    { area: 'Code generation', status: 'passed' as const },
+    { area: 'Creative writing', status: 'regressed' as const, delta: -2.1 },
+  ] satisfies RegressionItem[],
+};
+
+export const rmAccuracyTrend = [
+  { round: 'R1', helpfulness: 65.2, safety: 58.4 },
+  { round: 'R2', helpfulness: 69.8, safety: 63.1 },
+  { round: 'R3', helpfulness: 73.5, safety: 67.9 },
+  { round: 'R4', helpfulness: 76.1, safety: 71.2 },
+  { round: 'R5', helpfulness: 78.3, safety: 74.1 },
+];
+
+export interface EloRankingRow {
+  model: string;
+  elo: number;
+  delta: number;
+  winRate: number;
+  matches: number;
+}
+
+export const eloRankings: EloRankingRow[] = [
+  { model: 'Round 5 Model', elo: 1247, delta: 34, winRate: 64, matches: 420 },
+  { model: 'Round 4 Model', elo: 1213, delta: 22, winRate: 58, matches: 380 },
+  { model: 'Round 3 Model', elo: 1191, delta: 18, winRate: 55, matches: 350 },
+  { model: 'Baseline', elo: 1100, delta: 0, winRate: 42, matches: 520 },
+];
+
+export const costMetrics = {
+  costPerAnnotation: 0.52,
+  costPerRMPercent: 4200,
+  totalIterationCost: 28400,
+  roiScore: 2.3,
+  trend: [
+    { round: 'Round 1', costPerPercent: 1800 },
+    { round: 'Round 2', costPerPercent: 2400 },
+    { round: 'Round 3', costPerPercent: 3100 },
+    { round: 'Round 4', costPerPercent: 3600 },
+    { round: 'Round 5', costPerPercent: 4200 },
+  ],
+};

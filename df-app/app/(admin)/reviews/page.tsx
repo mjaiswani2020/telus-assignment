@@ -24,6 +24,34 @@ import type { ReviewItem } from "@/data/seed";
 
 type Row = ReviewItem & Record<string, unknown>;
 
+// --- Unit 17: QA Reviewer Calibration data ---
+interface ReviewerPerf {
+  id: string;
+  name: string;
+  reviewsPerDay: number;
+  agreement: number;
+  overturnRate: number;
+  avgTime: string;
+  calibrationNeeded: boolean;
+}
+
+type ReviewerRow = ReviewerPerf & Record<string, unknown>;
+
+const reviewerPerfData: ReviewerPerf[] = [
+  { id: "r1", name: "Sarah C.", reviewsPerDay: 45, agreement: 91, overturnRate: 3, avgTime: "2.1 min", calibrationNeeded: false },
+  { id: "r2", name: "James K.", reviewsPerDay: 32, agreement: 84, overturnRate: 8, avgTime: "3.4 min", calibrationNeeded: true },
+  { id: "r3", name: "Maria L.", reviewsPerDay: 38, agreement: 89, overturnRate: 5, avgTime: "2.8 min", calibrationNeeded: false },
+  { id: "r4", name: "David W.", reviewsPerDay: 28, agreement: 76, overturnRate: 12, avgTime: "4.2 min", calibrationNeeded: true },
+];
+
+// --- Unit 17: Rejection cost data ---
+const rejectionReasons = [
+  { reason: "Insufficient justification", percent: 34 },
+  { reason: "Gold standard failure", percent: 28 },
+  { reason: "Time violation", percent: 22 },
+  { reason: "Off-topic", percent: 16 },
+];
+
 function timeAgo(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime();
   const hours = Math.floor(diff / 3_600_000);
@@ -307,6 +335,155 @@ export default function ReviewsPage() {
           data={filtered as Row[]}
           keyExtractor={(item) => item.id}
         />
+      </div>
+
+      {/* ================================================================== */}
+      {/* Unit 17: QA Reviewer Calibration                                   */}
+      {/* ================================================================== */}
+      <div className="mt-8">
+        <h2 className="font-literata text-[14px] font-semibold uppercase tracking-[0.06em] text-ink">
+          Reviewer Performance
+        </h2>
+
+        <div className="mt-4 rounded-comfortable border border-level-2 bg-white">
+          <DataTable<ReviewerRow>
+            columns={[
+              {
+                key: "name",
+                header: "Reviewer",
+                render: (item) => (
+                  <span className="font-medium text-ink">{item.name}</span>
+                ),
+              },
+              {
+                key: "reviewsPerDay",
+                header: "Reviews/Day",
+                render: (item) => (
+                  <span className="text-ink">{item.reviewsPerDay}</span>
+                ),
+              },
+              {
+                key: "agreement",
+                header: "Agreement",
+                render: (item) => {
+                  const color =
+                    item.agreement >= 90
+                      ? "text-[#059669]"
+                      : item.agreement >= 85
+                        ? "text-[#D97706]"
+                        : "text-[#DC2626]";
+                  return <span className={`font-medium ${color}`}>{item.agreement}%</span>;
+                },
+              },
+              {
+                key: "overturnRate",
+                header: "Overturn Rate",
+                render: (item) => {
+                  const color =
+                    item.overturnRate <= 5
+                      ? "text-[#059669]"
+                      : item.overturnRate <= 8
+                        ? "text-[#D97706]"
+                        : "text-[#DC2626]";
+                  return <span className={`font-medium ${color}`}>{item.overturnRate}%</span>;
+                },
+              },
+              {
+                key: "avgTime",
+                header: "Avg Time",
+                render: (item) => (
+                  <span className="text-ink">{item.avgTime}</span>
+                ),
+              },
+              {
+                key: "status",
+                header: "Status",
+                render: (item) =>
+                  item.calibrationNeeded ? (
+                    <Badge variant="caution">Calibration needed</Badge>
+                  ) : (
+                    <span className="text-tertiary-text">&mdash;</span>
+                  ),
+              },
+            ]}
+            data={reviewerPerfData as ReviewerRow[]}
+            keyExtractor={(item) => item.id}
+          />
+        </div>
+      </div>
+
+      {/* ================================================================== */}
+      {/* Unit 17: Rejection Cost Dashboard                                  */}
+      {/* ================================================================== */}
+      <div className="mt-8 mb-8">
+        <div className="rounded-comfortable border border-level-2 bg-white p-5">
+          <h2 className="font-literata text-[14px] font-semibold uppercase tracking-[0.06em] text-ink">
+            Rejection Costs (30D)
+          </h2>
+
+          {/* 4 metrics row */}
+          <div className="mt-4 grid grid-cols-4 gap-3">
+            <div className="rounded-standard bg-[#F7F8F8] border border-[#EBEEED] px-4 py-3">
+              <p className="font-inter text-[11px] font-medium uppercase tracking-[0.06em] text-tertiary-text">
+                Rejection Rate
+              </p>
+              <p className="mt-1 font-literata text-[24px] font-semibold leading-[30px] tracking-[-0.02em] text-ink">
+                12%
+              </p>
+            </div>
+            <div className="rounded-standard bg-[#F7F8F8] border border-[#EBEEED] px-4 py-3">
+              <p className="font-inter text-[11px] font-medium uppercase tracking-[0.06em] text-tertiary-text">
+                Estimated Wasted Cost
+              </p>
+              <p className="mt-1 font-literata text-[24px] font-semibold leading-[30px] tracking-[-0.02em] text-[#DC2626]">
+                $3,840
+              </p>
+            </div>
+            <div className="rounded-standard bg-[#F7F8F8] border border-[#EBEEED] px-4 py-3">
+              <p className="font-inter text-[11px] font-medium uppercase tracking-[0.06em] text-tertiary-text">
+                Avg Rejections/Annotator
+              </p>
+              <p className="mt-1 font-literata text-[24px] font-semibold leading-[30px] tracking-[-0.02em] text-ink">
+                4.2
+              </p>
+            </div>
+            <div className="rounded-standard bg-[#F7F8F8] border border-[#EBEEED] px-4 py-3">
+              <p className="font-inter text-[11px] font-medium uppercase tracking-[0.06em] text-tertiary-text">
+                Salvage Rate
+              </p>
+              <p className="mt-1 font-literata text-[24px] font-semibold leading-[30px] tracking-[-0.02em] text-ink">
+                34%
+              </p>
+            </div>
+          </div>
+
+          {/* Top rejection reasons - horizontal bar chart */}
+          <div className="mt-5">
+            <p className="mb-3 font-inter text-label-sm uppercase tracking-[0.5px] text-secondary-text">
+              Top Rejection Reasons
+            </p>
+            <div className="space-y-3">
+              {rejectionReasons.map((r) => (
+                <div key={r.reason} className="flex items-center gap-3">
+                  <span className="w-48 shrink-0 font-inter text-[13px] text-ink">
+                    {r.reason}
+                  </span>
+                  <div className="flex flex-1 items-center gap-2">
+                    <div className="h-6 flex-1 rounded-sm bg-[#F7F8F8]">
+                      <div
+                        className="h-full rounded-sm bg-[#005151]"
+                        style={{ width: `${r.percent}%` }}
+                      />
+                    </div>
+                    <span className="w-10 text-right font-inter text-[13px] font-medium text-ink">
+                      {r.percent}%
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
