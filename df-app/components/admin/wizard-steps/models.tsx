@@ -1,9 +1,11 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { useModelStore } from "@/stores/model-store";
-import { Check, Circle } from "lucide-react";
+import { Check, Circle, ServerOff } from "lucide-react";
+import type { TypeFeatures, GenerationParams } from "@/lib/task-type-config";
 
 type ResponseSource = "live" | "cached" | "mixed";
 
@@ -12,11 +14,14 @@ interface ModelsData {
   responseSource: ResponseSource;
   pairingStrategy: string;
   responsesPerTask: string;
+  generationParams: GenerationParams;
+  cachedDatasetRef: string;
 }
 
 interface ModelsProps {
   data: ModelsData;
   onChange: (data: ModelsData) => void;
+  features: TypeFeatures;
 }
 
 const responseSourceOptions: { value: ResponseSource; label: string }[] = [
@@ -31,8 +36,30 @@ const pairingOptions = [
   { value: "mixed", label: "Mixed pairing" },
 ];
 
-export function Models({ data, onChange }: ModelsProps) {
+export function Models({ data, onChange, features }: ModelsProps) {
   const endpoints = useModelStore((s) => s.endpoints);
+
+  // If models not needed for this task type
+  if (!features.showModels) {
+    return (
+      <div>
+        <h2 className="font-inter text-title-lg text-ink">Model Configuration</h2>
+        <p className="mt-1 font-inter text-body-md text-tertiary-text">
+          Configure response generation for this task.
+        </p>
+        <div className="mt-8 flex flex-col items-center justify-center rounded-comfortable border border-level-2 bg-level-1 p-12 text-center">
+          <ServerOff className="h-10 w-10 text-tertiary-text" />
+          <p className="mt-4 font-inter text-[14px] font-medium text-secondary-text">
+            No model endpoints needed
+          </p>
+          <p className="mt-1 font-inter text-[13px] text-tertiary-text">
+            This task type uses annotator-written responses. Annotators will
+            author both prompts and responses directly.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   const toggleEndpoint = (id: string) => {
     const next = data.selectedEndpoints.includes(id)
@@ -143,27 +170,126 @@ export function Models({ data, onChange }: ModelsProps) {
         </div>
       </div>
 
+      {/* Cached Dataset Reference */}
+      {data.responseSource === "cached" && (
+        <div className="mt-4">
+          <Input
+            label="Dataset Reference"
+            placeholder="s3://my-bucket/responses/batch-2026-04.jsonl"
+            value={data.cachedDatasetRef}
+            onChange={(e) =>
+              onChange({ ...data, cachedDatasetRef: e.target.value })
+            }
+            helper="Path to pre-generated response dataset (S3, GCS, or local path)"
+          />
+        </div>
+      )}
+
+      {/* Generation Parameters — only for live inference */}
+      {features.showGenerationParams && data.responseSource === "live" && (
+        <div className="mt-8 rounded-comfortable border border-level-2 bg-white p-5">
+          <h3 className="font-inter text-[14px] font-semibold text-ink">
+            Generation Parameters
+          </h3>
+          <p className="mt-1 font-inter text-[12px] text-tertiary-text">
+            Control how models generate responses. Different temperatures
+            produce diversity for self-play comparisons.
+          </p>
+          <div className="mt-4 grid grid-cols-3 gap-4">
+            <Input
+              label="Temperature"
+              type="number"
+              step="0.1"
+              placeholder="0.7"
+              value={data.generationParams.temperature}
+              onChange={(e) =>
+                onChange({
+                  ...data,
+                  generationParams: {
+                    ...data.generationParams,
+                    temperature: e.target.value,
+                  },
+                })
+              }
+              helper="0.0 = deterministic, 1.5 = creative"
+            />
+            <Input
+              label="Top-P"
+              type="number"
+              step="0.05"
+              placeholder="0.95"
+              value={data.generationParams.topP}
+              onChange={(e) =>
+                onChange({
+                  ...data,
+                  generationParams: {
+                    ...data.generationParams,
+                    topP: e.target.value,
+                  },
+                })
+              }
+              helper="Nucleus sampling threshold"
+            />
+            <Input
+              label="Max Tokens"
+              type="number"
+              placeholder="2048"
+              value={data.generationParams.maxTokens}
+              onChange={(e) =>
+                onChange({
+                  ...data,
+                  generationParams: {
+                    ...data.generationParams,
+                    maxTokens: e.target.value,
+                  },
+                })
+              }
+              helper="Maximum response length"
+            />
+          </div>
+          <div className="mt-4">
+            <Textarea
+              label="System Prompt"
+              placeholder="You are a helpful AI assistant..."
+              value={data.generationParams.systemPrompt}
+              onChange={(e) =>
+                onChange({
+                  ...data,
+                  generationParams: {
+                    ...data.generationParams,
+                    systemPrompt: e.target.value,
+                  },
+                })
+              }
+              helper="System prompt sent to the model with every request"
+            />
+          </div>
+        </div>
+      )}
+
       {/* Pairing Strategy & Responses per Task */}
-      <div className="mt-6 grid grid-cols-2 gap-6">
-        <Select
-          label="Pairing Strategy"
-          options={pairingOptions}
-          value={data.pairingStrategy}
-          onChange={(e) =>
-            onChange({ ...data, pairingStrategy: e.target.value })
-          }
-        />
-        <Input
-          label="Responses Per Task"
-          type="number"
-          placeholder="2"
-          value={data.responsesPerTask}
-          onChange={(e) =>
-            onChange({ ...data, responsesPerTask: e.target.value })
-          }
-          helper="Number of model responses shown per annotation item"
-        />
-      </div>
+      {features.showPairing && (
+        <div className="mt-6 grid grid-cols-2 gap-6">
+          <Select
+            label="Pairing Strategy"
+            options={pairingOptions}
+            value={data.pairingStrategy}
+            onChange={(e) =>
+              onChange({ ...data, pairingStrategy: e.target.value })
+            }
+          />
+          <Input
+            label="Responses Per Task"
+            type="number"
+            placeholder="2"
+            value={data.responsesPerTask}
+            onChange={(e) =>
+              onChange({ ...data, responsesPerTask: e.target.value })
+            }
+            helper="Number of model responses shown per annotation item"
+          />
+        </div>
+      )}
     </div>
   );
 }

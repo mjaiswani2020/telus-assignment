@@ -123,6 +123,20 @@ export function Quality({ data, onChange }: QualityProps) {
             Percentage of items that are gold-standard checks (0--20%)
           </p>
         </div>
+
+        {/* Gold Standard Upload */}
+        {data.goldInsertionRate > 0 && (
+          <div className="mt-3 flex items-center justify-center rounded-standard border-2 border-dashed border-level-2 bg-level-1 p-4 transition-colors hover:border-deep-teal">
+            <div className="text-center">
+              <p className="font-inter text-[13px] font-medium text-secondary-text">
+                Upload gold standard items
+              </p>
+              <p className="mt-0.5 font-inter text-[11px] text-tertiary-text">
+                CSV or JSONL with labeled answers — drag & drop or click to browse
+              </p>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Min Time Threshold & Overlap Count */}

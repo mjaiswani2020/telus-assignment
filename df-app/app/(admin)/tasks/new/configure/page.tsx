@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { crossFade } from "@/lib/animations";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { WizardStepSidebar } from "@/components/admin/wizard-step-sidebar";
 import { BasicInfo, type BasicInfoData } from "@/components/admin/wizard-steps/basic-info";
 import { Prompts, type PromptsData } from "@/components/admin/wizard-steps/prompts";
@@ -13,11 +15,33 @@ import { Quality, type QualityData } from "@/components/admin/wizard-steps/quali
 import { Guidelines, type GuidelinesData } from "@/components/admin/wizard-steps/guidelines";
 import { Review } from "@/components/admin/wizard-steps/review";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import type { TaskType } from "@/data/seed";
+import {
+  TEMPLATE_TO_TYPE,
+  TEMPLATE_METADATA,
+  TYPE_DEFAULTS,
+  TYPE_FEATURES,
+  DEFAULT_GENERATION_PARAMS,
+  type TypeFeatures,
+} from "@/lib/task-type-config";
 
 const TOTAL_STEPS = 7;
 
-export default function ConfigureWizardPage() {
+function ConfigureWizardInner() {
+  const searchParams = useSearchParams();
+  const templateSlug = searchParams.get("template") || "scratch";
+  const templateMeta = TEMPLATE_METADATA[templateSlug] ?? null;
+  const initialType = TEMPLATE_TO_TYPE[templateSlug] ?? null;
+  const isFromTemplate = templateSlug !== "scratch" && initialType !== null;
+
   const [step, setStep] = useState(1);
+  const [taskType, setTaskType] = useState<TaskType | null>(initialType);
+
+  // Resolve defaults based on task type
+  const defaults = taskType ? TYPE_DEFAULTS[taskType] : {};
+  const features: TypeFeatures = taskType
+    ? TYPE_FEATURES[taskType]
+    : TYPE_FEATURES["Pairwise"]; // fallback for scratch before selection
 
   // Step 1 -- Basic Info
   const [basicInfo, setBasicInfo] = useState<BasicInfoData>({
@@ -31,32 +55,50 @@ export default function ConfigureWizardPage() {
 
   // Step 2 -- Prompts
   const [prompts, setPrompts] = useState<PromptsData>({
-    source: "annotator",
+    source: (defaults.prompts?.source as PromptsData["source"]) || "annotator",
     categories: [],
     minLength: "",
     maxLength: "",
+    modelGenConfig: { model: "", seedTopics: "", count: "" },
+    mixedConfig: { humanProportion: "", modelProportion: "" },
   });
 
   // Step 3 -- Models
   const [models, setModels] = useState<ModelsData>({
     selectedEndpoints: [],
-    responseSource: "live",
-    pairingStrategy: "different",
-    responsesPerTask: "2",
+    responseSource: (defaults.models?.responseSource as ModelsData["responseSource"]) || "live",
+    pairingStrategy: defaults.models?.pairingStrategy || "different",
+    responsesPerTask: defaults.models?.responsesPerTask || "2",
+    generationParams: { ...DEFAULT_GENERATION_PARAMS },
+    cachedDatasetRef: "",
   });
 
   // Step 4 -- Annotation
   const [annotation, setAnnotation] = useState<AnnotationData>({
-    preferenceScale: "4-point",
-    preferencePolarity: "a-vs-b",
-    allowTies: true,
-    justification: true,
-    safetyLabels: false,
-    riskCategories: false,
-    customDimensions: false,
-    minTime: "45",
+    preferenceScale: (defaults.annotation?.preferenceScale as AnnotationData["preferenceScale"]) || "4-point",
+    preferencePolarity: defaults.annotation?.preferencePolarity || "pick-better",
+    allowTies: defaults.annotation?.allowTies ?? true,
+    justification: defaults.annotation?.justification ?? true,
+    safetyLabels: defaults.annotation?.safetyLabels ?? false,
+    riskCategories: defaults.annotation?.riskCategories ?? false,
+    customDimensions: defaults.annotation?.customDimensions ?? false,
+    minTime: defaults.annotation?.minTime || "45",
     allowSkip: true,
     allowFlag: true,
+    customScaleLabels: [],
+    customDimensionsList: [],
+    multiTurnConfig: {
+      minTurns: "3",
+      maxTurns: "8",
+      perTurnPreference: true,
+      allowUndo: true,
+    },
+    safetyConfig: {
+      contentWarnings: true,
+      breakTimerInterval: "30",
+      escalationButton: true,
+      wellbeingChecks: true,
+    },
   });
 
   // Step 5 -- Quality
@@ -67,7 +109,7 @@ export default function ConfigureWizardPage() {
     reviewSampleRate: 25,
     minAgreementThreshold: "0.70",
     performanceGate: "0.80",
-    preset: "production",
+    preset: (defaults.quality?.preset as QualityData["preset"]) || "production",
   });
 
   // Step 6 -- Guidelines
@@ -75,19 +117,66 @@ export default function ConfigureWizardPage() {
     content: "",
   });
 
+  // Handle task type change (from scratch selector or template)
+  const handleTaskTypeChange = (type: TaskType) => {
+    setTaskType(type);
+    // Apply type defaults to annotation and models
+    const d = TYPE_DEFAULTS[type];
+    if (d.annotation) {
+      setAnnotation((prev) => ({
+        ...prev,
+        preferenceScale: (d.annotation?.preferenceScale as AnnotationData["preferenceScale"]) || prev.preferenceScale,
+        preferencePolarity: d.annotation?.preferencePolarity || prev.preferencePolarity,
+        allowTies: d.annotation?.allowTies ?? prev.allowTies,
+        justification: d.annotation?.justification ?? prev.justification,
+        safetyLabels: d.annotation?.safetyLabels ?? prev.safetyLabels,
+        riskCategories: d.annotation?.riskCategories ?? prev.riskCategories,
+        customDimensions: d.annotation?.customDimensions ?? prev.customDimensions,
+      }));
+    }
+    if (d.models) {
+      setModels((prev) => ({
+        ...prev,
+        pairingStrategy: d.models?.pairingStrategy || prev.pairingStrategy,
+        responsesPerTask: d.models?.responsesPerTask || prev.responsesPerTask,
+        responseSource: (d.models?.responseSource as ModelsData["responseSource"]) || prev.responseSource,
+      }));
+    }
+    if (d.prompts) {
+      setPrompts((prev) => ({
+        ...prev,
+        source: (d.prompts?.source as PromptsData["source"]) || prev.source,
+      }));
+    }
+  };
+
   const goNext = () => setStep((s) => Math.min(s + 1, TOTAL_STEPS));
   const goBack = () => setStep((s) => Math.max(s - 1, 1));
 
   const renderStep = () => {
     switch (step) {
       case 1:
-        return <BasicInfo data={basicInfo} onChange={setBasicInfo} />;
+        return (
+          <BasicInfo
+            data={basicInfo}
+            onChange={setBasicInfo}
+            taskType={taskType}
+            onTaskTypeChange={handleTaskTypeChange}
+            isFromTemplate={isFromTemplate}
+          />
+        );
       case 2:
         return <Prompts data={prompts} onChange={setPrompts} />;
       case 3:
-        return <Models data={models} onChange={setModels} />;
+        return <Models data={models} onChange={setModels} features={features} />;
       case 4:
-        return <Annotation data={annotation} onChange={setAnnotation} />;
+        return (
+          <Annotation
+            data={annotation}
+            onChange={setAnnotation}
+            features={features}
+          />
+        );
       case 5:
         return <Quality data={quality} onChange={setQuality} />;
       case 6:
@@ -101,6 +190,7 @@ export default function ConfigureWizardPage() {
             annotation={annotation}
             quality={quality}
             guidelines={guidelines}
+            taskType={taskType}
           />
         );
       default:
@@ -113,6 +203,25 @@ export default function ConfigureWizardPage() {
       <WizardStepSidebar currentStep={step} onStepClick={setStep} />
 
       <div className="flex flex-1 flex-col">
+        {/* Template indicator */}
+        {templateMeta && (
+          <div className="flex items-center gap-2 border-b border-level-2 bg-level-1 px-8 py-2.5">
+            <templateMeta.icon className="h-4 w-4 text-deep-teal" />
+            <span className="font-inter text-[13px] font-medium text-ink">
+              Template: {templateMeta.name}
+            </span>
+            <Badge variant="info">{templateMeta.methodology}</Badge>
+          </div>
+        )}
+        {!templateMeta && taskType && (
+          <div className="flex items-center gap-2 border-b border-level-2 bg-level-1 px-8 py-2.5">
+            <span className="font-inter text-[13px] font-medium text-ink">
+              Custom Task
+            </span>
+            <Badge variant="neutral">{taskType}</Badge>
+          </div>
+        )}
+
         <div className="flex-1 p-8">
           <AnimatePresence mode="wait">
             <motion.div
@@ -163,5 +272,21 @@ export default function ConfigureWizardPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function ConfigureWizardPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-[400px] items-center justify-center">
+          <span className="font-inter text-body-md text-tertiary-text">
+            Loading...
+          </span>
+        </div>
+      }
+    >
+      <ConfigureWizardInner />
+    </Suspense>
   );
 }
