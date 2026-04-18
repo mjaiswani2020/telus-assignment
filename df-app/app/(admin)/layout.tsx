@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Sidebar } from "@/components/admin/sidebar";
 import { ToastProvider } from "@/components/ui/toast";
-import { ChevronDown, Check } from "lucide-react";
+import { ChevronDown, Check, LogOut } from "lucide-react";
 
 const orgs = [
   { id: "google", name: "Google DeepMind", initial: "G", color: "#4285F4" },
@@ -18,9 +19,12 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
   const [selectedOrg, setSelectedOrg] = useState("google");
   const [open, setOpen] = useState(false);
+  const [avatarOpen, setAvatarOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const avatarRef = useRef<HTMLDivElement>(null);
 
   const current = orgs.find((o) => o.id === selectedOrg)!;
 
@@ -28,6 +32,9 @@ export default function AdminLayout({
     function handleClick(e: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setOpen(false);
+      }
+      if (avatarRef.current && !avatarRef.current.contains(e.target as Node)) {
+        setAvatarOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClick);
@@ -72,13 +79,27 @@ export default function AdminLayout({
                 </div>
               )}
             </div>
-            <div
-              className="flex h-9 w-9 items-center justify-center rounded-full"
-              style={{ backgroundColor: current.color }}
-            >
-              <span className="font-inter text-[14px] font-medium text-white">
-                {current.initial}
-              </span>
+            <div className="relative" ref={avatarRef}>
+              <button
+                onClick={() => setAvatarOpen(!avatarOpen)}
+                className="flex h-9 w-9 items-center justify-center rounded-full transition-opacity hover:opacity-80"
+                style={{ backgroundColor: current.color }}
+              >
+                <span className="font-inter text-[14px] font-medium text-white">
+                  {current.initial}
+                </span>
+              </button>
+              {avatarOpen && (
+                <div className="absolute right-0 mt-1 w-40 rounded-comfortable border border-level-2 bg-white py-1 shadow-lg">
+                  <button
+                    onClick={() => { setAvatarOpen(false); router.push("/login"); }}
+                    className="flex w-full items-center gap-2.5 px-3 py-2 font-inter text-[13px] text-ink hover:bg-level-1 transition-colors"
+                  >
+                    <LogOut className="h-4 w-4 text-tertiary-text" />
+                    Sign Out
+                  </button>
+                </div>
+              )}
             </div>
           </div>
           <main className="px-8 pt-16 pb-8">{children}</main>
