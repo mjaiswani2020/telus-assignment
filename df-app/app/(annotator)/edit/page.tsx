@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { TaskHeader } from "@/components/annotator/task-header";
 import { GuidelinesDrawer } from "@/components/guidelines-drawer";
 import { Button } from "@/components/ui/button";
 import { Tabs } from "@/components/ui/tabs";
+import { useToast } from "@/components/ui/toast";
+import { useReviewStore } from "@/stores/review-store";
 import { cn } from "@/lib/cn";
 
 const ORIGINAL_TEXT = `Python's Global Interpreter Lock (GIL) is a mutex that prevents multiple threads from executing Python bytecode simultaneously. This means that even on multi-core systems, Python threads cannot truly run in parallel for CPU-bound tasks.
@@ -69,6 +71,40 @@ export default function EditPage() {
   const [editedText, setEditedText] = useState(INITIAL_EDIT);
   const [diffView, setDiffView] = useState("inline");
   const [guidelinesOpen, setGuidelinesOpen] = useState(false);
+  const [progress, setProgress] = useState(5);
+  const { toast } = useToast();
+  const addReviewItem = useReviewStore((s) => s.addItem);
+
+  const handleSkip = useCallback(() => {
+    setProgress((p) => p + 1);
+    setEditedText(INITIAL_EDIT);
+    toast("Task skipped", "info");
+  }, [toast]);
+
+  const handleFlag = useCallback(() => {
+    addReviewItem({
+      id: `review-${Date.now()}`,
+      title: `Flagged: Edit Task #${progress + 1}`,
+      description: "Annotator flagged this editing task for review",
+      source: "Annotator",
+      status: "Flagged",
+      taskType: "Editing",
+      flaggedBy: "Current Annotator",
+      flaggedAt: new Date().toISOString(),
+      annotationId: `ann-${Date.now()}`,
+      campaignId: "camp-llama-align",
+      priority: "Medium",
+    });
+    setProgress((p) => p + 1);
+    setEditedText(INITIAL_EDIT);
+    toast("Task flagged for review", "warning");
+  }, [progress, addReviewItem, toast]);
+
+  const handleSubmit = useCallback(() => {
+    setProgress((p) => p + 1);
+    setEditedText(INITIAL_EDIT);
+    toast("Edit submitted successfully", "success");
+  }, [toast]);
 
   const diff = useMemo(() => computeDiff(ORIGINAL_TEXT, editedText), [editedText]);
   const editStats = useMemo(() => computeEditDistance(ORIGINAL_TEXT, editedText), [editedText]);
@@ -78,9 +114,11 @@ export default function EditPage() {
       <TaskHeader
         taskName="Response Editing"
         subtitle="Minimal Correction Mode"
-        progress={{ current: 5, total: 30 }}
+        progress={{ current: progress, total: 30 }}
         timer="3:42"
         onGuidelines={() => setGuidelinesOpen(true)}
+        onSkip={handleSkip}
+        onFlag={handleFlag}
       />
 
       <div className="stagger-children mx-auto max-w-[1440px] space-y-4 px-8 py-6">
@@ -198,7 +236,7 @@ export default function EditPage() {
 
         {/* Submit */}
         <div>
-          <Button variant="primary" size="lg" className="w-full">
+          <Button variant="primary" size="lg" className="w-full" onClick={handleSubmit}>
             Submit Edit
           </Button>
         </div>

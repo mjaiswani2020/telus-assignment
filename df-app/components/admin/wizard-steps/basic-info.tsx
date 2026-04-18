@@ -4,27 +4,12 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
-
-const projectOptions = [
-  { value: "proj-helpfulness", label: "Helpfulness Track" },
-  { value: "proj-safety", label: "Safety Track" },
-  { value: "proj-code-eval", label: "Code Evaluation" },
-];
-
-const campaignOptions = [
-  { value: "camp-llama-align", label: "Llama 3 Alignment Campaign" },
-  { value: "camp-gpt4-safety", label: "GPT-4 Safety Audit" },
-  { value: "camp-arena-q1", label: "Arena Benchmark Q1" },
-  { value: "camp-helpfulness-creative", label: "Creative Writing Evaluation" },
-  { value: "camp-code-bench", label: "Multi-Language Code Bench" },
-];
-
-const roundOptions = [
-  { value: "new", label: "Create new round" },
-  { value: "round-3", label: "Round 3 -- Post-DPO Checkpoint" },
-  { value: "round-cw2", label: "Round 2 -- Poetry & Style" },
-];
+import type { TaskType } from "@/data/seed";
+import { TASK_TYPE_INFO } from "@/lib/task-type-config";
+import { useProjectStore } from "@/stores/project-store";
+import { useCampaignStore } from "@/stores/campaign-store";
 
 const availableSkills = [
   "General",
@@ -49,10 +34,57 @@ interface BasicInfoData {
 interface BasicInfoProps {
   data: BasicInfoData;
   onChange: (data: BasicInfoData) => void;
+  taskType: TaskType | null;
+  onTaskTypeChange: (type: TaskType) => void;
+  isFromTemplate: boolean;
 }
 
-export function BasicInfo({ data, onChange }: BasicInfoProps) {
+const TASK_TYPES: TaskType[] = [
+  "Pairwise",
+  "Conversational",
+  "SFT",
+  "Safety",
+  "Editing",
+  "Ranking",
+  "Rubric",
+  "Arena",
+];
+
+export function BasicInfo({
+  data,
+  onChange,
+  taskType,
+  onTaskTypeChange,
+  isFromTemplate,
+}: BasicInfoProps) {
   const [skillInput, setSkillInput] = useState("");
+
+  const projects = useProjectStore((s) => s.projects);
+  const getCampaignsByProject = useCampaignStore((s) => s.getCampaignsByProject);
+
+  // Derive campaign options from selected project
+  const campaigns = data.projectId
+    ? getCampaignsByProject(data.projectId)
+    : [];
+  const campaignOptions = campaigns.map((c) => ({
+    value: c.id,
+    label: c.name,
+  }));
+
+  // Derive round options from selected campaign
+  const selectedCampaign = campaigns.find((c) => c.id === data.campaignId);
+  const roundOptions = [
+    { value: "new", label: "Create new round" },
+    ...(selectedCampaign?.rounds.map((r) => ({
+      value: r.id,
+      label: r.name,
+    })) || []),
+  ];
+
+  const projectOptions = projects.map((p) => ({
+    value: p.id,
+    label: p.name,
+  }));
 
   const addSkill = (skill: string) => {
     const trimmed = skill.trim();
@@ -80,6 +112,14 @@ export function BasicInfo({ data, onChange }: BasicInfoProps) {
       skillInput.length > 0
   );
 
+  const handleProjectChange = (projectId: string) => {
+    onChange({ ...data, projectId, campaignId: "", roundId: "" });
+  };
+
+  const handleCampaignChange = (campaignId: string) => {
+    onChange({ ...data, campaignId, roundId: "" });
+  };
+
   return (
     <div>
       <h2 className="font-inter text-title-lg text-ink">Basic Information</h2>
@@ -87,7 +127,60 @@ export function BasicInfo({ data, onChange }: BasicInfoProps) {
         Define the core details for this annotation task.
       </p>
 
-      <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-5">
+      {/* Task Type Selector (scratch mode) or Badge (template mode) */}
+      {!isFromTemplate ? (
+        <div className="mt-6">
+          <label className="font-inter text-label-sm uppercase tracking-[0.5px] text-secondary-text">
+            Task Type
+          </label>
+          <div className="mt-3 grid grid-cols-4 gap-2.5">
+            {TASK_TYPES.map((type) => {
+              const info = TASK_TYPE_INFO[type];
+              const Icon = info.icon;
+              const isSelected = taskType === type;
+              return (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => onTaskTypeChange(type)}
+                  className={`flex flex-col items-start rounded-comfortable border p-3.5 text-left transition-colors ${
+                    isSelected
+                      ? "border-deep-teal bg-selected-bg"
+                      : "border-level-2 bg-white hover:border-level-3"
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Icon
+                      className={`h-4 w-4 ${
+                        isSelected ? "text-deep-teal" : "text-tertiary-text"
+                      }`}
+                    />
+                    <span className="font-inter text-[13px] font-medium text-ink">
+                      {info.label}
+                    </span>
+                  </div>
+                  <p className="mt-1 font-inter text-[11px] text-tertiary-text">
+                    {info.description}
+                  </p>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      ) : (
+        taskType && (
+          <div className="mt-6 flex items-center gap-2">
+            <span className="font-inter text-label-sm uppercase tracking-[0.5px] text-secondary-text">
+              Task Type
+            </span>
+            <Badge variant={taskType.toLowerCase() as "pairwise"}>
+              {TASK_TYPE_INFO[taskType].label}
+            </Badge>
+          </div>
+        )
+      )}
+
+      <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-5">
         <div className="col-span-2">
           <Input
             label="Task Name"
@@ -111,23 +204,29 @@ export function BasicInfo({ data, onChange }: BasicInfoProps) {
           options={projectOptions}
           placeholder="Select a project"
           value={data.projectId}
-          onChange={(e) => onChange({ ...data, projectId: e.target.value })}
+          onChange={(e) => handleProjectChange(e.target.value)}
         />
 
         <Select
           label="Campaign"
           options={campaignOptions}
-          placeholder="Select a campaign"
+          placeholder={
+            data.projectId ? "Select a campaign" : "Select a project first"
+          }
           value={data.campaignId}
-          onChange={(e) => onChange({ ...data, campaignId: e.target.value })}
+          onChange={(e) => handleCampaignChange(e.target.value)}
+          disabled={!data.projectId}
         />
 
         <Select
           label="Round"
           options={roundOptions}
-          placeholder="Select a round"
+          placeholder={
+            data.campaignId ? "Select a round" : "Select a campaign first"
+          }
           value={data.roundId}
           onChange={(e) => onChange({ ...data, roundId: e.target.value })}
+          disabled={!data.campaignId}
         />
 
         {/* Skills tag input */}

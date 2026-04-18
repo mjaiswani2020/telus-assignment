@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { TaskHeader } from "@/components/annotator/task-header";
 import { GuidelinesDrawer } from "@/components/guidelines-drawer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/toast";
+import { useReviewStore } from "@/stores/review-store";
 import { cn } from "@/lib/cn";
 
 const PROMPT_TEXT = `What are the key differences between REST and GraphQL APIs? When should I choose one over the other for a new project?`;
@@ -49,6 +51,53 @@ export default function RubricPage() {
   const [verbosity, setVerbosity] = useState<VerbosityValue>("appropriate");
   const [tone, setTone] = useState(4);
   const [guidelinesOpen, setGuidelinesOpen] = useState(false);
+  const [progress, setProgress] = useState(15);
+  const { toast } = useToast();
+  const addReviewItem = useReviewStore((s) => s.addItem);
+
+  const handleSkip = useCallback(() => {
+    setProgress((p) => p + 1);
+    setHelpfulness(3);
+    setAccuracy(3);
+    setSafety(null);
+    setVerbosity(null);
+    setTone(3);
+    toast("Task skipped", "info");
+  }, [toast]);
+
+  const handleFlag = useCallback(() => {
+    addReviewItem({
+      id: `review-${Date.now()}`,
+      title: `Flagged: Rubric Task #${progress + 1}`,
+      description: "Annotator flagged this rubric task for review",
+      source: "Annotator",
+      status: "Flagged",
+      taskType: "Rubric",
+      flaggedBy: "Current Annotator",
+      flaggedAt: new Date().toISOString(),
+      annotationId: `ann-${Date.now()}`,
+      campaignId: "camp-llama-align",
+      priority: "Medium",
+    });
+    setProgress((p) => p + 1);
+    setHelpfulness(3);
+    setAccuracy(3);
+    setSafety(null);
+    setVerbosity(null);
+    setTone(3);
+    toast("Task flagged for review", "warning");
+  }, [progress, addReviewItem, toast]);
+
+  const handleSubmit = useCallback(() => {
+    if (!safety || !verbosity) return;
+    setProgress((p) => p + 1);
+    setHelpfulness(3);
+    setAccuracy(3);
+    setSafety(null);
+    setVerbosity(null);
+    setTone(3);
+    toast("Evaluation submitted successfully", "success");
+  }, [safety, verbosity, toast]);
 
   function SliderDimension({
     label,
@@ -138,9 +187,11 @@ export default function RubricPage() {
       <TaskHeader
         taskName="Rubric Evaluation"
         subtitle="Rubric Scoring"
-        progress={{ current: 15, total: 80 }}
+        progress={{ current: progress, total: 80 }}
         timer="2:15"
         onGuidelines={() => setGuidelinesOpen(true)}
+        onSkip={handleSkip}
+        onFlag={handleFlag}
       />
 
       <div className="stagger-children mx-auto max-w-[1440px] space-y-4 px-8 py-6">
@@ -234,6 +285,7 @@ export default function RubricPage() {
             size="lg"
             className="w-full"
             disabled={!safety || !verbosity}
+            onClick={handleSubmit}
           >
             Submit Evaluation
           </Button>

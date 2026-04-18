@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { PageHeader } from "@/components/admin/page-header";
@@ -10,6 +11,7 @@ import { StatCard } from "@/components/ui/stat-card";
 import { DataTable } from "@/components/ui/data-table";
 import { Select } from "@/components/ui/select";
 import { useTaskStore } from "@/stores/task-store";
+import { useToast } from "@/components/ui/toast";
 import type { Task, TaskType } from "@/data/seed";
 
 function formatDate(iso: string) {
@@ -53,9 +55,18 @@ const typeOptions = [
 ];
 
 export default function TasksPage() {
-  const tasks = useTaskStore((s) => s.tasks);
+  const allTasks = useTaskStore((s) => s.tasks);
   const getTaskCounts = useTaskStore((s) => s.getTaskCounts);
   const counts = getTaskCounts();
+  const { toast } = useToast();
+  const [statusFilter, setStatusFilter] = useState("");
+  const [typeFilter, setTypeFilter] = useState("");
+
+  const tasks = allTasks.filter((t) => {
+    if (statusFilter && t.status !== statusFilter) return false;
+    if (typeFilter && t.type !== typeFilter) return false;
+    return true;
+  });
 
   const taskColumns = [
     {
@@ -110,8 +121,8 @@ export default function TasksPage() {
         title="Task Configurations"
         action={
           <div className="flex items-center gap-3">
-            <Select options={statusOptions} defaultValue="" className="w-40" />
-            <Select options={typeOptions} defaultValue="" className="w-40" />
+            <Select options={statusOptions} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="w-40" />
+            <Select options={typeOptions} value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} className="w-40" />
             <Link href="/tasks/new">
               <Button icon={<Plus className="h-4 w-4" />}>New Task</Button>
             </Link>
@@ -133,6 +144,7 @@ export default function TasksPage() {
           columns={taskColumns as { key: string; header: string; className?: string; render?: (item: Task & Record<string, unknown>) => React.ReactNode }[]}
           data={tasks as (Task & Record<string, unknown>)[]}
           keyExtractor={(t) => t.id}
+          onRowClick={() => toast("Task detail view coming soon", "info")}
         />
       </div>
     </div>

@@ -59,7 +59,10 @@ export default function ReviewDetailPage() {
     );
   }
 
-  const detail = mockDetails.default;
+  const detail = {
+    ...mockDetails.default,
+    annotator: item.flaggedBy,
+  };
   const priorityVariant =
     item.priority === "High" ? "error" : item.priority === "Medium" ? "caution" : "neutral";
 
@@ -166,8 +169,10 @@ export default function ReviewDetailPage() {
           <Button
             variant="secondary"
             onClick={() => {
-              reassign(reviewId, "Sarah K.");
-              toast("Reassigned to Sarah K.", "info");
+              const reviewers = ["Sarah K.", "Priya M.", "James L.", "Elena R.", "Tom H."];
+              const reviewer = reviewers[Math.floor(Math.random() * reviewers.length)];
+              reassign(reviewId, reviewer);
+              toast(`Reassigned to ${reviewer}`, "info");
               router.push("/reviews");
             }}
           >

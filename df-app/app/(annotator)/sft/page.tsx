@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { TaskHeader } from "@/components/annotator/task-header";
 import { GuidelinesDrawer } from "@/components/guidelines-drawer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
+import { useToast } from "@/components/ui/toast";
+import { useReviewStore } from "@/stores/review-store";
 import { ChevronDown, ChevronUp, Eye } from "lucide-react";
 import { cn } from "@/lib/cn";
 
@@ -26,6 +28,44 @@ export default function SftPage() {
   const [difficulty, setDifficulty] = useState("medium");
   const [showReference, setShowReference] = useState(false);
   const [guidelinesOpen, setGuidelinesOpen] = useState(false);
+  const [progress, setProgress] = useState(8);
+  const { toast } = useToast();
+  const addReviewItem = useReviewStore((s) => s.addItem);
+
+  const handleSkip = useCallback(() => {
+    setProgress((p) => p + 1);
+    setPrompt("");
+    setResponse("");
+    toast("Task skipped", "info");
+  }, [toast]);
+
+  const handleFlag = useCallback(() => {
+    addReviewItem({
+      id: `review-${Date.now()}`,
+      title: `Flagged: SFT Task #${progress + 1}`,
+      description: "Annotator flagged this SFT task for review",
+      source: "Annotator",
+      status: "Flagged",
+      taskType: "SFT",
+      flaggedBy: "Current Annotator",
+      flaggedAt: new Date().toISOString(),
+      annotationId: `ann-${Date.now()}`,
+      campaignId: "camp-llama-align",
+      priority: "Medium",
+    });
+    setProgress((p) => p + 1);
+    setPrompt("");
+    setResponse("");
+    toast("Task flagged for review", "warning");
+  }, [progress, addReviewItem, toast]);
+
+  const handleSubmit = useCallback(() => {
+    if (!prompt.trim() || !response.trim() || prompt.length > 2000 || response.length > 4000) return;
+    setProgress((p) => p + 1);
+    setPrompt("");
+    setResponse("");
+    toast("SFT pair submitted successfully", "success");
+  }, [prompt, response, toast]);
 
   // Simple markdown preview render
   function renderPreview(text: string) {
@@ -75,9 +115,11 @@ export default function SftPage() {
       <TaskHeader
         taskName="SFT Data Authoring"
         subtitle="Llama Safety SFT — Round 2"
-        progress={{ current: 8, total: 50 }}
+        progress={{ current: progress, total: 50 }}
         timer="5:30"
         onGuidelines={() => setGuidelinesOpen(true)}
+        onSkip={handleSkip}
+        onFlag={handleFlag}
       />
 
       <div className="stagger-children mx-auto max-w-[1440px] space-y-4 px-8 py-6">
@@ -216,6 +258,7 @@ export default function SftPage() {
               variant="primary"
               size="md"
               disabled={!prompt.trim() || !response.trim() || prompt.length > 2000 || response.length > 4000}
+              onClick={handleSubmit}
             >
               Submit SFT Pair
             </Button>

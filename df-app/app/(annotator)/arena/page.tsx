@@ -7,6 +7,8 @@ import { ResponsePanel } from "@/components/annotator/response-panel";
 import { GuidelinesDrawer } from "@/components/guidelines-drawer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/toast";
+import { useReviewStore } from "@/stores/review-store";
 import { cn } from "@/lib/cn";
 
 const PROMPT_TEXT = `Write a Python function that finds all pairs of numbers in a list that sum to a given target. The function should handle duplicates correctly and return unique pairs only.`;
@@ -78,10 +80,42 @@ export default function ArenaPage() {
   const [preference, setPreference] = useState<Preference>(null);
   const [submitted, setSubmitted] = useState(false);
   const [guidelinesOpen, setGuidelinesOpen] = useState(false);
+  const [progress, setProgress] = useState(12);
+  const { toast } = useToast();
+  const addReviewItem = useReviewStore((s) => s.addItem);
+
+  const handleSkip = () => {
+    setProgress((p) => p + 1);
+    setPreference(null);
+    setSubmitted(false);
+    toast("Task skipped", "info");
+  };
+
+  const handleFlag = () => {
+    addReviewItem({
+      id: `review-${Date.now()}`,
+      title: `Flagged: Arena Task #${progress + 1}`,
+      description: "Annotator flagged this arena task for review",
+      source: "Annotator",
+      status: "Flagged",
+      taskType: "Arena",
+      flaggedBy: "Current Annotator",
+      flaggedAt: new Date().toISOString(),
+      annotationId: `ann-${Date.now()}`,
+      campaignId: "camp-arena-q1",
+      priority: "Medium",
+    });
+    setProgress((p) => p + 1);
+    setPreference(null);
+    setSubmitted(false);
+    toast("Task flagged for review", "warning");
+  };
 
   const handleSubmit = () => {
     if (!preference) return;
     setSubmitted(true);
+    setProgress((p) => p + 1);
+    toast("Verdict submitted — models revealed!", "success");
   };
 
   return (
@@ -89,9 +123,11 @@ export default function ArenaPage() {
       <TaskHeader
         taskName="Model Arena"
         subtitle="Blind Model Comparison"
-        progress={{ current: 12, total: 100 }}
+        progress={{ current: progress, total: 100 }}
         timer="0:48"
         onGuidelines={() => setGuidelinesOpen(true)}
+        onSkip={handleSkip}
+        onFlag={handleFlag}
       />
 
       <div className="stagger-children mx-auto max-w-[1440px] space-y-4 px-8 py-6">

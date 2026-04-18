@@ -52,7 +52,7 @@ export default function ExportBuilderPage() {
   const [gateCoverage, setGateCoverage] = useState(false);
 
   const matchCount = 28_531;
-  const allGatesPassed = gateIaa && gateGold; // eslint-disable-line @typescript-eslint/no-unused-vars
+  const allGatesPassed = gateIaa && gateGold;
 
   function handleExport() {
     const selectedCampaign = campaignOptions.find((c) => c.value === campaign);
@@ -77,7 +77,7 @@ export default function ExportBuilderPage() {
             <Button variant="ghost" onClick={() => router.push("/exports")}>
               Cancel
             </Button>
-            <Button variant="primary" onClick={handleExport}>
+            <Button variant="primary" onClick={handleExport} disabled={!allGatesPassed}>
               Export &mdash; Create Snapshot
             </Button>
           </div>

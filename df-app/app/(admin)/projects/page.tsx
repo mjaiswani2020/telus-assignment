@@ -5,6 +5,7 @@ import { Plus } from "lucide-react";
 import { PageHeader } from "@/components/admin/page-header";
 import { Button } from "@/components/ui/button";
 import { useProjectStore } from "@/stores/project-store";
+import { useToast } from "@/components/ui/toast";
 
 const avatarColors: Record<string, string> = {
   H: "#005151",
@@ -22,14 +23,15 @@ function formatDate(iso: string) {
 
 export default function ProjectsPage() {
   const projects = useProjectStore((s) => s.projects);
+  const { toast } = useToast();
 
   return (
     <div>
       <PageHeader
         title="Projects"
-        subtitle="Alignment Lab"
+        subtitle=""
         action={
-          <Button icon={<Plus className="h-4 w-4" />}>New Project</Button>
+          <Button icon={<Plus className="h-4 w-4" />} onClick={() => toast("Project creation wizard coming soon", "info")}>New Project</Button>
         }
       />
 
