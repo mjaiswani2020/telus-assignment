@@ -2,7 +2,13 @@
 
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import {
+  ArrowLeft,
+  CheckCircle2,
+  XCircle,
+  AlertTriangle,
+  Lightbulb,
+} from "lucide-react";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -35,6 +41,78 @@ const mockDetails: Record<
   },
 };
 
+// Mock peer comparison data
+const mockPeerAnnotations = [
+  {
+    annotator: "Sarah K.",
+    choice: "Response B",
+    confidence: 85,
+    timeSpent: "2m 14s",
+  },
+  {
+    annotator: "James L.",
+    choice: "Response B",
+    confidence: 78,
+    timeSpent: "1m 52s",
+  },
+  {
+    annotator: "Elena R.",
+    choice: "Response A",
+    confidence: 62,
+    timeSpent: "3m 08s",
+  },
+];
+
+/* ---------- Auto-check result row ---------- */
+function AutoCheckRow({
+  label,
+  passed,
+  detail,
+}: {
+  label: string;
+  passed: boolean | "warning";
+  detail?: string;
+}) {
+  const icon =
+    passed === true ? (
+      <CheckCircle2 className="h-4 w-4 text-[#059669]" />
+    ) : passed === "warning" ? (
+      <AlertTriangle className="h-4 w-4 text-[#D97706]" />
+    ) : (
+      <XCircle className="h-4 w-4 text-[#DC2626]" />
+    );
+
+  const statusText =
+    passed === true ? "Passed" : passed === "warning" ? "Warning" : "Failed";
+  const statusColor =
+    passed === true
+      ? "text-[#059669]"
+      : passed === "warning"
+        ? "text-[#D97706]"
+        : "text-[#DC2626]";
+
+  return (
+    <div className="flex items-start gap-3 py-2">
+      <div className="mt-0.5">{icon}</div>
+      <div className="flex-1">
+        <div className="flex items-center gap-2">
+          <span className="font-inter text-body-md font-medium text-ink">
+            {label}
+          </span>
+          <span className={`font-inter text-[12px] font-medium ${statusColor}`}>
+            {statusText}
+          </span>
+        </div>
+        {detail && (
+          <p className="mt-0.5 font-inter text-[12px] text-tertiary-text">
+            {detail}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function ReviewDetailPage() {
   const params = useParams();
   const router = useRouter();
@@ -66,6 +144,54 @@ export default function ReviewDetailPage() {
   const priorityVariant =
     item.priority === "High" ? "error" : item.priority === "Medium" ? "caution" : "neutral";
 
+  // Derive auto-check details from item data
+  const autoCheckDetails = [
+    {
+      label: "Gold Standard",
+      passed: item.autoChecks.gold as boolean | "warning",
+      detail: item.autoChecks.gold
+        ? undefined
+        : "3rd failure in last 50 items — declining accuracy pattern",
+    },
+    {
+      label: "Time Threshold",
+      passed: item.autoChecks.time as boolean | "warning",
+      detail: item.autoChecks.time
+        ? undefined
+        : "23s < 45s minimum for this task type",
+    },
+    {
+      label: "IAA Check",
+      passed: item.autoChecks.iaa as boolean | "warning",
+      detail: item.autoChecks.iaa
+        ? undefined
+        : "Disagrees with majority of peer annotators",
+    },
+    {
+      label: "Consistency",
+      passed: item.autoChecks.consistency
+        ? (true as boolean | "warning")
+        : ("warning" as boolean | "warning"),
+      detail: item.autoChecks.consistency
+        ? undefined
+        : "Disagrees with 2/3 peers on this item",
+    },
+  ];
+
+  const failedChecks = [
+    !item.autoChecks.gold && "gold accuracy",
+    !item.autoChecks.time && "time threshold",
+    !item.autoChecks.iaa && "IAA agreement",
+    !item.autoChecks.consistency && "response consistency",
+  ].filter(Boolean);
+
+  const suggestedAction =
+    failedChecks.length >= 2
+      ? "Reassign — annotator shows multiple quality signals requiring intervention"
+      : item.tier === "escalated"
+        ? "Escalate to senior reviewer — content requires policy-level adjudication"
+        : "Review and adjudicate — single auto-check flag, likely addressable";
+
   return (
     <div>
       {/* Back link */}
@@ -91,12 +217,107 @@ export default function ReviewDetailPage() {
           {item.source === "Annotator" ? "Flagged" : "Auto"}
         </Badge>
         <Badge variant={priorityVariant}>{item.priority}</Badge>
+        <Badge variant={item.tier === "escalated" ? "error" : "caution"}>
+          {item.tier === "escalated" ? "Escalated" : "Human Review"}
+        </Badge>
       </motion.div>
       <p className="mt-2 font-inter text-body-md text-tertiary-text">
         {item.description}
       </p>
 
       <div className="stagger-children mt-4 space-y-4">
+        {/* ── Automated Analysis Section ── */}
+        <motion.div
+          className="rounded-comfortable border border-level-2 bg-white p-5"
+          initial={{ opacity: 0, y: 4 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2, delay: 0.05 }}
+        >
+          <p className="font-inter text-label-sm uppercase tracking-[0.5px] text-secondary-text">
+            Automated Analysis
+          </p>
+
+          {/* Auto-check results */}
+          <div className="mt-3 divide-y divide-level-2">
+            {autoCheckDetails.map((check) => (
+              <AutoCheckRow
+                key={check.label}
+                label={check.label}
+                passed={check.passed}
+                detail={check.detail}
+              />
+            ))}
+          </div>
+
+          {/* Confidence score */}
+          <div className="mt-3 flex items-center gap-3 rounded-standard bg-level-1 px-3 py-2.5">
+            <span className="font-inter text-[12px] text-tertiary-text">
+              Confidence Score:
+            </span>
+            <span
+              className={`font-inter text-body-md font-semibold ${
+                item.confidence >= 70
+                  ? "text-[#059669]"
+                  : item.confidence >= 50
+                    ? "text-[#D97706]"
+                    : "text-[#DC2626]"
+              }`}
+            >
+              {item.confidence}%
+            </span>
+          </div>
+
+          {/* Suggested action */}
+          <div className="mt-3 flex items-start gap-3 rounded-standard border border-[#FED7AA] bg-[#FFF7ED] px-3 py-2.5">
+            <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-[#D97706]" />
+            <div>
+              <p className="font-inter text-[12px] font-medium text-[#D97706]">
+                Suggested Action
+              </p>
+              <p className="mt-0.5 font-inter text-[13px] text-ink">
+                {suggestedAction}
+              </p>
+            </div>
+          </div>
+
+          {/* Similar Annotations / Peer comparison */}
+          <div className="mt-4">
+            <p className="mb-2 font-inter text-[12px] font-medium uppercase tracking-[0.5px] text-secondary-text">
+              Similar Annotations (Peer Comparison)
+            </p>
+            <div className="grid grid-cols-3 gap-2">
+              {mockPeerAnnotations.map((peer) => (
+                <div
+                  key={peer.annotator}
+                  className="rounded-standard border border-level-2 bg-level-1 px-3 py-2.5"
+                >
+                  <p className="font-inter text-[12px] font-medium text-ink">
+                    {peer.annotator}
+                  </p>
+                  <div className="mt-1.5 flex items-center gap-2">
+                    <Badge
+                      variant={
+                        peer.choice === detail.choice ? "success" : "caution"
+                      }
+                      animate={false}
+                    >
+                      {peer.choice}
+                    </Badge>
+                  </div>
+                  <div className="mt-1.5 flex items-center gap-3">
+                    <span className="font-inter text-[11px] text-tertiary-text">
+                      {peer.confidence}% confidence
+                    </span>
+                    <span className="font-inter text-[11px] text-tertiary-text">
+                      {peer.timeSpent}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+
         {/* Prompt card */}
         <div className="rounded-comfortable bg-level-1 px-3 py-2.5">
           <p className="font-inter text-label-sm uppercase tracking-[0.5px] text-secondary-text">

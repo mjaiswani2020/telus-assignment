@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import { TaskHeader } from "@/components/annotator/task-header";
 import { ResponsePanel } from "@/components/annotator/response-panel";
 import { GuidelinesDrawer } from "@/components/guidelines-drawer";
+import { QualityFeedbackPanel } from "@/components/annotator/quality-feedback-panel";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ProgressBar } from "@/components/ui/progress-bar";
@@ -123,6 +124,10 @@ export default function ChatPage() {
       annotationId: `ann-${Date.now()}`,
       campaignId: "camp-llama-align",
       priority: "Medium",
+      tier: "human-review",
+      autoChecks: { gold: true, time: true, iaa: true, consistency: true },
+      confidence: 80,
+      routingReason: "Annotator-flagged conversational task for review",
     });
     setProgress((p) => p + 1);
     setPreference(null);
@@ -286,6 +291,7 @@ export default function ChatPage() {
       </div>
 
       <GuidelinesDrawer open={guidelinesOpen} onClose={() => setGuidelinesOpen(false)} />
+      <QualityFeedbackPanel />
     </>
   );
 }

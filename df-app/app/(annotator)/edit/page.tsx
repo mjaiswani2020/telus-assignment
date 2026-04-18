@@ -3,6 +3,7 @@
 import { useState, useMemo, useCallback } from "react";
 import { TaskHeader } from "@/components/annotator/task-header";
 import { GuidelinesDrawer } from "@/components/guidelines-drawer";
+import { QualityFeedbackPanel } from "@/components/annotator/quality-feedback-panel";
 import { Button } from "@/components/ui/button";
 import { Tabs } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/toast";
@@ -94,6 +95,10 @@ export default function EditPage() {
       annotationId: `ann-${Date.now()}`,
       campaignId: "camp-llama-align",
       priority: "Medium",
+      tier: "human-review",
+      autoChecks: { gold: true, time: true, iaa: true, consistency: true },
+      confidence: 80,
+      routingReason: "Annotator-flagged editing task for review",
     });
     setProgress((p) => p + 1);
     setEditedText(INITIAL_EDIT);
@@ -243,6 +248,7 @@ export default function EditPage() {
       </div>
 
       <GuidelinesDrawer open={guidelinesOpen} onClose={() => setGuidelinesOpen(false)} />
+      <QualityFeedbackPanel />
     </>
   );
 }

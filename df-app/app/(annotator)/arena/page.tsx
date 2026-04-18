@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { TaskHeader } from "@/components/annotator/task-header";
 import { ResponsePanel } from "@/components/annotator/response-panel";
 import { GuidelinesDrawer } from "@/components/guidelines-drawer";
+import { QualityFeedbackPanel } from "@/components/annotator/quality-feedback-panel";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
@@ -104,6 +105,10 @@ export default function ArenaPage() {
       annotationId: `ann-${Date.now()}`,
       campaignId: "camp-arena-q1",
       priority: "Medium",
+      tier: "human-review",
+      autoChecks: { gold: true, time: true, iaa: true, consistency: true },
+      confidence: 80,
+      routingReason: "Annotator-flagged arena task for review",
     });
     setProgress((p) => p + 1);
     setPreference(null);
@@ -276,6 +281,7 @@ export default function ArenaPage() {
       </div>
 
       <GuidelinesDrawer open={guidelinesOpen} onClose={() => setGuidelinesOpen(false)} />
+      <QualityFeedbackPanel />
     </>
   );
 }
