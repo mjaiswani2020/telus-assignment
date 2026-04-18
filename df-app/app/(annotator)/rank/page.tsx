@@ -6,6 +6,7 @@ import { GuidelinesDrawer } from "@/components/guidelines-drawer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
+import { useReviewStore } from "@/stores/review-store";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/cn";
 
@@ -59,6 +60,32 @@ export default function RankPage() {
   const [guidelinesOpen, setGuidelinesOpen] = useState(false);
   const [progress, setProgress] = useState(8);
   const { toast } = useToast();
+  const addReviewItem = useReviewStore((s) => s.addItem);
+
+  const handleSkip = useCallback(() => {
+    setProgress((p) => p + 1);
+    setItems([...initialItems]);
+    toast("Task skipped", "info");
+  }, [toast]);
+
+  const handleFlag = useCallback(() => {
+    addReviewItem({
+      id: `review-${Date.now()}`,
+      title: `Flagged: Ranking Task #${progress + 1}`,
+      description: "Annotator flagged this ranking task for review",
+      source: "Annotator",
+      status: "Flagged",
+      taskType: "Ranking",
+      flaggedBy: "Current Annotator",
+      flaggedAt: new Date().toISOString(),
+      annotationId: `ann-${Date.now()}`,
+      campaignId: "camp-llama-align",
+      priority: "Medium",
+    });
+    setProgress((p) => p + 1);
+    setItems([...initialItems]);
+    toast("Task flagged for review", "warning");
+  }, [progress, addReviewItem, toast]);
 
   const handleSubmit = useCallback(() => {
     setProgress((p) => p + 1);
@@ -92,6 +119,8 @@ export default function RankPage() {
         progress={{ current: progress, total: 40 }}
         timer="3:01"
         onGuidelines={() => setGuidelinesOpen(true)}
+        onSkip={handleSkip}
+        onFlag={handleFlag}
       />
 
       <div className="stagger-children mx-auto max-w-[1440px] space-y-4 px-8 py-6">

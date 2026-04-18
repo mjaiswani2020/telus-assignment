@@ -7,6 +7,7 @@ import { GuidelinesDrawer } from "@/components/guidelines-drawer";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
+import { useReviewStore } from "@/stores/review-store";
 import { AlertTriangle, Clock, Flag } from "lucide-react";
 import { cn } from "@/lib/cn";
 
@@ -57,6 +58,38 @@ export default function RedTeamPage() {
   const [guidelinesOpen, setGuidelinesOpen] = useState(false);
   const [progress, setProgress] = useState(12);
   const { toast } = useToast();
+  const addReviewItem = useReviewStore((s) => s.addItem);
+
+  const handleSkip = useCallback(() => {
+    setProgress((p) => p + 1);
+    setSafetyChoice(null);
+    setClassification(null);
+    setRiskCategory("");
+    setAttackVector("");
+    toast("Task skipped", "info");
+  }, [toast]);
+
+  const handleFlag = useCallback(() => {
+    addReviewItem({
+      id: `review-${Date.now()}`,
+      title: `Flagged: Safety Task #${progress + 1}`,
+      description: "Annotator flagged this safety task for review",
+      source: "Annotator",
+      status: "Flagged",
+      taskType: "Safety",
+      flaggedBy: "Current Annotator",
+      flaggedAt: new Date().toISOString(),
+      annotationId: `ann-${Date.now()}`,
+      campaignId: "camp-gpt4-safety",
+      priority: "High",
+    });
+    setProgress((p) => p + 1);
+    setSafetyChoice(null);
+    setClassification(null);
+    setRiskCategory("");
+    setAttackVector("");
+    toast("Task flagged for review", "warning");
+  }, [progress, addReviewItem, toast]);
 
   const handleSubmit = useCallback(() => {
     if (!safetyChoice || !classification || !riskCategory || !attackVector) return;
@@ -76,6 +109,8 @@ export default function RedTeamPage() {
         progress={{ current: progress, total: 50 }}
         timer="2:45"
         onGuidelines={() => setGuidelinesOpen(true)}
+        onSkip={handleSkip}
+        onFlag={handleFlag}
       />
 
       <div className="stagger-children mx-auto max-w-[1440px] space-y-4 px-8 py-6">

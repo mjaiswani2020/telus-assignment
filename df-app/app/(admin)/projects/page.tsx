@@ -29,7 +29,7 @@ export default function ProjectsPage() {
     <div>
       <PageHeader
         title="Projects"
-        subtitle="Alignment Lab"
+        subtitle=""
         action={
           <Button icon={<Plus className="h-4 w-4" />} onClick={() => toast("Project creation wizard coming soon", "info")}>New Project</Button>
         }

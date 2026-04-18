@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2, CheckSquare, TrendingUp, Download } from "lucide-react";
@@ -63,14 +64,16 @@ export default function LoginPage() {
           {/* Brand header */}
           <div className="flex flex-col gap-6">
             <div className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-comfortable bg-deep-teal">
-                <span className="font-inter text-[13px] font-bold tracking-[0.05em] text-white">
-                  DF
+              <Link href="/login" className="flex items-center gap-2.5 transition-opacity hover:opacity-80">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-comfortable bg-deep-teal">
+                  <span className="font-inter text-[13px] font-bold tracking-[0.05em] text-white">
+                    DF
+                  </span>
+                </div>
+                <span className="font-inter text-[15px] font-semibold tracking-[0.08em] text-ink">
+                  DATAFORGE
                 </span>
-              </div>
-              <span className="font-inter text-[15px] font-semibold tracking-[0.08em] text-ink">
-                DATAFORGE
-              </span>
+              </Link>
               <AnimatePresence mode="wait">
                 {mode === "annotator" && (
                   <motion.span
@@ -147,16 +150,18 @@ export default function LoginPage() {
               {isLoading ? "Signing in..." : "Log in"}
             </Button>
 
-            <button
+            <Button
               type="button"
+              variant="secondary"
+              size="md"
+              className="w-full"
               onClick={toggleMode}
               disabled={isLoading}
-              className="font-inter text-[13px] tracking-[0.25px] text-deep-teal transition-colors hover:underline disabled:text-tertiary-text"
             >
               {mode === "annotator"
-                ? "Log in as Admin instead"
-                : "Log in as Annotator instead"}
-            </button>
+                ? "Log in as Admin"
+                : "Log in as Annotator"}
+            </Button>
           </div>
         </motion.form>
       </div>

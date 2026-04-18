@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
+import { useReviewStore } from "@/stores/review-store";
 import { Send } from "lucide-react";
 import { cn } from "@/lib/cn";
 
@@ -95,12 +96,38 @@ export default function ChatPage() {
   const [progress, setProgress] = useState(3);
   const [messages, setMessages] = useState<Message[]>(conversationHistory);
   const { toast } = useToast();
+  const addReviewItem = useReviewStore((s) => s.addItem);
 
   const handleSend = useCallback(() => {
     if (!messageInput.trim()) return;
     setMessages((prev) => [...prev, { role: "user", content: messageInput }]);
     setMessageInput("");
   }, [messageInput]);
+
+  const handleSkip = useCallback(() => {
+    setProgress((p) => p + 1);
+    setPreference(null);
+    toast("Task skipped", "info");
+  }, [toast]);
+
+  const handleFlag = useCallback(() => {
+    addReviewItem({
+      id: `review-${Date.now()}`,
+      title: `Flagged: Chat Task #${progress + 1}`,
+      description: "Annotator flagged this conversational task for review",
+      source: "Annotator",
+      status: "Flagged",
+      taskType: "Conversational",
+      flaggedBy: "Current Annotator",
+      flaggedAt: new Date().toISOString(),
+      annotationId: `ann-${Date.now()}`,
+      campaignId: "camp-llama-align",
+      priority: "Medium",
+    });
+    setProgress((p) => p + 1);
+    setPreference(null);
+    toast("Task flagged for review", "warning");
+  }, [progress, addReviewItem, toast]);
 
   const handleSubmitPreference = useCallback(() => {
     if (!preference) return;
@@ -117,6 +144,8 @@ export default function ChatPage() {
         progress={{ current: progress, total: 6 }}
         timer="4:12"
         onGuidelines={() => setGuidelinesOpen(true)}
+        onSkip={handleSkip}
+        onFlag={handleFlag}
       />
 
       <div className="stagger-children mx-auto max-w-[1440px] space-y-4 px-8 py-6">

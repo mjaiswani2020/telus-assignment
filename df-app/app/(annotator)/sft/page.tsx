@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
+import { useReviewStore } from "@/stores/review-store";
 import { ChevronDown, ChevronUp, Eye } from "lucide-react";
 import { cn } from "@/lib/cn";
 
@@ -29,6 +30,34 @@ export default function SftPage() {
   const [guidelinesOpen, setGuidelinesOpen] = useState(false);
   const [progress, setProgress] = useState(8);
   const { toast } = useToast();
+  const addReviewItem = useReviewStore((s) => s.addItem);
+
+  const handleSkip = useCallback(() => {
+    setProgress((p) => p + 1);
+    setPrompt("");
+    setResponse("");
+    toast("Task skipped", "info");
+  }, [toast]);
+
+  const handleFlag = useCallback(() => {
+    addReviewItem({
+      id: `review-${Date.now()}`,
+      title: `Flagged: SFT Task #${progress + 1}`,
+      description: "Annotator flagged this SFT task for review",
+      source: "Annotator",
+      status: "Flagged",
+      taskType: "SFT",
+      flaggedBy: "Current Annotator",
+      flaggedAt: new Date().toISOString(),
+      annotationId: `ann-${Date.now()}`,
+      campaignId: "camp-llama-align",
+      priority: "Medium",
+    });
+    setProgress((p) => p + 1);
+    setPrompt("");
+    setResponse("");
+    toast("Task flagged for review", "warning");
+  }, [progress, addReviewItem, toast]);
 
   const handleSubmit = useCallback(() => {
     if (!prompt.trim() || !response.trim() || prompt.length > 2000 || response.length > 4000) return;
@@ -89,6 +118,8 @@ export default function SftPage() {
         progress={{ current: progress, total: 50 }}
         timer="5:30"
         onGuidelines={() => setGuidelinesOpen(true)}
+        onSkip={handleSkip}
+        onFlag={handleFlag}
       />
 
       <div className="stagger-children mx-auto max-w-[1440px] space-y-4 px-8 py-6">
