@@ -14,6 +14,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useReviewStore } from "@/stores/review-store";
 import { useToast } from "@/components/ui/toast";
+import {
+  ProvenancePanel,
+  mockProvenanceNodes,
+} from "@/components/admin/provenance-panel";
 
 // Mock review detail data keyed by review item
 const mockDetails: Record<
@@ -410,6 +414,19 @@ export default function ReviewDetailPage() {
             Escalate
           </Button>
         </div>
+
+        {/* ── Data Provenance Section ── */}
+        <motion.div
+          className="rounded-comfortable border border-level-2 bg-white p-5"
+          initial={{ opacity: 0, y: 4 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2, delay: 0.15 }}
+        >
+          <p className="mb-4 font-literata text-label-sm uppercase tracking-[0.5px] text-secondary-text">
+            Data Provenance
+          </p>
+          <ProvenancePanel nodes={mockProvenanceNodes} />
+        </motion.div>
       </div>
     </div>
   );

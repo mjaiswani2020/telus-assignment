@@ -7,12 +7,14 @@ import {
   LayoutDashboard,
   FolderOpen,
   Megaphone,
+  RefreshCw,
   ListChecks,
   Server,
   Users,
   Award,
   BarChart3,
   ClipboardCheck,
+  Database,
   Download,
   Key,
 } from "lucide-react";
@@ -24,6 +26,7 @@ const navSections = [
       { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
       { name: "Projects", href: "/projects", icon: FolderOpen },
       { name: "Campaigns", href: "/campaigns", icon: Megaphone },
+      { name: "Iterations", href: "/iterations", icon: RefreshCw },
       { name: "Tasks", href: "/tasks", icon: ListChecks },
       { name: "Models", href: "/models", icon: Server },
     ],
@@ -45,6 +48,7 @@ const navSections = [
   {
     label: "DATA",
     items: [
+      { name: "Prompts", href: "/prompts", icon: Database },
       { name: "Exports", href: "/exports", icon: Download },
       { name: "API Keys", href: "/settings/api-keys", icon: Key },
     ],

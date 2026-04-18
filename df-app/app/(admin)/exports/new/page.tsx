@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle, XCircle } from "lucide-react";
+import { CheckCircle, XCircle, ChevronDown, AlertTriangle } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { PageHeader } from "@/components/admin/page-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -50,6 +51,9 @@ export default function ExportBuilderPage() {
   const [gateIaa, setGateIaa] = useState(true);
   const [gateGold, setGateGold] = useState(true);
   const [gateCoverage, setGateCoverage] = useState(false);
+
+  // Provenance summary
+  const [provenanceOpen, setProvenanceOpen] = useState(false);
 
   const matchCount = 28_531;
   const allGatesPassed = gateIaa && gateGold;
@@ -262,6 +266,84 @@ export default function ExportBuilderPage() {
               </label>
             ))}
           </div>
+        </div>
+
+        {/* Data Provenance Summary */}
+        <div className="rounded-comfortable border border-level-2 bg-white">
+          <button
+            type="button"
+            onClick={() => setProvenanceOpen(!provenanceOpen)}
+            className="flex w-full items-center justify-between p-5"
+          >
+            <h3 className="font-literata text-label-sm uppercase tracking-[0.5px] text-secondary-text">
+              Data Provenance Summary
+            </h3>
+            <ChevronDown
+              className={`h-4 w-4 text-[#6F7A77] transition-transform duration-200 ${
+                provenanceOpen ? "rotate-180" : ""
+              }`}
+            />
+          </button>
+
+          <AnimatePresence initial={false}>
+            {provenanceOpen && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                className="overflow-hidden"
+              >
+                <div className="space-y-3 border-t border-level-2 px-5 pb-5 pt-4">
+                  {/* Summary stats */}
+                  <div className="space-y-2">
+                    <div className="flex items-baseline gap-2">
+                      <span className="font-inter text-[12px] font-medium text-[#556260]">
+                        Model Versions:
+                      </span>
+                      <span className="font-inter text-body-md text-ink">
+                        claude-3.5-sonnet v1, claude-3.5-sonnet v2, llama-3-70b
+                      </span>
+                    </div>
+                    <div className="flex items-baseline gap-2">
+                      <span className="font-inter text-[12px] font-medium text-[#556260]">
+                        Guideline Versions:
+                      </span>
+                      <span className="font-inter text-body-md text-ink">
+                        v2.1 through v2.3 (3 versions)
+                      </span>
+                    </div>
+                    <div className="flex items-baseline gap-2">
+                      <span className="font-inter text-[12px] font-medium text-[#556260]">
+                        Unique Annotators:
+                      </span>
+                      <span className="font-inter text-body-md text-ink">
+                        24
+                      </span>
+                    </div>
+                    <div className="flex items-baseline gap-2">
+                      <span className="font-inter text-[12px] font-medium text-[#556260]">
+                        QA Coverage:
+                      </span>
+                      <span className="font-inter text-body-md text-ink">
+                        87% human-reviewed, 13% auto-approved only
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Warning callout */}
+                  <div className="flex items-start gap-3 rounded-standard border border-[#D97706] bg-[#FFF7ED] px-3 py-2.5">
+                    <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-[#D97706]" />
+                    <p className="font-inter text-[13px] text-ink leading-relaxed">
+                      Selected data spans 2 model versions and 3 guideline
+                      versions. This may introduce distribution inconsistencies
+                      in training.
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Preview bar */}
