@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { Plus } from "lucide-react";
 import { PageHeader } from "@/components/admin/page-header";
 import { StatCard } from "@/components/ui/stat-card";
@@ -8,6 +9,8 @@ import type { BadgeVariant } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { useCampaignStore } from "@/stores/campaign-store";
+import { useProjectStore } from "@/stores/project-store";
+import { useToast } from "@/components/ui/toast";
 
 const statusVariant: Record<string, BadgeVariant> = {
   Active: "active",
@@ -23,7 +26,10 @@ function formatDate(iso: string) {
 }
 
 export default function CampaignsPage() {
+  const router = useRouter();
   const campaigns = useCampaignStore((s) => s.campaigns);
+  const projects = useProjectStore((s) => s.projects);
+  const { toast } = useToast();
 
   const totalCampaigns = campaigns.length;
   const activeCampaigns = campaigns.filter((c) => c.status === "Active").length;
@@ -44,14 +50,10 @@ export default function CampaignsPage() {
       key: "projectId",
       header: "Project",
       render: (c: Record<string, unknown>) => {
-        const projectNames: Record<string, string> = {
-          "proj-helpfulness": "Helpfulness Track",
-          "proj-safety": "Safety Track",
-          "proj-code-eval": "Code Evaluation",
-        };
+        const project = projects.find((p) => p.id === (c.projectId as string));
         return (
           <span className="font-inter text-body-md text-tertiary-text">
-            {projectNames[c.projectId as string] || (c.projectId as string)}
+            {project?.name || (c.projectId as string)}
           </span>
         );
       },
@@ -100,7 +102,7 @@ export default function CampaignsPage() {
         title="Campaigns"
         subtitle="Alignment Lab"
         action={
-          <Button icon={<Plus className="h-4 w-4" />}>New Campaign</Button>
+          <Button icon={<Plus className="h-4 w-4" />} onClick={() => toast("Campaign creation coming soon", "info")}>New Campaign</Button>
         }
       />
 
@@ -120,9 +122,10 @@ export default function CampaignsPage() {
           data={campaigns as unknown as Record<string, unknown>[]}
           keyExtractor={(c) => c.id as string}
           onRowClick={(c) => {
-            const campaign = c as unknown as { id: string; rounds: Array<{ id: string }> };
+            const campaign = c as unknown as { id: string; rounds: Array<{ id: string; status: string }> };
             if (campaign.rounds.length > 0) {
-              window.location.href = `/campaigns/${campaign.id}/rounds/${campaign.rounds[campaign.rounds.length - 1].id}`;
+              const activeRound = campaign.rounds.find((r) => r.status === "Active") ?? campaign.rounds[0];
+              router.push(`/campaigns/${campaign.id}/rounds/${activeRound.id}`);
             }
           }}
         />

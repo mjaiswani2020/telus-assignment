@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { ChevronLeft, Check, Download, Eye, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +11,7 @@ import { ProgressBar } from "@/components/ui/progress-bar";
 import { DataTable } from "@/components/ui/data-table";
 import { useCampaignStore } from "@/stores/campaign-store";
 import { useModelStore } from "@/stores/model-store";
+import { useToast } from "@/components/ui/toast";
 
 function statusVariant(status: string): BadgeVariant {
   const map: Record<string, BadgeVariant> = {
@@ -30,6 +31,8 @@ interface CrossRoundRow extends Record<string, unknown> {
 
 export default function CampaignRoundDetailPage() {
   const params = useParams<{ id: string; roundId: string }>();
+  const router = useRouter();
+  const { toast } = useToast();
   const getCampaign = useCampaignStore((s) => s.getCampaign);
   const getRound = useCampaignStore((s) => s.getRound);
   const getRoundProgress = useCampaignStore((s) => s.getRoundProgress);
@@ -49,7 +52,7 @@ export default function CampaignRoundDetailPage() {
     );
   }
 
-  const modelEndpoints = endpoints.slice(0, 2);
+  const modelEndpoints = endpoints.filter((ep) => ep.activeTasks > 0).slice(0, 4);
 
   const crossRoundColumns = [
     {
@@ -266,16 +269,17 @@ export default function CampaignRoundDetailPage() {
 
       {/* Action buttons */}
       <div className="mt-4 flex items-center gap-3">
-        <Button icon={<ArrowRight className="h-4 w-4" />}>
+        <Button icon={<ArrowRight className="h-4 w-4" />} onClick={() => { toast("Round advanced to review", "success"); router.push("/reviews"); }}>
           Advance to Review
         </Button>
         <Button
           variant="secondary"
           icon={<Download className="h-4 w-4" />}
+          onClick={() => router.push("/exports/new")}
         >
           Export Round Data
         </Button>
-        <Button variant="ghost" icon={<Eye className="h-4 w-4" />}>
+        <Button variant="ghost" icon={<Eye className="h-4 w-4" />} onClick={() => toast("Annotation viewer coming soon", "info")}>
           View Annotations
         </Button>
       </div>

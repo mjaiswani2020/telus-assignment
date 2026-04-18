@@ -5,6 +5,7 @@ import { TaskHeader } from "@/components/annotator/task-header";
 import { GuidelinesDrawer } from "@/components/guidelines-drawer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/toast";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/cn";
 
@@ -56,6 +57,14 @@ const initialItems: RankItem[] = [
 export default function RankPage() {
   const [items, setItems] = useState<RankItem[]>(initialItems);
   const [guidelinesOpen, setGuidelinesOpen] = useState(false);
+  const [progress, setProgress] = useState(8);
+  const { toast } = useToast();
+
+  const handleSubmit = useCallback(() => {
+    setProgress((p) => p + 1);
+    setItems([...initialItems]);
+    toast("Ranking submitted successfully", "success");
+  }, [toast]);
 
   const moveUp = useCallback((index: number) => {
     if (index === 0) return;
@@ -80,7 +89,7 @@ export default function RankPage() {
       <TaskHeader
         taskName="Response Ranking"
         subtitle="N-Way Ranking"
-        progress={{ current: 8, total: 40 }}
+        progress={{ current: progress, total: 40 }}
         timer="3:01"
         onGuidelines={() => setGuidelinesOpen(true)}
       />
@@ -178,7 +187,7 @@ export default function RankPage() {
 
         {/* Submit */}
         <div>
-          <Button variant="primary" size="lg" className="w-full">
+          <Button variant="primary" size="lg" className="w-full" onClick={handleSubmit}>
             Submit Ranking &crarr; Enter
           </Button>
         </div>

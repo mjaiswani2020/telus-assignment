@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { DataTable } from "@/components/ui/data-table";
 import { useExportStore } from "@/stores/export-store";
+import { useToast } from "@/components/ui/toast";
 import type { ExportRecord } from "@/data/seed";
 
 type Row = ExportRecord & Record<string, unknown>;
@@ -37,6 +38,7 @@ function formatDate(iso: string): string {
 
 export default function ExportsPage() {
   const exports = useExportStore((s) => s.exports);
+  const { toast } = useToast();
 
   const columns: { key: string; header: string; className?: string; render?: (item: Row) => React.ReactNode }[] = [
     {
@@ -120,6 +122,7 @@ export default function ExportsPage() {
           columns={columns}
           data={exports as Row[]}
           keyExtractor={(item) => item.id}
+          onRowClick={() => toast("Export detail view coming soon", "info")}
         />
       </div>
     </div>

@@ -6,6 +6,7 @@ import { ResponsePanel } from "@/components/annotator/response-panel";
 import { GuidelinesDrawer } from "@/components/guidelines-drawer";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/input";
+import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/cn";
 
 const PROMPT_TEXT = `Write a function that implements merge sort in Python. The function should take a list of integers as input and return a new sorted list. Include proper error handling and type hints.`;
@@ -93,17 +94,27 @@ export default function PairwisePage() {
   const [preference, setPreference] = useState<PreferenceKey | null>(null);
   const [justification, setJustification] = useState("");
   const [guidelinesOpen, setGuidelinesOpen] = useState(false);
+  const [progress, setProgress] = useState(47);
+  const { toast } = useToast();
 
   const handleSubmit = useCallback(() => {
     if (!preference || justification.length < 20) return;
-    // Submit logic would go here
-  }, [preference, justification]);
+    setProgress((p) => p + 1);
+    setPreference(null);
+    setJustification("");
+    toast("Annotation submitted successfully", "success");
+  }, [preference, justification, toast]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLInputElement) return;
       if (e.key === "a" || e.key === "A") setPreference("a-better");
       if (e.key === "b" || e.key === "B") setPreference("b-better");
+      if (e.key === "1") setPreference("a-better");
+      if (e.key === "2") setPreference("a-slightly");
+      if (e.key === "3") setPreference("tie");
+      if (e.key === "4") setPreference("b-slightly");
+      if (e.key === "5") setPreference("b-better");
       if (e.key === "Enter" && preference && justification.length >= 20) handleSubmit();
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -115,7 +126,7 @@ export default function PairwisePage() {
       <TaskHeader
         taskName="Pairwise Preference"
         subtitle="Llama Helpfulness Eval — Round 3"
-        progress={{ current: 47, total: 200 }}
+        progress={{ current: progress, total: 200 }}
         timer="1:23"
         onGuidelines={() => setGuidelinesOpen(true)}
       />

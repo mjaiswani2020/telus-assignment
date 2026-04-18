@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { TaskHeader } from "@/components/annotator/task-header";
 import { GuidelinesDrawer } from "@/components/guidelines-drawer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/cn";
 
 const PROMPT_TEXT = `What are the key differences between REST and GraphQL APIs? When should I choose one over the other for a new project?`;
@@ -49,6 +50,19 @@ export default function RubricPage() {
   const [verbosity, setVerbosity] = useState<VerbosityValue>("appropriate");
   const [tone, setTone] = useState(4);
   const [guidelinesOpen, setGuidelinesOpen] = useState(false);
+  const [progress, setProgress] = useState(15);
+  const { toast } = useToast();
+
+  const handleSubmit = useCallback(() => {
+    if (!safety || !verbosity) return;
+    setProgress((p) => p + 1);
+    setHelpfulness(3);
+    setAccuracy(3);
+    setSafety(null);
+    setVerbosity(null);
+    setTone(3);
+    toast("Evaluation submitted successfully", "success");
+  }, [safety, verbosity, toast]);
 
   function SliderDimension({
     label,
@@ -138,7 +152,7 @@ export default function RubricPage() {
       <TaskHeader
         taskName="Rubric Evaluation"
         subtitle="Rubric Scoring"
-        progress={{ current: 15, total: 80 }}
+        progress={{ current: progress, total: 80 }}
         timer="2:15"
         onGuidelines={() => setGuidelinesOpen(true)}
       />
@@ -234,6 +248,7 @@ export default function RubricPage() {
             size="lg"
             className="w-full"
             disabled={!safety || !verbosity}
+            onClick={handleSubmit}
           >
             Submit Evaluation
           </Button>

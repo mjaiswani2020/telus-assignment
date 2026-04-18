@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { TaskHeader } from "@/components/annotator/task-header";
 import { ResponsePanel } from "@/components/annotator/response-panel";
 import { GuidelinesDrawer } from "@/components/guidelines-drawer";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
+import { useToast } from "@/components/ui/toast";
 import { AlertTriangle, Clock, Flag } from "lucide-react";
 import { cn } from "@/lib/cn";
 
@@ -54,13 +55,25 @@ export default function RedTeamPage() {
   const [riskCategory, setRiskCategory] = useState("");
   const [attackVector, setAttackVector] = useState("");
   const [guidelinesOpen, setGuidelinesOpen] = useState(false);
+  const [progress, setProgress] = useState(12);
+  const { toast } = useToast();
+
+  const handleSubmit = useCallback(() => {
+    if (!safetyChoice || !classification || !riskCategory || !attackVector) return;
+    setProgress((p) => p + 1);
+    setSafetyChoice(null);
+    setClassification(null);
+    setRiskCategory("");
+    setAttackVector("");
+    toast("Safety evaluation submitted", "success");
+  }, [safetyChoice, classification, riskCategory, attackVector, toast]);
 
   return (
     <>
       <TaskHeader
         taskName="Safety Red-Teaming"
         subtitle="Safety Red-Teaming — Round 5"
-        progress={{ current: 12, total: 50 }}
+        progress={{ current: progress, total: 50 }}
         timer="2:45"
         onGuidelines={() => setGuidelinesOpen(true)}
       />
@@ -235,6 +248,7 @@ export default function RedTeamPage() {
             size="lg"
             className="w-full"
             disabled={!safetyChoice || !classification || !riskCategory || !attackVector}
+            onClick={handleSubmit}
           >
             Submit Safety Evaluation
           </Button>

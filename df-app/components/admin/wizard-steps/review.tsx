@@ -8,6 +8,7 @@ import { useTaskStore } from "@/stores/task-store";
 import { useProjectStore } from "@/stores/project-store";
 import { useCampaignStore } from "@/stores/campaign-store";
 import { useModelStore } from "@/stores/model-store";
+import { useToast } from "@/components/ui/toast";
 import { AlertCircle } from "lucide-react";
 import { AnnotatorPreview } from "./annotator-preview";
 import type { TaskType } from "@/data/seed";
@@ -70,6 +71,7 @@ export function Review({
   const projects = useProjectStore((s) => s.projects);
   const campaigns = useCampaignStore((s) => s.campaigns);
   const endpoints = useModelStore((s) => s.endpoints);
+  const { toast } = useToast();
   const [errors, setErrors] = useState<string[]>([]);
 
   // Resolve display names
@@ -129,6 +131,7 @@ export function Review({
       assignedAnnotators: 0,
       createdAt: new Date().toISOString(),
     });
+    toast(status === "Active" ? "Task activated" : "Task saved as draft", "success");
     router.push("/tasks");
   };
 

@@ -7,6 +7,7 @@ import { ResponsePanel } from "@/components/annotator/response-panel";
 import { GuidelinesDrawer } from "@/components/guidelines-drawer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/cn";
 
 const PROMPT_TEXT = `Write a Python function that finds all pairs of numbers in a list that sum to a given target. The function should handle duplicates correctly and return unique pairs only.`;
@@ -78,10 +79,14 @@ export default function ArenaPage() {
   const [preference, setPreference] = useState<Preference>(null);
   const [submitted, setSubmitted] = useState(false);
   const [guidelinesOpen, setGuidelinesOpen] = useState(false);
+  const [progress, setProgress] = useState(12);
+  const { toast } = useToast();
 
   const handleSubmit = () => {
     if (!preference) return;
     setSubmitted(true);
+    setProgress((p) => p + 1);
+    toast("Verdict submitted — models revealed!", "success");
   };
 
   return (
@@ -89,7 +94,7 @@ export default function ArenaPage() {
       <TaskHeader
         taskName="Model Arena"
         subtitle="Blind Model Comparison"
-        progress={{ current: 12, total: 100 }}
+        progress={{ current: progress, total: 100 }}
         timer="0:48"
         onGuidelines={() => setGuidelinesOpen(true)}
       />

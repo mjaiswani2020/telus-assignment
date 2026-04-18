@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { TaskHeader } from "@/components/annotator/task-header";
 import { GuidelinesDrawer } from "@/components/guidelines-drawer";
 import { Button } from "@/components/ui/button";
 import { Tabs } from "@/components/ui/tabs";
+import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/cn";
 
 const ORIGINAL_TEXT = `Python's Global Interpreter Lock (GIL) is a mutex that prevents multiple threads from executing Python bytecode simultaneously. This means that even on multi-core systems, Python threads cannot truly run in parallel for CPU-bound tasks.
@@ -69,6 +70,14 @@ export default function EditPage() {
   const [editedText, setEditedText] = useState(INITIAL_EDIT);
   const [diffView, setDiffView] = useState("inline");
   const [guidelinesOpen, setGuidelinesOpen] = useState(false);
+  const [progress, setProgress] = useState(5);
+  const { toast } = useToast();
+
+  const handleSubmit = useCallback(() => {
+    setProgress((p) => p + 1);
+    setEditedText(INITIAL_EDIT);
+    toast("Edit submitted successfully", "success");
+  }, [toast]);
 
   const diff = useMemo(() => computeDiff(ORIGINAL_TEXT, editedText), [editedText]);
   const editStats = useMemo(() => computeEditDistance(ORIGINAL_TEXT, editedText), [editedText]);
@@ -78,7 +87,7 @@ export default function EditPage() {
       <TaskHeader
         taskName="Response Editing"
         subtitle="Minimal Correction Mode"
-        progress={{ current: 5, total: 30 }}
+        progress={{ current: progress, total: 30 }}
         timer="3:42"
         onGuidelines={() => setGuidelinesOpen(true)}
       />
@@ -198,7 +207,7 @@ export default function EditPage() {
 
         {/* Submit */}
         <div>
-          <Button variant="primary" size="lg" className="w-full">
+          <Button variant="primary" size="lg" className="w-full" onClick={handleSubmit}>
             Submit Edit
           </Button>
         </div>

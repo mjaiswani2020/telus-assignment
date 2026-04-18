@@ -11,6 +11,7 @@ import { DataTable } from "@/components/ui/data-table";
 import { useProjectStore } from "@/stores/project-store";
 import { useCampaignStore } from "@/stores/campaign-store";
 import { useTaskStore } from "@/stores/task-store";
+import { useToast } from "@/components/ui/toast";
 import type { Campaign } from "@/data/seed";
 import type { Task, TaskType } from "@/data/seed";
 
@@ -42,6 +43,7 @@ export default function ProjectDetailPage() {
   const getProject = useProjectStore((s) => s.getProject);
   const getCampaignsByProject = useCampaignStore((s) => s.getCampaignsByProject);
   const getTasksByProject = useTaskStore((s) => s.getTasksByProject);
+  const { toast } = useToast();
 
   const project = getProject(params.id);
 
@@ -159,7 +161,7 @@ export default function ProjectDetailPage() {
             {project.status}
           </Badge>
         </div>
-        <Button>New Campaign</Button>
+        <Button onClick={() => toast("Campaign creation coming soon", "info")}>New Campaign</Button>
       </div>
 
       {/* Stat Cards */}
@@ -195,6 +197,7 @@ export default function ProjectDetailPage() {
           columns={taskColumns as { key: string; header: string; className?: string; render?: (item: Task & Record<string, unknown>) => React.ReactNode }[]}
           data={tasks as (Task & Record<string, unknown>)[]}
           keyExtractor={(t) => t.id}
+          onRowClick={() => toast("Task detail view coming soon", "info")}
         />
       </div>
     </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { TaskHeader } from "@/components/annotator/task-header";
 import { ResponsePanel } from "@/components/annotator/response-panel";
 import { GuidelinesDrawer } from "@/components/guidelines-drawer";
@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/toast";
 import { Send } from "lucide-react";
 import { cn } from "@/lib/cn";
 
@@ -91,13 +92,29 @@ export default function ChatPage() {
   const [preference, setPreference] = useState<"a" | "b" | null>(null);
   const [messageInput, setMessageInput] = useState("");
   const [guidelinesOpen, setGuidelinesOpen] = useState(false);
+  const [progress, setProgress] = useState(3);
+  const [messages, setMessages] = useState<Message[]>(conversationHistory);
+  const { toast } = useToast();
+
+  const handleSend = useCallback(() => {
+    if (!messageInput.trim()) return;
+    setMessages((prev) => [...prev, { role: "user", content: messageInput }]);
+    setMessageInput("");
+  }, [messageInput]);
+
+  const handleSubmitPreference = useCallback(() => {
+    if (!preference) return;
+    setProgress((p) => p + 1);
+    setPreference(null);
+    toast("Turn preference submitted", "success");
+  }, [preference, toast]);
 
   return (
     <>
       <TaskHeader
         taskName="Conversational RLHF"
         subtitle="Anthropic Helpfulness — Multi-Turn"
-        progress={{ current: 3, total: 6 }}
+        progress={{ current: progress, total: 6 }}
         timer="4:12"
         onGuidelines={() => setGuidelinesOpen(true)}
       />
@@ -109,7 +126,7 @@ export default function ChatPage() {
             Conversation History
           </p>
           <div className="space-y-2.5 rounded-comfortable border border-level-2 bg-white p-4">
-            {conversationHistory.map((msg, idx) => (
+            {messages.map((msg, idx) => (
               <div
                 key={idx}
                 className={cn(
@@ -203,6 +220,14 @@ export default function ChatPage() {
           >
             B is better
           </Button>
+          <Button
+            variant="primary"
+            size="md"
+            disabled={!preference}
+            onClick={handleSubmitPreference}
+          >
+            Submit Choice
+          </Button>
         </div>
 
         {/* Message input */}
@@ -220,6 +245,7 @@ export default function ChatPage() {
               size="md"
               icon={<Send className="h-4 w-4" />}
               disabled={!messageInput.trim()}
+              onClick={handleSend}
             >
               Send
             </Button>
