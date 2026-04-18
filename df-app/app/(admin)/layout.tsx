@@ -40,7 +40,7 @@ export default function AdminLayout({
         <Sidebar />
         <div className="ml-[240px]">
           {/* Org selector + avatar fixed top-right */}
-          <div className="fixed top-0 right-0 z-20 flex items-center gap-3 pr-8 pt-5">
+          <div className="fixed top-0 right-0 left-[240px] z-20 flex items-center justify-end gap-3 bg-off-white px-8 py-3 border-b border-level-2">
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setOpen(!open)}
@@ -81,7 +81,7 @@ export default function AdminLayout({
               </span>
             </div>
           </div>
-          <main className="px-8 pt-5 pb-8">{children}</main>
+          <main className="px-8 pt-16 pb-8">{children}</main>
         </div>
       </div>
     </ToastProvider>
