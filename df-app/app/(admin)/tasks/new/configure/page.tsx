@@ -22,6 +22,12 @@ import {
   TYPE_DEFAULTS,
   TYPE_FEATURES,
   DEFAULT_GENERATION_PARAMS,
+  DEFAULT_SAFETY,
+  DEFAULT_EDITING,
+  DEFAULT_RANKING,
+  DEFAULT_RUBRIC_DIMENSIONS,
+  DEFAULT_ARENA,
+  DEFAULT_SFT,
   type TypeFeatures,
 } from "@/lib/task-type-config";
 
@@ -87,18 +93,13 @@ function ConfigureWizardInner() {
     allowFlag: true,
     customScaleLabels: [],
     customDimensionsList: [],
-    multiTurnConfig: {
-      minTurns: "3",
-      maxTurns: "8",
-      perTurnPreference: true,
-      allowUndo: true,
-    },
-    safetyConfig: {
-      contentWarnings: true,
-      breakTimerInterval: "30",
-      escalationButton: true,
-      wellbeingChecks: true,
-    },
+    multiTurnConfig: { minTurns: "3", maxTurns: "8", perTurnPreference: true, allowUndo: true },
+    safetyConfig: { ...DEFAULT_SAFETY },
+    editingConfig: { ...DEFAULT_EDITING },
+    rankingConfig: { ...DEFAULT_RANKING },
+    rubricDimensions: [...DEFAULT_RUBRIC_DIMENSIONS],
+    arenaConfig: { ...DEFAULT_ARENA },
+    sftConfig: { ...DEFAULT_SFT },
   });
 
   // Step 5 -- Quality

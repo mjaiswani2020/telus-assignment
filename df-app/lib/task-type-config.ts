@@ -23,7 +23,7 @@ export const TEMPLATE_TO_TYPE: Record<string, TaskType | null> = {
   "n-way-ranking": "Ranking",
   "rubric-scoring": "Rubric",
   "model-arena": "Arena",
-  scratch: null, // user picks in wizard
+  scratch: null,
 };
 
 // ---------------------------------------------------------------------------
@@ -81,25 +81,39 @@ export const TEMPLATE_METADATA: Record<
 // ---------------------------------------------------------------------------
 
 export interface TypeFeatures {
+  // Annotation step sections
   showPreferenceScale: boolean;
+  showPolarity: boolean;
+  showTies: boolean;
+  showAdditionalInputs: boolean;
   showMultiTurnConfig: boolean;
   showSafetyConfig: boolean;
+  showEditingConfig: boolean;
+  showRankingConfig: boolean;
+  showRubricConfig: boolean;
+  showArenaConfig: boolean;
+  showSftConfig: boolean;
+  // Models step sections
   showGenerationParams: boolean;
   showModels: boolean;
   showPairing: boolean;
-  showRubricDimensions: boolean;
-  showEditingConfig: boolean;
 }
 
 const BASE_FEATURES: TypeFeatures = {
   showPreferenceScale: true,
+  showPolarity: true,
+  showTies: true,
+  showAdditionalInputs: true,
   showMultiTurnConfig: false,
   showSafetyConfig: false,
+  showEditingConfig: false,
+  showRankingConfig: false,
+  showRubricConfig: false,
+  showArenaConfig: false,
+  showSftConfig: false,
   showGenerationParams: true,
   showModels: true,
   showPairing: true,
-  showRubricDimensions: false,
-  showEditingConfig: false,
 };
 
 export const TYPE_FEATURES: Record<TaskType, TypeFeatures> = {
@@ -111,6 +125,10 @@ export const TYPE_FEATURES: Record<TaskType, TypeFeatures> = {
   SFT: {
     ...BASE_FEATURES,
     showPreferenceScale: false,
+    showPolarity: false,
+    showTies: false,
+    showAdditionalInputs: false,
+    showSftConfig: true,
     showModels: false,
     showPairing: false,
     showGenerationParams: false,
@@ -121,24 +139,38 @@ export const TYPE_FEATURES: Record<TaskType, TypeFeatures> = {
   },
   Editing: {
     ...BASE_FEATURES,
+    showPreferenceScale: false,
+    showPolarity: false,
+    showTies: false,
+    showAdditionalInputs: false,
     showEditingConfig: true,
     showPairing: false,
   },
   Ranking: {
     ...BASE_FEATURES,
+    showPreferenceScale: false,
+    showPolarity: false,
+    showTies: false,
+    showAdditionalInputs: true,
+    showRankingConfig: true,
   },
   Rubric: {
     ...BASE_FEATURES,
-    showRubricDimensions: true,
+    showPreferenceScale: false,
+    showPolarity: false,
+    showTies: false,
+    showAdditionalInputs: false,
+    showRubricConfig: true,
     showPairing: false,
   },
   Arena: {
     ...BASE_FEATURES,
+    showArenaConfig: true,
   },
 };
 
 // ---------------------------------------------------------------------------
-// Default values per task type — applied when template is selected
+// Config sub-types
 // ---------------------------------------------------------------------------
 
 export interface MultiTurnConfig {
@@ -153,6 +185,45 @@ export interface SafetyConfig {
   breakTimerInterval: string;
   escalationButton: boolean;
   wellbeingChecks: boolean;
+  riskCategories: string[];
+  attackVectors: string[];
+  classificationLabels: string[];
+}
+
+export interface EditingConfig {
+  editingMode: "minimal" | "substantial";
+  showDiffView: boolean;
+}
+
+export interface RankingConfig {
+  responsesToRank: string;
+  allowTiedRanks: boolean;
+  rankingMethod: "full" | "top-k";
+  topK: string;
+}
+
+export interface RubricDimension {
+  name: string;
+  description: string;
+  scaleType: "slider" | "categorical";
+  scaleMin: string;
+  scaleMax: string;
+  categoricalOptions: string[];
+}
+
+export interface ArenaConfig {
+  blindEvaluation: boolean;
+  revealModelsAfterSubmit: boolean;
+  matchmaking: "random" | "swiss" | "round-robin";
+  initialElo: string;
+  kFactor: string;
+}
+
+export interface SftConfig {
+  promptCharLimit: string;
+  responseCharLimit: string;
+  showReferenceResponse: boolean;
+  difficultyLevels: string[];
 }
 
 export interface GenerationParams {
@@ -167,6 +238,10 @@ export interface CustomDimension {
   description: string;
 }
 
+// ---------------------------------------------------------------------------
+// Defaults
+// ---------------------------------------------------------------------------
+
 export const DEFAULT_MULTI_TURN: MultiTurnConfig = {
   minTurns: "3",
   maxTurns: "8",
@@ -179,6 +254,59 @@ export const DEFAULT_SAFETY: SafetyConfig = {
   breakTimerInterval: "30",
   escalationButton: true,
   wellbeingChecks: true,
+  riskCategories: [
+    "Violence & Physical Harm",
+    "Cybersecurity Exploits",
+    "Privacy Violation",
+    "Deception & Manipulation",
+    "Bias & Discrimination",
+    "Illegal Activity",
+    "Self-Harm",
+    "Other",
+  ],
+  attackVectors: [
+    "Jailbreak",
+    "Roleplay / Fiction Framing",
+    "Encoding / Obfuscation",
+    "Multi-Step Escalation",
+    "Authority Impersonation",
+    "Context Shifting",
+    "Direct Request",
+  ],
+  classificationLabels: ["Safe", "Borderline", "Unsafe"],
+};
+
+export const DEFAULT_EDITING: EditingConfig = {
+  editingMode: "minimal",
+  showDiffView: true,
+};
+
+export const DEFAULT_RANKING: RankingConfig = {
+  responsesToRank: "4",
+  allowTiedRanks: false,
+  rankingMethod: "full",
+  topK: "3",
+};
+
+export const DEFAULT_RUBRIC_DIMENSIONS: RubricDimension[] = [
+  { name: "Helpfulness", description: "Does the response address the user's needs?", scaleType: "slider", scaleMin: "1", scaleMax: "5", categoricalOptions: [] },
+  { name: "Factual Accuracy", description: "Are all claims factually correct?", scaleType: "slider", scaleMin: "1", scaleMax: "5", categoricalOptions: [] },
+  { name: "Safety", description: "Does the response avoid harmful content?", scaleType: "categorical", scaleMin: "", scaleMax: "", categoricalOptions: ["Safe", "Borderline", "Unsafe"] },
+];
+
+export const DEFAULT_ARENA: ArenaConfig = {
+  blindEvaluation: true,
+  revealModelsAfterSubmit: true,
+  matchmaking: "random",
+  initialElo: "1500",
+  kFactor: "32",
+};
+
+export const DEFAULT_SFT: SftConfig = {
+  promptCharLimit: "2000",
+  responseCharLimit: "4000",
+  showReferenceResponse: true,
+  difficultyLevels: ["Easy", "Medium", "Hard", "Adversarial"],
 };
 
 export const DEFAULT_GENERATION_PARAMS: GenerationParams = {
@@ -188,7 +316,10 @@ export const DEFAULT_GENERATION_PARAMS: GenerationParams = {
   systemPrompt: "",
 };
 
-// Partial overrides applied to wizard state when a template is selected
+// ---------------------------------------------------------------------------
+// Type defaults applied to wizard state when template is selected
+// ---------------------------------------------------------------------------
+
 export interface TypeDefaults {
   annotation?: {
     preferenceScale?: string;
@@ -237,15 +368,13 @@ export const TYPE_DEFAULTS: Record<TaskType, TypeDefaults> = {
     quality: { preset: "production" },
   },
   Editing: {
-    annotation: { preferencePolarity: "pick-better" },
     models: { pairingStrategy: "same", responsesPerTask: "1" },
   },
   Ranking: {
-    annotation: { preferenceScale: "binary", preferencePolarity: "pick-better", allowTies: true },
     models: { pairingStrategy: "different", responsesPerTask: "4" },
   },
   Rubric: {
-    annotation: { preferencePolarity: "pick-better", customDimensions: true },
+    annotation: { customDimensions: true },
     models: { responsesPerTask: "1" },
   },
   Arena: {

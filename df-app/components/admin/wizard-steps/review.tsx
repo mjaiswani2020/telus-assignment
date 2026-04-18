@@ -208,50 +208,73 @@ export function Review({
         </SectionBlock>
 
         <SectionBlock title="Annotation">
-          <Field label="Preference Scale" value={annotation.preferenceScale} />
-          <Field
-            label="Polarity"
-            value={
-              polarityLabels[annotation.preferencePolarity] ||
-              annotation.preferencePolarity
-            }
-          />
-          <Field
-            label="Allow Ties"
-            value={annotation.allowTies ? "Yes" : "No"}
-          />
-          <Field
-            label="Justification"
-            value={annotation.justification ? "Required" : "No"}
-          />
-          <Field
-            label="Safety Labels"
-            value={annotation.safetyLabels ? "Enabled" : "No"}
-          />
-          <Field
-            label="Risk Categories"
-            value={annotation.riskCategories ? "Enabled" : "No"}
-          />
-          <Field
-            label="Custom Dimensions"
-            value={
-              annotation.customDimensions
-                ? `${annotation.customDimensionsList.length || 2} dimensions`
-                : "No"
-            }
-          />
-          <Field
-            label="Min Time"
-            value={annotation.minTime ? `${annotation.minTime}s` : "--"}
-          />
-          <Field
-            label="Allow Skip"
-            value={annotation.allowSkip ? "Yes" : "No"}
-          />
-          <Field
-            label="Allow Flag"
-            value={annotation.allowFlag ? "Yes" : "No"}
-          />
+          {/* Comparison types: scale, polarity, ties */}
+          {taskType && ["Pairwise", "Conversational", "Safety", "Arena"].includes(taskType) && (
+            <>
+              <Field label="Preference Scale" value={annotation.preferenceScale} />
+              <Field label="Polarity" value={polarityLabels[annotation.preferencePolarity] || annotation.preferencePolarity} />
+              <Field label="Allow Ties" value={annotation.allowTies ? "Yes" : "No"} />
+              <Field label="Justification" value={annotation.justification ? "Required" : "No"} />
+            </>
+          )}
+          {/* SFT-specific */}
+          {taskType === "SFT" && (
+            <>
+              <Field label="Prompt Char Limit" value={annotation.sftConfig.promptCharLimit} />
+              <Field label="Response Char Limit" value={annotation.sftConfig.responseCharLimit} />
+              <Field label="Reference Response" value={annotation.sftConfig.showReferenceResponse ? "Shown" : "Hidden"} />
+              <Field label="Difficulty Levels" value={annotation.sftConfig.difficultyLevels.join(", ")} />
+            </>
+          )}
+          {/* Editing-specific */}
+          {taskType === "Editing" && (
+            <>
+              <Field label="Editing Mode" value={annotation.editingConfig.editingMode === "minimal" ? "Minimal Correction" : "Substantial Rewrite"} />
+              <Field label="Diff View" value={annotation.editingConfig.showDiffView ? "Enabled" : "Disabled"} />
+            </>
+          )}
+          {/* Ranking-specific */}
+          {taskType === "Ranking" && (
+            <>
+              <Field label="Responses to Rank" value={annotation.rankingConfig.responsesToRank} />
+              <Field label="Ranking Method" value={annotation.rankingConfig.rankingMethod === "full" ? "Full Ordering" : `Top-${annotation.rankingConfig.topK}`} />
+              <Field label="Allow Tied Ranks" value={annotation.rankingConfig.allowTiedRanks ? "Yes" : "No"} />
+            </>
+          )}
+          {/* Rubric-specific */}
+          {taskType === "Rubric" && (
+            <Field label="Scoring Dimensions" value={`${annotation.rubricDimensions.length} dimensions`} />
+          )}
+          {/* Arena-specific */}
+          {taskType === "Arena" && (
+            <>
+              <Field label="Blind Evaluation" value={annotation.arenaConfig.blindEvaluation ? "Yes" : "No"} />
+              <Field label="Reveal After Submit" value={annotation.arenaConfig.revealModelsAfterSubmit ? "Yes" : "No"} />
+              <Field label="Matchmaking" value={annotation.arenaConfig.matchmaking} />
+              <Field label="Initial Elo" value={annotation.arenaConfig.initialElo} />
+            </>
+          )}
+          {/* Safety-specific */}
+          {taskType === "Safety" && (
+            <>
+              <Field label="Content Warnings" value={annotation.safetyConfig.contentWarnings ? "Enabled" : "No"} />
+              <Field label="Break Timer" value={`${annotation.safetyConfig.breakTimerInterval} min`} />
+              <Field label="Risk Categories" value={`${annotation.safetyConfig.riskCategories.length} categories`} />
+              <Field label="Attack Vectors" value={`${annotation.safetyConfig.attackVectors.length} vectors`} />
+            </>
+          )}
+          {/* Multi-turn */}
+          {taskType === "Conversational" && (
+            <>
+              <Field label="Min Turns" value={annotation.multiTurnConfig.minTurns} />
+              <Field label="Max Turns" value={annotation.multiTurnConfig.maxTurns} />
+              <Field label="Per-Turn Preference" value={annotation.multiTurnConfig.perTurnPreference ? "Yes" : "No"} />
+            </>
+          )}
+          {/* Common */}
+          <Field label="Min Time" value={annotation.minTime ? `${annotation.minTime}s` : "--"} />
+          <Field label="Allow Skip" value={annotation.allowSkip ? "Yes" : "No"} />
+          <Field label="Allow Flag" value={annotation.allowFlag ? "Yes" : "No"} />
         </SectionBlock>
 
         <SectionBlock title="Quality Pipeline">

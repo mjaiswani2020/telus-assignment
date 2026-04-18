@@ -127,7 +127,7 @@ function PairwisePreview({
   return (
     <>
       {/* Arena badge */}
-      {isArena && (
+      {isArena && annotation.arenaConfig.blindEvaluation && (
         <div className="flex justify-center py-1.5">
           <span className="inline-flex items-center gap-1 rounded-full bg-[#FFFBEB] px-2.5 py-0.5 font-inter text-[9px] font-medium text-[#B45309]">
             <Swords className="h-3 w-3" />
@@ -310,7 +310,7 @@ function SFTPreview() {
   );
 }
 
-function EditingPreview() {
+function EditingPreview({ annotation }: { annotation: AnnotationData }) {
   return (
     <div className="grid grid-cols-2 gap-2 p-3">
       <div className="rounded-standard border border-level-2 bg-white">
@@ -337,9 +337,16 @@ function EditingPreview() {
           <span className="font-inter text-[10px] font-medium text-ink">
             Editable Response
           </span>
-          <span className="rounded-tight bg-selected-bg px-1.5 py-0.5 font-inter text-[8px] text-deep-teal">
-            Diff view
-          </span>
+          <div className="flex items-center gap-1.5">
+            <span className="rounded-tight bg-[#FFFBEB] px-1.5 py-0.5 font-inter text-[7px] text-[#B45309]">
+              {annotation.editingConfig.editingMode === "minimal" ? "Minimal" : "Rewrite"}
+            </span>
+            {annotation.editingConfig.showDiffView && (
+              <span className="rounded-tight bg-selected-bg px-1.5 py-0.5 font-inter text-[8px] text-deep-teal">
+                Diff
+              </span>
+            )}
+          </div>
         </div>
         <div className="h-28 overflow-hidden p-2.5">
           <div className="space-y-1">
@@ -357,11 +364,11 @@ function EditingPreview() {
 
 function RubricPreview({ annotation }: { annotation: AnnotationData }) {
   const dimensions =
-    annotation.customDimensionsList.length > 0
-      ? annotation.customDimensionsList
+    annotation.rubricDimensions.length > 0
+      ? annotation.rubricDimensions.map((d) => ({ name: d.name, description: d.description, scaleType: d.scaleType, categoricalOptions: d.categoricalOptions }))
       : [
-          { name: "Helpfulness", description: "" },
-          { name: "Accuracy", description: "" },
+          { name: "Helpfulness", description: "", scaleType: "slider" as const, categoricalOptions: [] },
+          { name: "Accuracy", description: "", scaleType: "slider" as const, categoricalOptions: [] },
         ];
 
   return (
@@ -384,20 +391,22 @@ function RubricPreview({ annotation }: { annotation: AnnotationData }) {
                   {dim.name || `Dimension ${i + 1}`}
                 </span>
                 <span className="font-inter text-[8px] text-tertiary-text">
-                  1-5
+                  {dim.scaleType === "categorical" ? "categorical" : "1-5"}
                 </span>
               </div>
-              <div className="mt-1 flex gap-0.5">
-                {[1, 2, 3, 4, 5].map((n) => (
-                  <span
-                    key={n}
-                    className={cn(
-                      "flex-1 h-2 rounded-full",
-                      n <= 3 ? "bg-deep-teal/60" : "bg-level-2"
-                    )}
-                  />
-                ))}
-              </div>
+              {dim.scaleType === "categorical" && dim.categoricalOptions.length > 0 ? (
+                <div className="mt-1 flex gap-0.5">
+                  {dim.categoricalOptions.map((opt, j) => (
+                    <span key={j} className={cn("rounded-tight px-1 py-0.5 font-inter text-[7px]", j === 0 ? "bg-deep-teal/20 text-deep-teal" : "border border-level-2 text-tertiary-text")}>{opt}</span>
+                  ))}
+                </div>
+              ) : (
+                <div className="mt-1 flex gap-0.5">
+                  {[1, 2, 3, 4, 5].map((n) => (
+                    <span key={n} className={cn("flex-1 h-2 rounded-full", n <= 3 ? "bg-deep-teal/60" : "bg-level-2")} />
+                  ))}
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -544,7 +553,7 @@ export function AnnotatorPreview({
           <SafetyPreview annotation={annotation} />
         )}
         {taskType === "SFT" && <SFTPreview />}
-        {taskType === "Editing" && <EditingPreview />}
+        {taskType === "Editing" && <EditingPreview annotation={annotation} />}
         {taskType === "Rubric" && <RubricPreview annotation={annotation} />}
         {taskType === "Ranking" && <RankingPreview />}
         {(taskType === "Pairwise" || taskType === "Conversational") && (
