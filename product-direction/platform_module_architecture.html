@@ -1,0 +1,134 @@
+
+<style>
+h2.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+.mod-grid{display:grid;gap:12px}
+.mod-section{margin-bottom:6px}
+.mod-section-label{font:500 11px var(--font-sans);color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;padding-left:4px}
+.mod-card{border:1px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px 16px;background:var(--color-background-primary)}
+.mod-card-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.mod-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.mod-name{font:500 14px var(--font-sans);color:var(--color-text-primary)}
+.mod-num{font:400 11px var(--font-mono);color:var(--color-text-tertiary)}
+.mod-desc{font:400 13px var(--font-sans);color:var(--color-text-secondary);line-height:1.5}
+.mod-pain{font:400 12px var(--font-sans);color:var(--color-text-warning);margin-top:6px;padding-top:6px;border-top:1px solid var(--color-border-tertiary)}
+.flow-row{display:flex;align-items:center;gap:6px;padding:8px 0;justify-content:center}
+.flow-arrow{color:var(--color-text-tertiary);font-size:16px}
+.flow-label{font:400 12px var(--font-sans);color:var(--color-text-tertiary);padding:4px 10px;border:1px dashed var(--color-border-secondary);border-radius:var(--border-radius-md)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;padding:10px 0;margin-bottom:12px}
+.legend-item{display:flex;align-items:center;gap:5px;font:400 12px var(--font-sans);color:var(--color-text-secondary)}
+.legend-dot{width:8px;height:8px;border-radius:50%}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+</style>
+
+<h2 class="sr-only">Platform module architecture for RLHF data collection</h2>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#7F77DD"></div>Researcher-owned</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#1D9E75"></div>Task designer-owned</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#378ADD"></div>Annotator-facing</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#BA7517"></div>QA reviewer-owned</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#D4537E"></div>Automated + Researcher</div>
+</div>
+
+<div class="mod-grid">
+
+  <div class="mod-section">
+    <div class="mod-section-label">Orchestration layer</div>
+    <div class="mod-card" style="border-left:3px solid #7F77DD;border-radius:0 var(--border-radius-lg) var(--border-radius-lg) 0">
+      <div class="mod-card-header"><div class="mod-dot" style="background:#7F77DD"></div><div class="mod-name">Project hub</div><div class="mod-num">M1</div></div>
+      <div class="mod-desc">The top-level container. A "project" = one client engagement (e.g., Anthropic's RLHF campaign). Contains iteration cycles, target metrics, data volume goals, and model version history. This is where the researcher defines "what are we trying to achieve this week" and tracks progress across iterations.</div>
+      <div class="mod-pain">Addresses pain: 1.2 (strategy feedback), 1.3 (cross-iteration memory)</div>
+    </div>
+  </div>
+
+  <div class="mod-section">
+    <div class="mod-section-label">Configuration layer</div>
+    <div class="pair">
+      <div class="mod-card" style="border-left:3px solid #1D9E75;border-radius:0 var(--border-radius-lg) var(--border-radius-lg) 0">
+        <div class="mod-card-header"><div class="mod-dot" style="background:#1D9E75"></div><div class="mod-name">Task studio</div><div class="mod-num">M2</div></div>
+        <div class="mod-desc">Where task designers build annotation tasks: define guidelines, rubrics, evaluation dimensions, preference scales, risk categories, and attack vectors. Version-controlled — every guideline change is tracked and can be A/B tested.</div>
+        <div class="mod-pain">Addresses pain: 1.1 (translation gap), 2.1 (versioning), 2.2 (rubric ambiguity), 2.3 (A/B testing)</div>
+      </div>
+      <div class="mod-card" style="border-left:3px solid #1D9E75;border-radius:0 var(--border-radius-lg) var(--border-radius-lg) 0">
+        <div class="mod-card-header"><div class="mod-dot" style="background:#1D9E75"></div><div class="mod-name">Workforce hub</div><div class="mod-num">M3</div></div>
+        <div class="mod-desc">Annotator lifecycle management: recruitment pipelines, multi-stage vetting (Meta's 4-test process), skill tiering, task routing, compensation tracking, communication channels, and demographics. Maps annotators to task types by capability.</div>
+        <div class="mod-pain">Addresses pain: 4.2 (fatigue detection), 4.6 (feedback loops to annotators)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-row">
+    <span class="flow-arrow">&#8595;</span>
+    <span class="flow-label">Task configs + annotator assignments flow down</span>
+    <span class="flow-arrow">&#8595;</span>
+  </div>
+
+  <div class="mod-section">
+    <div class="mod-section-label">Generation layer</div>
+    <div class="pair">
+      <div class="mod-card" style="border-left:3px solid #D85A30;border-radius:0 var(--border-radius-lg) var(--border-radius-lg) 0">
+        <div class="mod-card-header"><div class="mod-dot" style="background:#D85A30"></div><div class="mod-name">Model gateway</div><div class="mod-num">M4</div></div>
+        <div class="mod-desc">Connects to client model endpoints. Manages model variant deployment, temperature/sampling configs, response pair generation, and latency optimization. Tracks which model version generated each response for full provenance.</div>
+        <div class="mod-pain">Addresses pain: 3.1 (infra), 4.4 (latency)</div>
+      </div>
+      <div class="mod-card" style="border-left:3px solid #D85A30;border-radius:0 var(--border-radius-lg) var(--border-radius-lg) 0">
+        <div class="mod-card-header"><div class="mod-dot" style="background:#D85A30"></div><div class="mod-name">Prompt engine</div><div class="mod-num">M5</div></div>
+        <div class="mod-desc">Manages prompt sourcing and diversity: human-written prompts, model-generated synthetic prompts, adversarial seed prompts. Tracks topic/category coverage, detects distribution gaps, and ensures diversity targets are met per batch.</div>
+        <div class="mod-pain">Addresses pain: 3.2 (diversity), 3.3 (quality gate)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-row">
+    <span class="flow-arrow">&#8595;</span>
+    <span class="flow-label">Prompts + model responses flow into annotation</span>
+    <span class="flow-arrow">&#8595;</span>
+  </div>
+
+  <div class="mod-section">
+    <div class="mod-section-label">Core execution layer</div>
+    <div class="mod-card" style="border-left:3px solid #378ADD;border-radius:0 var(--border-radius-lg) var(--border-radius-lg) 0">
+      <div class="mod-card-header"><div class="mod-dot" style="background:#378ADD"></div><div class="mod-name">Annotation workbench</div><div class="mod-num">M6</div></div>
+      <div class="mod-desc">The annotator-facing interface. Supports multiple task modes: SFT demonstration writing, pairwise preference comparison with strength ratings, multi-turn conversational annotation, red-team adversarial probing, and safety labeling. Includes conversation branching, response editing (as Anthropic allowed for Upworkers), and real-time quality signals. This is the heart of the platform.</div>
+      <div class="mod-pain">Addresses pain: 4.1 (cognitive load), 4.3 (signal degradation), 4.5 (multi-turn), 4.6 (real-time feedback)</div>
+    </div>
+  </div>
+
+  <div class="flow-row">
+    <span class="flow-arrow">&#8595;</span>
+    <span class="flow-label">Raw annotations flow into quality control</span>
+    <span class="flow-arrow">&#8595;</span>
+  </div>
+
+  <div class="mod-section">
+    <div class="mod-section-label">Quality & processing layer</div>
+    <div class="pair">
+      <div class="mod-card" style="border-left:3px solid #BA7517;border-radius:0 var(--border-radius-lg) var(--border-radius-lg) 0">
+        <div class="mod-card-header"><div class="mod-dot" style="background:#BA7517"></div><div class="mod-name">Quality control center</div><div class="mod-num">M7</div></div>
+        <div class="mod-desc">QA review workflows (approve/edit/reject), inter-annotator agreement monitoring, automated quality scoring using client reward models, drift detection over time, and calibration checks. Feeds quality signals back to Workforce Hub and Task Studio.</div>
+        <div class="mod-pain">Addresses pain: 5.1 (QA bottleneck), 5.2 (rejection cost), 2.2 (ambiguity detection)</div>
+      </div>
+      <div class="mod-card" style="border-left:3px solid #D4537E;border-radius:0 var(--border-radius-lg) var(--border-radius-lg) 0">
+        <div class="mod-card-header"><div class="mod-dot" style="background:#D4537E"></div><div class="mod-name">Data engine</div><div class="mod-num">M8</div></div>
+        <div class="mod-desc">Data processing pipeline: formatting for training, train/test splitting, cross-batch mixing with configurable ratios, deduplication, distribution analysis, coverage reporting. Exports to client training infrastructure in their required format.</div>
+        <div class="mod-pain">Addresses pain: 5.3 (ad-hoc mixing), 5.4 (distribution analysis)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-row">
+    <span class="flow-arrow">&#8595;</span>
+    <span class="flow-label">Processed data exports to client + results feed back</span>
+    <span class="flow-arrow">&#8593;</span>
+  </div>
+
+  <div class="mod-section">
+    <div class="mod-section-label">Intelligence layer</div>
+    <div class="mod-card" style="border-left:3px solid #7F77DD;border-radius:0 var(--border-radius-lg) var(--border-radius-lg) 0">
+      <div class="mod-card-header"><div class="mod-dot" style="background:#7F77DD"></div><div class="mod-name">Analytics & insights</div><div class="mod-num">M9</div></div>
+      <div class="mod-desc">Cross-iteration analytics: reward model accuracy trends, data quality over time, annotator performance, coverage gaps, false refusal rates, cost-per-annotation, throughput metrics. Generates actionable recommendations for next iteration strategy. Closes the loop back to Project Hub.</div>
+      <div class="mod-pain">Addresses pain: 6.1 (RM accuracy visibility), 6.2 (slow feedback), 6.3 (eval cost)</div>
+    </div>
+  </div>
+
+</div>

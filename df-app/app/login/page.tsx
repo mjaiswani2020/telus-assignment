@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Loader2, CheckSquare, TrendingUp, Download } from "lucide-react";
+import { Loader2, CheckSquare, TrendingUp, Download, BarChart3, FileText } from "lucide-react";
 import { fadeSlideUp } from "@/lib/animations";
 
 type LoginMode = "annotator" | "admin";
@@ -203,6 +203,38 @@ export default function LoginPage() {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Product links */}
+        <div className="flex gap-3">
+          <Link
+            href="/roadmap"
+            className="flex flex-1 items-center gap-3 rounded-comfortable border border-white/15 px-4 py-3 transition-colors hover:border-white/30 hover:bg-white/5"
+          >
+            <BarChart3 className="h-[18px] w-[18px] shrink-0 text-white/50" />
+            <div className="flex flex-col gap-0.5">
+              <span className="font-inter text-[13px] font-medium text-off-white">
+                Product Roadmap
+              </span>
+              <span className="font-inter text-[11px] text-white/50">
+                78 features across 5 phases
+              </span>
+            </div>
+          </Link>
+          <Link
+            href="/product-direction"
+            className="flex flex-1 items-center gap-3 rounded-comfortable border border-white/15 px-4 py-3 transition-colors hover:border-white/30 hover:bg-white/5"
+          >
+            <FileText className="h-[18px] w-[18px] shrink-0 text-white/50" />
+            <div className="flex flex-col gap-0.5">
+              <span className="font-inter text-[13px] font-medium text-off-white">
+                Product Direction
+              </span>
+              <span className="font-inter text-[11px] text-white/50">
+                Research, architecture &amp; strategy
+              </span>
+            </div>
+          </Link>
         </div>
       </div>
     </div>
