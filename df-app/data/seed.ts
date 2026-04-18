@@ -91,6 +91,8 @@ export interface Task {
   createdAt: string;
 }
 
+export type FatigueRisk = 'none' | 'low' | 'medium' | 'high';
+
 export interface Annotator {
   id: string;
   name: string;
@@ -103,6 +105,9 @@ export interface Annotator {
   tasks30d: number;
   trend: AnnotatorTrend;
   joinedAt: string;
+  sessionHours?: number;
+  fatigueRisk?: FatigueRisk;
+  driftAlert?: string | null;
 }
 
 export type ReviewTier = 'human-review' | 'escalated';
@@ -560,8 +565,11 @@ export const seedAnnotators: Annotator[] = [
     goldAccuracy: 88,
     iaa: 0.81,
     tasks30d: 956,
-    trend: 'Stable',
+    trend: 'Declining',
     joinedAt: '2025-07-21T00:00:00Z',
+    sessionHours: 7.2,
+    fatigueRisk: 'high',
+    driftAlert: '78% A-preference in last 50 tasks',
   },
   {
     id: 'ann-004',
@@ -601,6 +609,9 @@ export const seedAnnotators: Annotator[] = [
     tasks30d: 1_087,
     trend: 'Improving',
     joinedAt: '2025-08-28T00:00:00Z',
+    sessionHours: 5.8,
+    fatigueRisk: 'medium',
+    driftAlert: null,
   },
   {
     id: 'ann-007',
@@ -625,8 +636,11 @@ export const seedAnnotators: Annotator[] = [
     goldAccuracy: 93,
     iaa: 0.86,
     tasks30d: 1_345,
-    trend: 'Stable',
+    trend: 'Declining',
     joinedAt: '2025-06-10T00:00:00Z',
+    sessionHours: 8.5,
+    fatigueRisk: 'high',
+    driftAlert: null,
   },
   {
     id: 'ann-009',
@@ -640,6 +654,9 @@ export const seedAnnotators: Annotator[] = [
     tasks30d: 623,
     trend: 'Improving',
     joinedAt: '2025-10-05T00:00:00Z',
+    sessionHours: 4.1,
+    fatigueRisk: 'low',
+    driftAlert: 'Gold accuracy dropped from 85% to 62% in last 2 hours',
   },
   {
     id: 'ann-010',

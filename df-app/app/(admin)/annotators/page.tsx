@@ -8,7 +8,20 @@ import {
   Minus,
   ArrowRight,
   Settings2,
+  AlertTriangle,
+  Clock,
+  Activity,
 } from "lucide-react";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Cell,
+} from "recharts";
 import { PageHeader } from "@/components/admin/page-header";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -205,6 +218,37 @@ const difficultyColor: Record<string, string> = {
   Hard: "bg-[#FFF7ED] text-[#EA580C] border-[#FDBA74]",
 };
 
+// ---- Session Health mock data ----
+
+const SESSION_QUALITY_DATA = [
+  { range: "0-2h", quality: 84, fill: "#059669" },
+  { range: "2-4h", quality: 81, fill: "#16A34A" },
+  { range: "4-6h", quality: 73, fill: "#D97706" },
+  { range: "6-8h", quality: 65, fill: "#EA580C" },
+  { range: "8+h", quality: 58, fill: "#DC2626" },
+];
+
+const SESSION_ALERTS = [
+  {
+    id: "sa-1",
+    icon: Clock,
+    text: "3 annotators have been active >5 hours without a break",
+    severity: "caution" as const,
+  },
+  {
+    id: "sa-2",
+    icon: Activity,
+    text: "J. Lee shows 78% A-preference in last 50 tasks (expected: ~50%)",
+    severity: "error" as const,
+  },
+  {
+    id: "sa-3",
+    icon: AlertTriangle,
+    text: "R. Patel gold accuracy dropped from 85% to 62% in last 2 hours",
+    severity: "error" as const,
+  },
+];
+
 export default function AnnotatorsPage() {
   const annotators = useAnnotatorStore((s) => s.annotators);
   const { toast } = useToast();
@@ -223,6 +267,17 @@ export default function AnnotatorsPage() {
 
   const counts = useAnnotatorStore((s) => s.getStatusCounts)();
   const total = annotators.length;
+
+  const fatigueCount = useMemo(
+    () =>
+      annotators.filter(
+        (a) =>
+          a.fatigueRisk === "high" ||
+          a.fatigueRisk === "medium" ||
+          !!a.driftAlert
+      ).length,
+    [annotators]
+  );
 
   const columns: { key: string; header: string; className?: string; render?: (item: Row) => React.ReactNode }[] = [
     {
@@ -328,13 +383,34 @@ export default function AnnotatorsPage() {
             : item.trend === "Declining"
               ? "text-error"
               : "text-tertiary-text";
+        const showFatigue =
+          item.fatigueRisk === "high" || item.fatigueRisk === "medium";
+        const showDrift = !!item.driftAlert;
         return (
-          <span className={`flex items-center gap-1 ${color}`}>
-            {item.trend === "Improving" && <TrendingUp className="h-3.5 w-3.5" />}
-            {item.trend === "Declining" && <TrendingDown className="h-3.5 w-3.5" />}
-            {item.trend === "Stable" && <Minus className="h-3.5 w-3.5" />}
-            {item.trend}
-          </span>
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className={`flex items-center gap-1 ${color}`}>
+              {item.trend === "Improving" && <TrendingUp className="h-3.5 w-3.5" />}
+              {item.trend === "Declining" && <TrendingDown className="h-3.5 w-3.5" />}
+              {item.trend === "Stable" && <Minus className="h-3.5 w-3.5" />}
+              {item.trend}
+            </span>
+            {showFatigue && (
+              <span
+                title={`Fatigue risk: ${item.fatigueRisk} — ${item.sessionHours ?? 0}h session`}
+                className="inline-flex items-center gap-1 rounded-tight border border-[#FED7AA] bg-[#FFF7ED] px-1.5 py-0 font-inter text-[10px] font-medium uppercase tracking-[0.5px] text-[#D97706]"
+              >
+                Fatigue
+              </span>
+            )}
+            {showDrift && (
+              <span
+                title={item.driftAlert as string}
+                className="inline-flex items-center gap-1 rounded-tight border border-[#FDBA74] bg-[#FFF7ED] px-1.5 py-0 font-inter text-[10px] font-medium uppercase tracking-[0.5px] text-[#EA580C]"
+              >
+                Drift
+              </span>
+            )}
+          </div>
         );
       },
     },
@@ -368,11 +444,16 @@ export default function AnnotatorsPage() {
         }
       />
 
-      <div className="stagger-children mt-4 grid grid-cols-4 gap-3">
+      <div className="stagger-children mt-4 grid grid-cols-5 gap-3">
         <StatCard label="Total" value={total} />
         <StatCard label="Active" value={counts.Active} />
         <StatCard label="In Review" value={counts["In Review"]} />
         <StatCard label="Onboarding" value={counts.Onboarding} />
+        <StatCard
+          label="At-Risk (Fatigue)"
+          value={fatigueCount}
+          trend={{ value: `${fatigueCount} flagged`, direction: "down" }}
+        />
       </div>
 
       <div className="stagger-children mt-4 rounded-comfortable border border-level-2 bg-white">
@@ -443,6 +524,85 @@ export default function AnnotatorsPage() {
               </p>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* ---- Session Health Section ---- */}
+      <div className="mt-6">
+        <h2 className="font-literata text-[13px] font-semibold uppercase tracking-[1.5px] text-secondary-text mb-4">
+          Session Health
+        </h2>
+        <div className="grid grid-cols-2 gap-4">
+          {/* Left: Quality vs Session Duration Bar Chart */}
+          <div className="rounded-comfortable border border-[#EBEEED] bg-white p-5">
+            <h3 className="font-inter text-[14px] font-semibold text-ink mb-4">
+              Quality vs. Session Duration
+            </h3>
+            <ResponsiveContainer width="100%" height={220}>
+              <BarChart data={SESSION_QUALITY_DATA} barCategoryGap="20%">
+                <CartesianGrid
+                  strokeDasharray="0"
+                  stroke="#EBEEED"
+                  vertical={false}
+                />
+                <XAxis
+                  dataKey="range"
+                  tick={{ fontSize: 12, fill: "#6F7A77" }}
+                  axisLine={{ stroke: "#EBEEED" }}
+                  tickLine={false}
+                />
+                <YAxis
+                  domain={[0, 100]}
+                  tick={{ fontSize: 12, fill: "#6F7A77" }}
+                  axisLine={false}
+                  tickLine={false}
+                  width={36}
+                  tickFormatter={(v: number) => `${v}%`}
+                />
+                <Tooltip
+                  formatter={(value) => [`${value}%`, "Quality"]}
+                  contentStyle={{
+                    fontSize: 12,
+                    borderRadius: 6,
+                    border: "1px solid #EBEEED",
+                    boxShadow: "none",
+                  }}
+                />
+                <Bar dataKey="quality" radius={[4, 4, 0, 0]}>
+                  {SESSION_QUALITY_DATA.map((entry) => (
+                    <Cell key={entry.range} fill={entry.fill} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Right: Alert Cards */}
+          <div className="flex flex-col gap-3">
+            {SESSION_ALERTS.map((alert) => {
+              const Icon = alert.icon;
+              const borderColor =
+                alert.severity === "error" ? "#DC2626" : "#D97706";
+              const iconColor =
+                alert.severity === "error" ? "text-[#DC2626]" : "text-[#D97706]";
+              const bgColor =
+                alert.severity === "error" ? "bg-[#FEF2F2]" : "bg-[#FFF7ED]";
+              return (
+                <div
+                  key={alert.id}
+                  className={`rounded-comfortable border border-[#EBEEED] ${bgColor} p-4 border-l-[3px]`}
+                  style={{ borderLeftColor: borderColor }}
+                >
+                  <div className="flex items-start gap-3">
+                    <Icon className={`h-5 w-5 shrink-0 mt-0.5 ${iconColor}`} />
+                    <p className="font-inter text-[13px] text-ink leading-snug">
+                      {alert.text}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
 
