@@ -57,14 +57,14 @@ export function Sidebar() {
   return (
     <aside className="fixed left-0 top-0 bottom-0 w-[240px] border-r border-level-2 bg-white flex flex-col z-30">
       {/* Logo */}
-      <div className="flex items-center gap-2.5 px-5 py-5">
+      <Link href="/dashboard" className="flex items-center gap-2.5 px-5 py-5">
         <div className="flex h-8 w-8 items-center justify-center rounded-standard bg-deep-teal">
           <span className="font-inter text-[13px] font-bold text-white">DF</span>
         </div>
         <span className="font-inter text-[15px] font-semibold tracking-[0.08em] text-ink">
           DATAFORGE
         </span>
-      </div>
+      </Link>
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto px-3 pb-4">

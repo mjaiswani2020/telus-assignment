@@ -6,14 +6,14 @@ export function HeaderBar() {
   return (
     <header className="flex h-14 items-center justify-between bg-deep-teal px-6">
       {/* Left: branding */}
-      <div className="flex items-center gap-3">
+      <Link href="/annotate" className="flex items-center gap-3">
         <span className="font-inter text-[15px] font-bold tracking-[0.08em] text-white">
           <span className="opacity-70">DF</span>{"  "}DATAFORGE
         </span>
         <span className="rounded-tight border border-white/50 px-2 py-0.5 font-inter text-[11px] font-medium uppercase tracking-[0.5px] text-white">
           ANNOTATOR
         </span>
-      </div>
+      </Link>
 
       {/* Right: profile */}
       <div className="flex items-center gap-3">

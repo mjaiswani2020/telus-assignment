@@ -1,9 +1,11 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { HeaderBar } from "@/components/annotator/header-bar";
 import { StatCard } from "@/components/ui/stat-card";
 import { Badge } from "@/components/ui/badge";
-import { Check, X, Hourglass } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Check, X, Hourglass, LogOut } from "lucide-react";
 import { cn } from "@/lib/cn";
 
 const qualifications = [
@@ -23,6 +25,8 @@ const taskBreakdown = [
 ];
 
 export default function ProfilePage() {
+  const router = useRouter();
+
   return (
     <>
       <HeaderBar />
@@ -41,6 +45,14 @@ export default function ProfilePage() {
             Annotator since January 2026 &middot; Tier 2 &middot; English, Spanish
           </p>
         </div>
+        <Button
+          variant="secondary"
+          size="default"
+          icon={<LogOut className="h-4 w-4" />}
+          onClick={() => router.push("/login")}
+        >
+          Sign Out
+        </Button>
       </div>
 
       {/* Stat cards */}
