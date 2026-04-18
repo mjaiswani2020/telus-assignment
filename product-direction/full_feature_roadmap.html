@@ -1,0 +1,228 @@
+
+<style>
+h2.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+*{box-sizing:border-box}
+.rm-controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;position:sticky;top:0;z-index:10;padding:10px 0;background:var(--color-background-primary)}
+.rm-btn{font:400 12px var(--font-sans);padding:6px 12px;border:1px solid var(--color-border-secondary);border-radius:20px;cursor:pointer;background:var(--color-background-primary);color:var(--color-text-secondary);transition:all .15s}
+.rm-btn:hover{border-color:var(--color-border-primary)}
+.rm-btn.active{background:var(--color-text-primary);color:var(--color-background-primary);border-color:var(--color-text-primary)}
+.rm-stats{font:400 12px var(--font-sans);color:var(--color-text-tertiary);margin-bottom:12px}
+.rm-theme{margin-bottom:24px}
+.rm-theme-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;cursor:pointer;user-select:none}
+.rm-theme-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.rm-theme-name{font:500 16px var(--font-sans);color:var(--color-text-primary)}
+.rm-theme-count{font:400 12px var(--font-mono);color:var(--color-text-tertiary)}
+.rm-theme-desc{font:400 13px var(--font-sans);color:var(--color-text-secondary);margin-bottom:10px;padding-left:20px;line-height:1.5}
+.rm-feat{display:grid;grid-template-columns:1fr auto;gap:8px;padding:8px 12px;border-bottom:1px solid var(--color-border-tertiary);align-items:start}
+.rm-feat:last-child{border-bottom:none}
+.rm-feat-left{min-width:0}
+.rm-feat-name{font:500 13px var(--font-sans);color:var(--color-text-primary)}
+.rm-feat-desc{font:400 12px var(--font-sans);color:var(--color-text-secondary);line-height:1.5;margin-top:2px}
+.rm-feat-meta{font:400 11px var(--font-sans);color:var(--color-text-tertiary);margin-top:3px}
+.rm-feat-tags{display:flex;gap:4px;flex-wrap:wrap;align-items:start;flex-shrink:0;padding-top:2px}
+.rm-pill{font:400 10px var(--font-mono);padding:2px 7px;border-radius:10px;white-space:nowrap}
+.rm-pill-core{background:#E1F5EE;color:#085041}
+.rm-pill-intel{background:#EEEDFE;color:#3C3489}
+.rm-pill-ai{background:#FAEEDA;color:#633806}
+.rm-pill-scale{background:#FAECE7;color:#712B13}
+.rm-pill-eco{background:#E6F1FB;color:#0C447C}
+.rm-pill-mod{background:var(--color-background-secondary);color:var(--color-text-tertiary);border:1px solid var(--color-border-tertiary)}
+.rm-pill-impact-h{background:#FCEBEB;color:#791F1F}
+.rm-pill-impact-m{background:#FAEEDA;color:#633806}
+.rm-group{border:1px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin-bottom:8px}
+.rm-group-header{font:500 12px var(--font-sans);color:var(--color-text-tertiary);padding:6px 12px;background:var(--color-background-secondary);text-transform:uppercase;letter-spacing:.4px}
+@media(prefers-color-scheme:dark){
+.rm-pill-core{background:#04342C;color:#9FE1CB}
+.rm-pill-intel{background:#26215C;color:#CECBF6}
+.rm-pill-ai{background:#412402;color:#FAC775}
+.rm-pill-scale{background:#4A1B0C;color:#F5C4B3}
+.rm-pill-eco{background:#042C53;color:#B5D4F4}
+.rm-pill-impact-h{background:#501313;color:#F7C1C1}
+.rm-pill-impact-m{background:#412402;color:#FAC775}
+}
+</style>
+<h2 class="sr-only">Comprehensive feature roadmap for RLHF data platform</h2>
+
+<div class="rm-controls" id="controls">
+<span style="font:500 12px var(--font-sans);color:var(--color-text-tertiary);padding:6px 0">Filter:</span>
+<button class="rm-btn active" onclick="filterTheme('all')">All (78)</button>
+<button class="rm-btn" onclick="filterTheme('core')">Core pipeline</button>
+<button class="rm-btn" onclick="filterTheme('intel')">Intelligence</button>
+<button class="rm-btn" onclick="filterTheme('ai')">AI-augmented</button>
+<button class="rm-btn" onclick="filterTheme('scale')">Scale</button>
+<button class="rm-btn" onclick="filterTheme('eco')">Ecosystem</button>
+</div>
+
+<div id="roadmap">
+
+<div class="rm-theme" data-theme="core">
+<div class="rm-theme-header"><div class="rm-theme-dot" style="background:#1D9E75"></div><div class="rm-theme-name">Core annotation pipeline</div><div class="rm-theme-count">19 features</div></div>
+<div class="rm-theme-desc">The fundamental ability to collect RLHF training data from humans. This is table stakes — without these, there's no product.</div>
+
+<div class="rm-group"><div class="rm-group-header">Task configuration</div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Task type templates (SFT, preference, red-team, ranking)</div><div class="rm-feat-desc">Pre-built annotation task structures with default UX layouts and required fields</div><div class="rm-feat-meta">Module: M2 Task Studio | Pain: 1.1</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-core">core</span><span class="rm-pill rm-pill-mod">M2</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Evaluation dimension builder</div><div class="rm-feat-desc">Configure helpfulness, safety, honesty dimensions with definitions, examples, and scales</div><div class="rm-feat-meta">Module: M2 | Pain: 2.2</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-core">core</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Preference scale configuration</div><div class="rm-feat-desc">4-point strength scale (significantly better → negligibly better) with configurable labels and minimum thresholds</div><div class="rm-feat-meta">Module: M2 | Pain: 2.2</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-core">core</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Safety taxonomy builder</div><div class="rm-feat-desc">Structured risk categories × attack vectors matrix definition</div><div class="rm-feat-meta">Module: M2</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-core">core</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Guideline version control</div><div class="rm-feat-desc">Every guideline change versioned with diffs, rationale, and data linkage</div><div class="rm-feat-meta">Module: M2 | Pain: 2.1</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-core">core</span></div></div>
+</div>
+
+<div class="rm-group"><div class="rm-group-header">Annotation interface</div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Multi-mode annotation workbench</div><div class="rm-feat-desc">Distinct UX modes for SFT, preference comparison, red-team, and multi-turn tasks</div><div class="rm-feat-meta">Module: M6 | Pain: 4.1</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-core">core</span><span class="rm-pill rm-pill-impact-h">high impact</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Side-by-side response comparison with preference selector</div><div class="rm-feat-desc">Core comparison UX with strength rating and optional rationale field</div><div class="rm-feat-meta">Module: M6</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-core">core</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Multi-turn conversation threading</div><div class="rm-feat-desc">Full conversation interface with per-turn preference annotations</div><div class="rm-feat-meta">Module: M6 | Pain: 4.5</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-core">core</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Red-team task reframing</div><div class="rm-feat-desc">Reframe "choose more harmful" as "choose better per safety guidelines" to reduce cognitive confusion</div><div class="rm-feat-meta">Module: M6 | Pain: 4.1 | Critical fix from Anthropic's findings</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-core">core</span><span class="rm-pill rm-pill-impact-h">high impact</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Response editing capability</div><div class="rm-feat-desc">Allow annotators to edit model responses, creating edit-vs-original comparison pairs</div><div class="rm-feat-meta">Module: M6 | Per Anthropic's Upwork annotator workflow</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-core">core</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Keyboard-first interaction design</div><div class="rm-feat-desc">Full keyboard shortcuts for all annotation actions — selection, strength, submit, flag</div><div class="rm-feat-meta">Module: M6</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-core">core</span></div></div>
+</div>
+
+<div class="rm-group"><div class="rm-group-header">Model integration</div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Model endpoint registry with hot-swap</div><div class="rm-feat-desc">Register, manage, and swap client model endpoints without disrupting active sessions</div><div class="rm-feat-meta">Module: M4 | Pain: 3.1</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-core">core</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Response pair generation strategies</div><div class="rm-feat-desc">Same-model/different-temp, cross-model, and configurable sampling parameters</div><div class="rm-feat-meta">Module: M4</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-core">core</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Full response provenance tracking</div><div class="rm-feat-desc">Every response tagged with model version, sampling params, timestamp, latency</div><div class="rm-feat-meta">Module: M4 | Pain: 1.3</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-core">core</span></div></div>
+</div>
+
+<div class="rm-group"><div class="rm-group-header">Project & data management</div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Project → Iteration → Batch hierarchy</div><div class="rm-feat-desc">First-class iteration entity with strategy, model version, annotator cohort, and results</div><div class="rm-feat-meta">Module: M1 | Pain: 1.3</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-core">core</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Multi-tenant isolation</div><div class="rm-feat-desc">Complete data and configuration isolation between clients</div><div class="rm-feat-meta">Module: M1</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-core">core</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Multi-format data export (JSONL, Parquet, custom)</div><div class="rm-feat-desc">Export in client-required training formats with metadata</div><div class="rm-feat-meta">Module: M8</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-core">core</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Train/test split management</div><div class="rm-feat-desc">Deterministic, reproducible split strategies (random, stratified, temporal, 50/50 robustness)</div><div class="rm-feat-meta">Module: M8</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-core">core</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Basic annotator management</div><div class="rm-feat-desc">Recruitment, vetting pipeline, task assignment, compensation tracking</div><div class="rm-feat-meta">Module: M3</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-core">core</span></div></div>
+</div>
+</div>
+
+<div class="rm-theme" data-theme="intel">
+<div class="rm-theme-header"><div class="rm-theme-dot" style="background:#7F77DD"></div><div class="rm-theme-name">Quality & strategic intelligence</div><div class="rm-theme-count">22 features</div></div>
+<div class="rm-theme-desc">Automated quality monitoring, workforce optimization, and cross-iteration learning. This is where the platform moves from "tool" to "intelligent system."</div>
+
+<div class="rm-group"><div class="rm-group-header">Real-time quality monitoring</div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Tiered review pipeline (auto-approve / spot-check / mandatory)</div><div class="rm-feat-desc">Concentrate human QA effort on low-confidence annotations; auto-approve high-confidence ones</div><div class="rm-feat-meta">Module: M7 | Pain: 5.1 | Differentiator</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-intel">intelligence</span><span class="rm-pill rm-pill-impact-h">high impact</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Reward model alignment scoring</div><div class="rm-feat-desc">Score each annotation with the client's RM; flag disagreements between annotator and RM</div><div class="rm-feat-meta">Module: M7 | Differentiator</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-intel">intelligence</span><span class="rm-pill rm-pill-impact-h">high impact</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Composite quality score per annotation</div><div class="rm-feat-desc">Combine golden-task accuracy, IAA, RM alignment, preference strength, and time-spent into single confidence score</div><div class="rm-feat-meta">Module: M7 | Differentiator</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-intel">intelligence</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Multi-dimensional IAA tracking</div><div class="rm-feat-desc">Agreement broken down by dimension, task type, prompt category, preference strength, and guideline version</div><div class="rm-feat-meta">Module: M7 | Pain: 2.2</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-intel">intelligence</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Calibration drift detection</div><div class="rm-feat-desc">Monitor quality trends within and across batches; alert on decline patterns</div><div class="rm-feat-meta">Module: M7 | Pain: 4.2</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-intel">intelligence</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Difficulty distribution monitor</div><div class="rm-feat-desc">Track comparison difficulty over time; detect when models improve past the preference signal's resolving power</div><div class="rm-feat-meta">Module: M7 | Pain: 4.3 | Addresses degradation paradox</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-intel">intelligence</span><span class="rm-pill rm-pill-impact-h">high impact</span></div></div>
+</div>
+
+<div class="rm-group"><div class="rm-group-header">Annotator quality feedback</div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Real-time annotator quality dashboard</div><div class="rm-feat-desc">Personal calibration score, peer agreement rate, quality trend — visible to the annotator</div><div class="rm-feat-meta">Module: M6 | Pain: 4.6</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-intel">intelligence</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Calibration nudge system</div><div class="rm-feat-desc">Auto-insert calibration micro-tasks from edge case library when divergence is detected</div><div class="rm-feat-meta">Module: M6+M7 | Pain: 4.6 | Differentiator</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-intel">intelligence</span><span class="rm-pill rm-pill-impact-h">high impact</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Context-sensitive inline guideline delivery</div><div class="rm-feat-desc">Surface relevant rubric sections based on prompt content, not static sidebar</div><div class="rm-feat-meta">Module: M6+M2 | Pain: 4.1</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-intel">intelligence</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Structured rejection feedback with learning loop</div><div class="rm-feat-desc">QA rejections include categorized reasons that flow back to annotators as corrective signals</div><div class="rm-feat-meta">Module: M7 | Pain: 5.2</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-intel">intelligence</span></div></div>
+</div>
+
+<div class="rm-group"><div class="rm-group-header">Workforce optimization</div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Skill tier system with per-dimension scoring</div><div class="rm-feat-desc">Annotators scored on helpfulness, safety, creativity, writing quality — tiers update continuously</div><div class="rm-feat-meta">Module: M3 | Differentiator</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-intel">intelligence</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Intelligent task routing</div><div class="rm-feat-desc">Route tasks by skill match, difficulty, fatigue state, and coverage needs</div><div class="rm-feat-meta">Module: M3 | Pain: 4.3 | Differentiator</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-intel">intelligence</span><span class="rm-pill rm-pill-impact-h">high impact</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Fatigue management system</div><div class="rm-feat-desc">Track session duration, velocity, quality; enforce breaks and task-type rotation</div><div class="rm-feat-meta">Module: M6+M3 | Pain: 4.2</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-intel">intelligence</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Content exposure management for red-team work</div><div class="rm-feat-desc">Track harmful content exposure, enforce rotation limits, flag wellbeing concerns</div><div class="rm-feat-meta">Module: M3</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-intel">intelligence</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Dynamic compensation engine</div><div class="rm-feat-desc">Auto-adjust pay rates based on task complexity, model latency, and skill tier</div><div class="rm-feat-meta">Module: M3</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-intel">intelligence</span></div></div>
+</div>
+
+<div class="rm-group"><div class="rm-group-header">Data intelligence</div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Coverage heatmap (risk category × attack vector)</div><div class="rm-feat-desc">Real-time visualization of annotation coverage against safety taxonomy; highlight gaps</div><div class="rm-feat-meta">Module: M7 | Pain: 5.4 | Differentiator</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-intel">intelligence</span><span class="rm-pill rm-pill-impact-h">high impact</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Coverage-driven prompt allocation</div><div class="rm-feat-desc">Prompt Engine auto-fills coverage gaps by generating/prioritizing prompts for underrepresented cells</div><div class="rm-feat-meta">Module: M5 | Pain: 5.4, 3.2 | Differentiator</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-intel">intelligence</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Configurable data mixing engine</div><div class="rm-feat-desc">Define mixing recipes across iterations, task types, quality tiers — version-controlled and reproducible</div><div class="rm-feat-meta">Module: M8 | Pain: 5.3 | Differentiator</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-intel">intelligence</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Cross-batch deduplication</div><div class="rm-feat-desc">Embedding-based near-duplicate detection across prompts and responses</div><div class="rm-feat-meta">Module: M8 | Pain: 5.4</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-intel">intelligence</span></div></div>
+</div>
+
+<div class="rm-group"><div class="rm-group-header">Strategic intelligence</div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Cross-iteration comparison dashboard</div><div class="rm-feat-desc">Side-by-side comparison of any two iterations on all metrics</div><div class="rm-feat-meta">Module: M1+M9 | Pain: 1.3 | Differentiator</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-intel">intelligence</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Distribution shift detector</div><div class="rm-feat-desc">Detect when RLHF-improved models shift response distribution enough to degrade RM calibration</div><div class="rm-feat-meta">Module: M9 | Pain: 6.2</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-intel">intelligence</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Cost & efficiency analytics</div><div class="rm-feat-desc">Cost per usable annotation, per RM accuracy point, waste analysis from QA rejections</div><div class="rm-feat-meta">Module: M9</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-intel">intelligence</span></div></div>
+</div>
+</div>
+
+<div class="rm-theme" data-theme="ai">
+<div class="rm-theme-header"><div class="rm-theme-dot" style="background:#BA7517"></div><div class="rm-theme-name">AI-augmented capabilities</div><div class="rm-theme-count">18 features</div></div>
+<div class="rm-theme-desc">Using AI to improve the data collection process itself. This is the frontier — where the platform stops being just a tool and starts being a collaborator. The core insight: if we're collecting data to make models better, those improving models should also make our data collection better.</div>
+
+<div class="rm-group"><div class="rm-group-header">AI-assisted annotation</div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Intelligent diff highlighting</div><div class="rm-feat-desc">AI-powered semantic diff between response pairs — highlight factual, tonal, and structural differences, not character-level changes</div><div class="rm-feat-meta">Module: M6 | Differentiator | Reduces cognitive load on comparisons</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-ai">AI</span><span class="rm-pill rm-pill-impact-h">high impact</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">AI pre-labeling with human review</div><div class="rm-feat-desc">A strong model (e.g., GPT-4 or client's best model) pre-labels preferences; human annotators review and correct. Meta already showed GPT-4 outperforms many baselines on preference prediction. Dramatically increases throughput for clear-cut comparisons while humans focus on ambiguous ones.</div><div class="rm-feat-meta">Module: M6+M7 | Shifts annotator role from labeler to reviewer</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-ai">AI</span><span class="rm-pill rm-pill-impact-h">high impact</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Difficulty-aware comparison indicator</div><div class="rm-feat-desc">AI-estimated difficulty signal shown to annotators before they compare — "these responses are very similar, take your time"</div><div class="rm-feat-meta">Module: M6 | Pain: 4.3 | Differentiator</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-ai">AI</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Preference strength anchor examples</div><div class="rm-feat-desc">AI selects the most illustrative calibration examples to show alongside the preference scale, personalized to where this annotator tends to miscalibrate</div><div class="rm-feat-meta">Module: M6+M2 | Pain: 2.2</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-ai">AI</span></div></div>
+</div>
+
+<div class="rm-group"><div class="rm-group-header">AI-powered quality</div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Predictive quality scoring</div><div class="rm-feat-desc">Predict annotation quality before QA review using annotator history, task features, and response characteristics. Route low-predicted-quality annotations to mandatory review, saving QA time on likely-good ones.</div><div class="rm-feat-meta">Module: M7 | Pain: 5.1</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-ai">AI</span><span class="rm-pill rm-pill-impact-m">med impact</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Automated rubric ambiguity detection</div><div class="rm-feat-desc">AI analyzes disagreement patterns to identify which rubric clauses cause confusion, and suggests specific rewordings or additional examples</div><div class="rm-feat-meta">Module: M7→M2 | Pain: 2.2 | Differentiator</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-ai">AI</span><span class="rm-pill rm-pill-impact-h">high impact</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">AI-powered annotation rationale analysis</div><div class="rm-feat-desc">When annotators provide optional rationales for their preferences, AI clusters and summarizes them to surface common reasoning patterns — helps task designers understand why annotators agree or disagree</div><div class="rm-feat-meta">Module: M7+M2</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-ai">AI</span></div></div>
+</div>
+
+<div class="rm-group"><div class="rm-group-header">AI-powered prompt generation</div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Adversarial prompt auto-generation</div><div class="rm-feat-desc">AI generates red-team prompts targeting specific cells in the safety taxonomy — especially rare attack vector combinations that humans struggle to invent. Use the client's own model to find its weaknesses, then generate prompts that exploit them.</div><div class="rm-feat-meta">Module: M5 | Pain: 3.2 | Model-in-the-loop adversarial testing</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-ai">AI</span><span class="rm-pill rm-pill-impact-h">high impact</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Topic-guided synthetic prompt generation</div><div class="rm-feat-desc">Generate prompts targeting specific underrepresented topics identified by the coverage heatmap, with quality filtering</div><div class="rm-feat-meta">Module: M5 | Pain: 3.2, 3.3</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-ai">AI</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Prompt diversity scoring</div><div class="rm-feat-desc">AI evaluates each new prompt against the existing corpus for semantic novelty — reject prompts that are too similar to existing ones before they enter the queue</div><div class="rm-feat-meta">Module: M5 | Pain: 3.2</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-ai">AI</span></div></div>
+</div>
+
+<div class="rm-group"><div class="rm-group-header">Active learning & data efficiency</div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Active learning comparison selection</div><div class="rm-feat-desc">Instead of randomly pairing responses, use the current RM's uncertainty to select comparisons where human feedback is most informative. Present pairs where the RM is least confident — maximizing information gain per annotation dollar.</div><div class="rm-feat-meta">Module: M4+M7 | Differentiator | Could reduce annotation volume 30-50% for same RM accuracy</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-ai">AI</span><span class="rm-pill rm-pill-impact-h">high impact</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Data valuation engine</div><div class="rm-feat-desc">Estimate the marginal value of additional annotations in each category — "100 more safety comparisons will improve RM accuracy by ~0.5%, but 100 more helpfulness comparisons will only improve it by ~0.1%." Enables ROI-driven data collection.</div><div class="rm-feat-meta">Module: M9 | Differentiator</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-ai">AI</span><span class="rm-pill rm-pill-impact-h">high impact</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Constitutional AI data generation</div><div class="rm-feat-desc">Generate synthetic preference data from principles (constitutional AI approach) as a supplement to human annotations. Humans then validate a sample of the synthetic data rather than generating it all.</div><div class="rm-feat-meta">Module: M5+M8 | Hybrid human-AI data pipeline</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-ai">AI</span><span class="rm-pill rm-pill-impact-m">med impact</span></div></div>
+</div>
+
+<div class="rm-group"><div class="rm-group-header">Automated strategic planning</div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Iteration playbook generator</div><div class="rm-feat-desc">AI synthesizes all signals (RM accuracy, quality trends, coverage, cost) and recommends next iteration config: volume, mix, prompt emphasis, model variants, annotator cohort</div><div class="rm-feat-meta">Module: M9 | Pain: 6.2 | Differentiator</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-ai">AI</span><span class="rm-pill rm-pill-impact-h">high impact</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Guideline A/B testing with automated analysis</div><div class="rm-feat-desc">Run two guideline variants, AI analyzes the results and recommends which to adopt with statistical significance</div><div class="rm-feat-meta">Module: M2 | Pain: 2.3</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-ai">AI</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Workforce planning predictor</div><div class="rm-feat-desc">Predict annotator needs for upcoming iterations based on volume targets, skill requirements, and historical capacity</div><div class="rm-feat-meta">Module: M3+M9</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-ai">AI</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Optimal temperature/sampling recommender</div><div class="rm-feat-desc">Recommend model sampling parameters that maximize response pair diversity while maintaining quality — Meta found optimal temperature shifts across RLHF versions</div><div class="rm-feat-meta">Module: M4+M9</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-ai">AI</span></div></div>
+</div>
+</div>
+
+<div class="rm-theme" data-theme="scale">
+<div class="rm-theme-header"><div class="rm-theme-dot" style="background:#D85A30"></div><div class="rm-theme-name">Scale & specialization</div><div class="rm-theme-count">12 features</div></div>
+<div class="rm-theme-desc">Expanding the platform beyond text-based English RLHF to cover multi-modal, multi-lingual, and domain-specific data collection needs as LLMs evolve.</div>
+
+<div class="rm-group"><div class="rm-group-header">Multi-modal annotation</div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Vision annotation workbench</div><div class="rm-feat-desc">Preference comparison for image generation, image understanding, and vision-language tasks. Side-by-side image+text response comparison.</div><div class="rm-feat-meta">Module: M6 | As LLMs become multi-modal</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-scale">scale</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Code execution annotation</div><div class="rm-feat-desc">Annotators can execute model-generated code in a sandboxed environment to evaluate correctness, not just readability. Preference based on actual execution results.</div><div class="rm-feat-meta">Module: M6 | Anthropic applied RLHF to code models</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-scale">scale</span><span class="rm-pill rm-pill-impact-m">med impact</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Tool-use annotation</div><div class="rm-feat-desc">Evaluate model responses that involve tool calls (search, calculator, API). Annotators assess both the tool-use decision and the final response quality.</div><div class="rm-feat-meta">Module: M6 | Meta observed tool-use emergence in Llama 2</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-scale">scale</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Audio/speech annotation</div><div class="rm-feat-desc">Preference comparison for speech synthesis, voice assistants, and audio understanding tasks</div><div class="rm-feat-meta">Module: M6 | Future modality</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-scale">scale</span></div></div>
+</div>
+
+<div class="rm-group"><div class="rm-group-header">Multi-lingual & cross-cultural</div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Multi-lingual annotation support</div><div class="rm-feat-desc">Full annotation workflow in non-English languages. Language-specific annotator pools, guidelines, and quality metrics. Meta listed non-English as an attack vector category.</div><div class="rm-feat-meta">Module: M6+M3 | Significant market need</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-scale">scale</span><span class="rm-pill rm-pill-impact-h">high impact</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Cross-lingual safety taxonomy</div><div class="rm-feat-desc">Culturally-adapted safety categories — what's considered harmful varies across cultures. Support per-locale safety guidelines.</div><div class="rm-feat-meta">Module: M2</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-scale">scale</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Translation quality annotation</div><div class="rm-feat-desc">Specialized annotation mode for evaluating translation quality, bilingual preference comparison</div><div class="rm-feat-meta">Module: M6</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-scale">scale</span></div></div>
+</div>
+
+<div class="rm-group"><div class="rm-group-header">Domain specialization</div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Domain-specific evaluation rubrics</div><div class="rm-feat-desc">Pre-built rubric templates for specialized domains: medical accuracy, legal reasoning, financial advice, scientific methodology. Includes domain-specific golden tasks.</div><div class="rm-feat-meta">Module: M2</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-scale">scale</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Expert annotator marketplace</div><div class="rm-feat-desc">Connect clients with domain experts (doctors, lawyers, engineers) for specialized annotation tasks requiring professional judgment</div><div class="rm-feat-meta">Module: M3</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-scale">scale</span><span class="rm-pill rm-pill-impact-m">med impact</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Mathematical reasoning annotation tools</div><div class="rm-feat-desc">LaTeX rendering, step-by-step verification interface, computation checking for math RLHF data</div><div class="rm-feat-meta">Module: M6</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-scale">scale</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Long-form content annotation</div><div class="rm-feat-desc">Specialized tools for evaluating long documents, reports, and multi-page outputs — section-level annotation rather than whole-response comparison</div><div class="rm-feat-meta">Module: M6</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-scale">scale</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Conversation branching & tree annotation</div><div class="rm-feat-desc">Full conversation tree exploration with branching at any turn — addresses multi-turn error compounding</div><div class="rm-feat-meta">Module: M6 | Pain: 4.5 | Differentiator</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-scale">scale</span></div></div>
+</div>
+</div>
+
+<div class="rm-theme" data-theme="eco">
+<div class="rm-theme-header"><div class="rm-theme-dot" style="background:#378ADD"></div><div class="rm-theme-name">Platform ecosystem & governance</div><div class="rm-theme-count">7 features</div></div>
+<div class="rm-theme-desc">Enterprise readiness, compliance, integrations, and the broader platform ecosystem that makes this a sustainable business, not just a tool.</div>
+
+<div class="rm-group"><div class="rm-group-header">Governance & compliance</div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Full audit trail</div><div class="rm-feat-desc">Every action by every stakeholder is logged with timestamp, actor, and context. Immutable audit log for data provenance from prompt creation through export.</div><div class="rm-feat-meta">Cross-module</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-eco">ecosystem</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">GDPR/privacy compliance framework</div><div class="rm-feat-desc">Annotator PII protection, data retention policies, right-to-deletion for annotator data, consent management</div><div class="rm-feat-meta">Cross-module | Required for EU annotator pools</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-eco">ecosystem</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Data lineage & provenance chain</div><div class="rm-feat-desc">Full traceability from every data point in a trained model back to: which annotator, which guideline version, which model generated it, which QA reviewer approved it</div><div class="rm-feat-meta">Cross-module | Critical for responsible AI</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-eco">ecosystem</span><span class="rm-pill rm-pill-impact-h">high impact</span></div></div>
+</div>
+
+<div class="rm-group"><div class="rm-group-header">Integrations & platform</div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Custom workflow builder</div><div class="rm-feat-desc">Clients configure which pipeline stages are active — skip QA, require double-review for safety only, auto-approve above threshold</div><div class="rm-feat-meta">Module: M1 | Supports both Anthropic-lightweight and Meta-rigorous operating models</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-eco">ecosystem</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">Training infrastructure integration</div><div class="rm-feat-desc">Push exports directly to client training pipelines (S3, GCS, Azure, custom). Webhook notifications when batches are ready. Pull training results back for model impact analysis.</div><div class="rm-feat-meta">Module: M8+M9</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-eco">ecosystem</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">API-first platform</div><div class="rm-feat-desc">Full API for all platform operations — programmatic task creation, data retrieval, quality querying. Enables client-side automation and custom integrations.</div><div class="rm-feat-meta">Cross-module</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-eco">ecosystem</span></div></div>
+<div class="rm-feat"><div class="rm-feat-left"><div class="rm-feat-name">In-platform reward model training</div><div class="rm-feat-desc">Train reward models directly within the platform using collected data. Eliminates the export-train-reimport cycle for RM-based quality scoring. Client retains model ownership.</div><div class="rm-feat-meta">Module: M4+M8 | Significant value-add but complex</div></div><div class="rm-feat-tags"><span class="rm-pill rm-pill-eco">ecosystem</span><span class="rm-pill rm-pill-impact-m">med impact</span></div></div>
+</div>
+</div>
+
+</div>
+
+<script>
+function filterTheme(theme) {
+  document.querySelectorAll('.rm-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('.rm-theme').forEach(t => {
+    if (theme === 'all') { t.style.display = ''; return; }
+    t.style.display = t.dataset.theme === theme ? '' : 'none';
+  });
+}
+</script>
