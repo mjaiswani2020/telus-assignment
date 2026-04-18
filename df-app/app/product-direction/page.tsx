@@ -16,7 +16,6 @@ const tocSections = [
   "Platform Architecture",
   "Core Module Deep Dives",
   "Feature Roadmap",
-  "Strategic Patterns",
 ];
 
 const stakeholders = [
@@ -46,83 +45,143 @@ const stakeholders = [
   },
 ];
 
-const workflowPhases = [
-  { name: "Phase 1: Strategy & Objective Definition", bg: "#3C3489", text: "#CECBF6" },
-  { name: "Phase 2: Task Design", bg: "#085041", text: "#9FE1CB" },
-  { name: "Phase 3: Model & Prompt Setup", bg: "#085041", text: "#9FE1CB" },
-  { name: "Phase 4: Human Annotation", bg: "#0C447C", text: "#B5D4F4" },
-  { name: "Phase 5: Quality Assurance", bg: "#633806", text: "#FAC775" },
-  { name: "Phase 6: Model Training & Evaluation", bg: "#72243E", text: "#F4C0D1" },
-];
 
-const painPhases = [
-  { name: "Strategy", color: "#7F77DD", bars: [8, 6, 5] as const, colors: ["#E24B4A", "#EF9F27", "#EF9F27"] as const },
-  { name: "Task Design", color: "#1D9E75", bars: [6, 9, 4] as const, colors: ["#EF9F27", "#E24B4A", "#1D9E75"] as const },
-  { name: "Model / Prompt", color: "#D85A30", bars: [6, 8, 4] as const, colors: ["#EF9F27", "#E24B4A", "#1D9E75"] as const },
-  { name: "Annotation", color: "#378ADD", bars: [9, 7, 10, 6, 6, 7] as const, colors: ["#E24B4A", "#E24B4A", "#E24B4A", "#EF9F27", "#EF9F27", "#E24B4A"] as const },
-  { name: "QA / Processing", color: "#BA7517", bars: [7, 6, 6, 6] as const, colors: ["#E24B4A", "#EF9F27", "#EF9F27", "#EF9F27"] as const },
-  { name: "Training / Eval", color: "#D4537E", bars: [6, 8, 6] as const, colors: ["#EF9F27", "#E24B4A", "#EF9F27"] as const },
-];
 
-const modules = [
-  { id: "M1", name: "Project Hub", layer: "ORCHESTRATION", color: "#7F77DD", desc: "Strategy, iterations, target metrics" },
-  { id: "M2", name: "Task Studio", layer: "CONFIGURATION", color: "#1D9E75" },
-  { id: "M3", name: "Workforce Hub", layer: "CONFIGURATION", color: "#1D9E75" },
-  { id: "M4", name: "Model Gateway", layer: "GENERATION", color: "#D85A30" },
-  { id: "M5", name: "Prompt Engine", layer: "GENERATION", color: "#D85A30" },
-  { id: "M6", name: "Annotation Workbench", layer: "CORE EXECUTION", color: "#378ADD", desc: "The heart of the platform" },
-  { id: "M7", name: "Quality Control", layer: "QUALITY & PROCESSING", color: "#BA7517" },
-  { id: "M8", name: "Data Engine", layer: "QUALITY & PROCESSING", color: "#D4537E" },
-  { id: "M9", name: "Analytics & Insights", layer: "INTELLIGENCE", color: "#7F77DD", desc: "Cross-iteration learning, closes the loop" },
-];
 
-const coreModules = [
-  {
-    id: "M2",
-    name: "Task Studio",
-    subtitle: "The translation layer",
-    color: "#1D9E75",
-    description:
-      "Where research intent becomes executable annotation work. The core insight: task design is not a one-time activity. Anthropic was amending guidelines via Slack messages. Meta iterated through 14 batch stages. Task Studio treats guidelines as living, versioned artifacts.",
-    tags: ["Task type templates", "Evaluation dimensions", "Safety taxonomy", "Guideline versioning", "Edge case library"],
-  },
-  {
-    id: "M6",
-    name: "Annotation Workbench",
-    subtitle: "The heart",
-    color: "#378ADD",
-    description:
-      "Faces a fundamental tension: simple enough for annotators to work quickly at scale, but structured enough for high-quality data. Anthropic\u2019s 63% IAA suggests insufficient scaffolding; over-structuring kills throughput. Eight distinct task modes serve different annotation workflows.",
-    tags: ["Pairwise Preference", "Multi-Turn", "SFT Authoring", "Safety Red-Team", "Response Editing", "N-Way Ranking", "Rubric Scoring", "Model Arena"],
-  },
-  {
-    id: "M7",
-    name: "Quality Control Center",
-    subtitle: "The intelligence layer",
-    color: "#BA7517",
-    description:
-      "Where the platform earns its premium over manual processes. Answers the question both papers struggled with: is this data actually good enough to train on? Combines golden-task accuracy, IAA, RM alignment, preference strength, and time-spent into a composite confidence score.",
-    tags: ["Tiered review pipeline", "RM alignment scoring", "Drift detection", "Calibration nudges", "Coverage heatmap"],
-  },
-];
 
-const patterns = [
-  {
-    num: "01",
-    title: "Pain concentrates in human annotation",
-    body: "Six pain points in Phase 4, four high severity. This is where human judgment, model behavior, task design, and quality control collide. The platform\u2019s center of gravity.",
-  },
-  {
-    num: "02",
-    title: "Value lives in the feedback loops, not the phases",
-    body: "The biggest value isn\u2019t in making any single phase better, but in tightening the loops between them. Information not flowing fast enough between stakeholders is the systemic failure mode.",
-  },
-  {
-    num: "03",
-    title: "The degradation paradox",
-    body: "As the pipeline succeeds (models get better), data collection gets harder. Responses become more similar, annotators struggle to distinguish, preference signals weaken. The platform must be designed for this \u2014 it can\u2019t just optimize for the early-stage case.",
-  },
-];
+
+/* ------------------------------------------------------------------ */
+/*  Components                                                         */
+/* ------------------------------------------------------------------ */
+
+interface PainItem {
+  id: string;
+  desc: string;
+  severity: string;
+  barColor: string;
+  barWidth: number;
+}
+
+function PainPhaseBlock({ color, name, items }: { color: string; name: string; items: PainItem[] }) {
+  return (
+    <div className="mb-5">
+      <div className="mb-2 flex items-center gap-2.5">
+        <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: color }} />
+        <span className="font-inter text-[14px] font-medium text-ink" dangerouslySetInnerHTML={{ __html: name }} />
+      </div>
+      {items.map((item, i) => (
+        <div
+          key={item.id}
+          className="flex items-center gap-2 py-1.5"
+          style={{ borderBottom: i < items.length - 1 ? "1px solid var(--color-border-tertiary, #e5e5e3)" : "none" }}
+        >
+          <span className="min-w-[28px] font-mono text-[11px] text-tertiary-text">{item.id}</span>
+          <span className="flex-1 font-inter text-[13px] text-secondary-text">{item.desc}</span>
+          <div className="flex w-[140px] shrink-0 items-center gap-1.5">
+            <span className="h-1.5 rounded-full" style={{ backgroundColor: item.barColor, width: item.barWidth }} />
+          </div>
+          <span className="min-w-[60px] text-right font-inter text-[11px] text-tertiary-text">{item.severity}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ModuleCard({ color, name, num, desc, pain }: { color: string; name: string; num: string; desc: string; pain: string }) {
+  return (
+    <div
+      className="rounded-r-lg border border-level-2 border-l-[3px] bg-white p-3.5"
+      style={{ borderLeftColor: color }}
+    >
+      <div className="mb-1.5 flex items-center gap-2">
+        <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: color }} />
+        <span className="font-inter text-[14px] font-medium text-ink" dangerouslySetInnerHTML={{ __html: name }} />
+        <span className="font-mono text-[11px] text-tertiary-text">{num}</span>
+      </div>
+      <p className="font-inter text-[13px] leading-relaxed text-secondary-text">{desc}</p>
+      <p className="mt-1.5 border-t border-level-2 pt-1.5 font-inter text-[12px] text-[#BA7517]">{pain}</p>
+    </div>
+  );
+}
+
+function ModuleSection({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="mb-1.5">
+      <p className="mb-1.5 pl-1 font-inter text-[11px] font-medium uppercase tracking-[0.5px] text-tertiary-text" dangerouslySetInnerHTML={{ __html: label }} />
+      {children}
+    </div>
+  );
+}
+
+function FlowArrow({ label, up }: { label: string; up?: boolean }) {
+  return (
+    <div className="flex items-center justify-center gap-1.5 py-2">
+      <span className="text-[16px] text-tertiary-text">&darr;</span>
+      <span className="rounded-md border border-dashed border-level-2 px-2.5 py-1 font-inter text-[12px] text-tertiary-text">{label}</span>
+      <span className="text-[16px] text-tertiary-text">{up ? "\u2191" : "\u2193"}</span>
+    </div>
+  );
+}
+
+function DeepDiveModule({ color, id, name, subtitle, children }: { color: string; id: string; name: string; subtitle: string; children: React.ReactNode }) {
+  return (
+    <div className="mb-6 rounded-comfortable border border-level-2 p-5">
+      <div className="mb-4 flex items-center gap-2.5 border-b border-level-2 pb-3">
+        <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: color }} />
+        <h3 className="font-inter text-[16px] font-semibold text-ink">{id}: {name}</h3>
+        <span className="font-inter text-[13px] text-tertiary-text">{subtitle}</span>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function DeepDiveGroup({ title, rationale, children }: { title: string; rationale?: string; children: React.ReactNode }) {
+  return (
+    <div className="mb-5">
+      <h4 className="mb-2 border-b border-level-2 pb-1.5 font-inter text-[14px] font-medium text-ink">{title}</h4>
+      {rationale && (
+        <p className="mb-2 rounded-md bg-level-1 px-3 py-2 font-inter text-[13px] leading-relaxed text-secondary-text">{rationale}</p>
+      )}
+      {children}
+    </div>
+  );
+}
+
+interface FeatTag { label: string; type: "pain" | "new" | "critical" }
+
+function Feat({ color, name, desc, tags }: { color: string; name: string; desc: string; tags?: FeatTag[] }) {
+  const tagStyles: Record<string, string> = {
+    pain: "bg-[#EF9F27]/15 text-[#BA7517]",
+    new: "bg-[#378ADD]/15 text-[#378ADD]",
+    critical: "bg-[#E24B4A]/15 text-[#E24B4A]",
+  };
+  return (
+    <div className="my-2 rounded-r-md border-l-2 bg-level-1 px-3.5 py-2.5" style={{ borderLeftColor: color }}>
+      <p className="mb-1 font-inter text-[13px] font-medium text-ink">{name}</p>
+      <p className="font-inter text-[13px] leading-relaxed text-secondary-text">
+        {desc}
+        {tags?.map((t) => (
+          <span key={t.label} className={`ml-1.5 inline-block rounded px-1.5 py-0.5 font-mono text-[11px] ${tagStyles[t.type]}`}>{t.label}</span>
+        ))}
+      </p>
+    </div>
+  );
+}
+
+function DeepDiveConnections({ connections }: { connections: { label: string; desc: string }[] }) {
+  return (
+    <div className="mb-2">
+      <h4 className="mb-2 font-inter text-[13px] font-medium text-tertiary-text">Key connections</h4>
+      {connections.map((c) => (
+        <div key={c.label} className="my-1.5 rounded-md border border-dashed border-level-2 px-3.5 py-2.5">
+          <p className="mb-1 font-inter text-[12px] font-medium text-tertiary-text">{c.label}</p>
+          <p className="font-inter text-[13px] text-secondary-text">{c.desc}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 /* ------------------------------------------------------------------ */
 /*  Page                                                               */
@@ -169,11 +228,6 @@ export default function ProductDirectionPage() {
             an end-to-end platform that operationalizes RLHF data collection at
             scale.
           </p>
-          <div className="mt-3 flex gap-6 font-inter text-[12px] text-tertiary-text">
-            <span>Last updated: April 2026</span>
-            <span>Version 1.0</span>
-            <span>9 modules, 78 features</span>
-          </div>
         </header>
 
         {/* Section 1: Overview */}
@@ -182,8 +236,7 @@ export default function ProductDirectionPage() {
             1. Overview
           </h2>
           <p className="mb-4 font-literata text-[15px] leading-[1.75] text-ink/85">
-            DataForge is an end-to-end platform for RLHF (Reinforcement Learning
-            from Human Feedback) data collection. It operationalizes the entire
+            DataForge is an end-to-end platform for RLHF data collection. It operationalizes the entire
             cycle of aligning large language models using human preference data —
             from strategy definition through annotation, quality assurance, and
             training data export.
@@ -195,33 +248,6 @@ export default function ProductDirectionPage() {
             methodology. These papers reveal a rich space of operational
             challenges that no existing tool adequately addresses.
           </p>
-          <div className="grid grid-cols-3 gap-4">
-            <div className="rounded-comfortable bg-level-1 px-5 py-4">
-              <p className="mb-1 font-inter text-[11px] font-medium uppercase tracking-[0.04em] text-tertiary-text">
-                Stakeholders
-              </p>
-              <p className="font-inter text-[13px] leading-snug text-ink/80">
-                ML Researcher, Task Designer, Annotator, QA Reviewer
-              </p>
-            </div>
-            <div className="rounded-comfortable bg-level-1 px-5 py-4">
-              <p className="mb-1 font-inter text-[11px] font-medium uppercase tracking-[0.04em] text-tertiary-text">
-                Task types
-              </p>
-              <p className="font-inter text-[13px] leading-snug text-ink/80">
-                SFT Authoring, Pairwise Preference, Red-Team, Multi-Turn,
-                Response Editing, N-Way Ranking, Rubric Scoring, Model Arena
-              </p>
-            </div>
-            <div className="rounded-comfortable bg-level-1 px-5 py-4">
-              <p className="mb-1 font-inter text-[11px] font-medium uppercase tracking-[0.04em] text-tertiary-text">
-                Pain points identified
-              </p>
-              <p className="font-inter text-[13px] leading-snug text-ink/80">
-                19 pain points across 6 phases, 8 rated high severity
-              </p>
-            </div>
-          </div>
         </section>
 
         {/* Section 2: Research Foundation */}
@@ -240,23 +266,17 @@ export default function ProductDirectionPage() {
                 name: "Anthropic",
                 paper: "\u201cTraining a Helpful and Harmless Assistant with RLHF\u201d",
                 body: "Lean, iterative setup. ~30 vetted crowdworkers across MTurk and Upwork. Open-ended conversations, two responses per turn, weekly model updates. Lightweight QA via spot-checks. 63% inter-annotator agreement.",
-                finding: 'The "hostage negotiator" problem \u2014 having annotators choose the more harmful response during red-teaming made it structurally impossible for models to learn good responses to harmful queries.',
               },
               {
                 name: "Meta (Llama 2)",
                 paper: "Llama 2 alignment methodology",
                 body: "Industrial-scale. 1.4M+ binary comparisons. 4-stage annotator selection. 4-point preference strength scale. Separate helpfulness and safety reward models. Margin-based loss leveraging preference strength signal.",
-                finding: "A few thousand high-quality SFT annotations outperformed millions of lower-quality third-party examples. Quality over quantity is the defining tradeoff.",
               },
             ].map((r) => (
               <div key={r.name} className="rounded-comfortable border border-level-2 p-5">
                 <h3 className="mb-1 font-inter text-[14px] font-semibold text-ink">{r.name}</h3>
                 <p className="mb-3 font-literata text-[13px] italic text-secondary-text">{r.paper}</p>
                 <p className="mb-4 font-literata text-[14px] leading-relaxed text-ink/80">{r.body}</p>
-                <div className="border-t border-level-2 pt-3">
-                  <p className="mb-1 font-inter text-[11px] font-medium uppercase text-tertiary-text">Key finding</p>
-                  <p className="font-literata text-[13px] leading-snug text-[#D85A30]">{r.finding}</p>
-                </div>
               </div>
             ))}
           </div>
@@ -297,35 +317,15 @@ export default function ProductDirectionPage() {
               <span className="font-inter text-[11px] font-medium text-secondary-text">FIGURE 1</span>
               <span className="font-inter text-[11px] text-tertiary-text">E2E RLHF Data Collection Workflow</span>
             </div>
-            <div className="flex flex-col gap-2 bg-[#1A1A19] p-6">
-              {workflowPhases.map((p, i) => (
-                <div key={p.name}>
-                  <div
-                    className="flex items-center justify-center rounded-comfortable px-4 py-3"
-                    style={{ backgroundColor: p.bg }}
-                  >
-                    <span className="font-inter text-[12px] font-medium" style={{ color: p.text }}>
-                      {p.name}
-                    </span>
-                  </div>
-                  {i < workflowPhases.length - 1 && (
-                    <div className="flex justify-center py-1 text-[14px] text-white/30">&darr;</div>
-                  )}
-                </div>
-              ))}
-              <div className="mt-1 flex justify-center">
-                <span className="rounded-tight border border-dashed border-white/25 px-3 py-1 font-inter text-[11px] text-white/50">
-                  &#8635; Weekly iteration cycle back to Phase 3
-                </span>
-              </div>
+            <div className="bg-[#1A1A19] p-6">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/rlhf_data_collection_e2e_workflow.svg"
+                alt="End-to-end RLHF data collection workflow showing six phases: Strategy, Setup, Generation, Annotation, Processing, and Training with an iteration loop"
+                className="mx-auto w-full max-w-[680px]"
+              />
             </div>
           </div>
-          <p className="mt-4 font-literata text-[14px] italic leading-relaxed text-secondary-text">
-            Both Anthropic and Meta ran this cycle weekly. Anthropic ran 5+
-            weeks; Meta ran 14+ batches (RLHF V1 through V5). The platform must
-            operationalize this entire cycle and make it repeatable,
-            configurable, and scalable.
-          </p>
         </section>
 
         {/* Section 5: Pain Points */}
@@ -345,39 +345,66 @@ export default function ProductDirectionPage() {
               <span className="font-inter text-[11px] font-medium text-secondary-text">FIGURE 2</span>
               <span className="font-inter text-[11px] text-tertiary-text">Pain Point Severity Map</span>
             </div>
-            <div className="flex flex-col gap-3 bg-level-1/50 p-5">
-              <div className="mb-2 flex gap-4">
+            <div className="p-5">
+              {/* Legend */}
+              <div className="mb-4 flex gap-4 rounded-md bg-level-1 px-3 py-2">
                 {[
-                  { color: "#E24B4A", label: "High — data quality / pipeline failure" },
-                  { color: "#EF9F27", label: "Medium — efficiency loss" },
-                  { color: "#1D9E75", label: "Low — friction" },
+                  { color: "#E24B4A", label: "High severity — data quality or pipeline failure" },
+                  { color: "#EF9F27", label: "Medium — efficiency loss or rework" },
+                  { color: "#1D9E75", label: "Low — friction but manageable" },
                 ].map((l) => (
                   <div key={l.label} className="flex items-center gap-1.5">
-                    <span className="h-[5px] w-5 rounded-full" style={{ backgroundColor: l.color }} />
-                    <span className="font-inter text-[11px] text-secondary-text">{l.label}</span>
+                    <span className="h-1.5 w-6 shrink-0 rounded-full" style={{ backgroundColor: l.color }} />
+                    <span className="font-inter text-[12px] text-secondary-text">{l.label}</span>
                   </div>
                 ))}
               </div>
-              {painPhases.map((phase) => (
-                <div key={phase.name} className="flex items-center gap-2">
-                  <span
-                    className="w-24 shrink-0 font-inter text-[11px] font-medium"
-                    style={{ color: phase.color }}
-                  >
-                    {phase.name}
-                  </span>
-                  <div className="flex flex-1 items-center gap-1.5">
-                    {phase.bars.map((w, i) => (
-                      <span
-                        key={i}
-                        className="h-[5px] rounded-full"
-                        style={{ backgroundColor: phase.colors[i], flex: w }}
-                      />
-                    ))}
-                    <span style={{ flex: 30 - phase.bars.reduce((a, b) => a + b, 0) }} />
-                  </div>
-                </div>
-              ))}
+
+              {/* Phase: Strategy & objectives */}
+              <PainPhaseBlock color="#7F77DD" name="Strategy &amp; objectives" items={[
+                { id: "1.1", desc: "Research-to-task translation gap", severity: "High", barColor: "#E24B4A", barWidth: 120 },
+                { id: "1.2", desc: "No fast feedback loop on strategy decisions", severity: "Medium", barColor: "#EF9F27", barWidth: 90 },
+                { id: "1.3", desc: "Cross-iteration memory loss", severity: "Medium", barColor: "#EF9F27", barWidth: 80 },
+              ]} />
+
+              {/* Phase: Task design & guidelines */}
+              <PainPhaseBlock color="#1D9E75" name="Task design &amp; guidelines" items={[
+                { id: "2.1", desc: "Guidelines evolve but aren\u2019t versioned", severity: "Medium", barColor: "#EF9F27", barWidth: 100 },
+                { id: "2.2", desc: "Rubric ambiguity \u2192 low inter-annotator agreement", severity: "High", barColor: "#E24B4A", barWidth: 130 },
+                { id: "2.3", desc: "Task design can\u2019t be A/B tested", severity: "Low", barColor: "#1D9E75", barWidth: 60 },
+              ]} />
+
+              {/* Phase: Model deployment & prompt sourcing */}
+              <PainPhaseBlock color="#D85A30" name="Model deployment &amp; prompt sourcing" items={[
+                { id: "3.1", desc: "Model serving infra for live annotation", severity: "Medium", barColor: "#EF9F27", barWidth: 100 },
+                { id: "3.2", desc: "Prompt diversity hard to control/measure", severity: "High", barColor: "#E24B4A", barWidth: 120 },
+                { id: "3.3", desc: "Synthetic prompts lack quality gate", severity: "Low", barColor: "#1D9E75", barWidth: 70 },
+              ]} />
+
+              {/* Phase: Human annotation */}
+              <PainPhaseBlock color="#378ADD" name="Human annotation" items={[
+                { id: "4.1", desc: "Cognitive load and task confusion (esp. red-teaming)", severity: "High", barColor: "#E24B4A", barWidth: 130 },
+                { id: "4.2", desc: "Annotator fatigue and quality drift over time", severity: "High", barColor: "#E24B4A", barWidth: 110 },
+                { id: "4.3", desc: "Preference signal degrades as models improve", severity: "High", barColor: "#E24B4A", barWidth: 140 },
+                { id: "4.4", desc: "Model latency kills annotator throughput", severity: "Medium", barColor: "#EF9F27", barWidth: 90 },
+                { id: "4.5", desc: "Multi-turn conversations compound errors", severity: "Medium", barColor: "#EF9F27", barWidth: 100 },
+                { id: "4.6", desc: "No real-time quality feedback to annotators", severity: "High", barColor: "#E24B4A", barWidth: 110 },
+              ]} />
+
+              {/* Phase: QA & data processing */}
+              <PainPhaseBlock color="#BA7517" name="QA &amp; data processing" items={[
+                { id: "5.1", desc: "QA is a manual bottleneck", severity: "High", barColor: "#E24B4A", barWidth: 110 },
+                { id: "5.2", desc: "Rejected annotations waste resources", severity: "Medium", barColor: "#EF9F27", barWidth: 90 },
+                { id: "5.3", desc: "Data mixing across iterations is ad-hoc", severity: "Medium", barColor: "#EF9F27", barWidth: 100 },
+                { id: "5.4", desc: "No systematic distribution/coverage analysis", severity: "Medium", barColor: "#EF9F27", barWidth: 100 },
+              ]} />
+
+              {/* Phase: Training & evaluation */}
+              <PainPhaseBlock color="#D4537E" name="Training &amp; evaluation" items={[
+                { id: "6.1", desc: "RM accuracy unknown until after training", severity: "Medium", barColor: "#EF9F27", barWidth: 100 },
+                { id: "6.2", desc: "Evaluation-to-strategy feedback loop is slow", severity: "High", barColor: "#E24B4A", barWidth: 120 },
+                { id: "6.3", desc: "Human evaluation is expensive and noisy", severity: "Medium", barColor: "#EF9F27", barWidth: 90 },
+              ]} />
             </div>
           </div>
         </section>
@@ -399,33 +426,87 @@ export default function ProductDirectionPage() {
               <span className="font-inter text-[11px] font-medium text-secondary-text">FIGURE 3</span>
               <span className="font-inter text-[11px] text-tertiary-text">Platform Module Architecture</span>
             </div>
-            <div className="flex flex-col gap-2.5 bg-level-1/50 p-5">
-              {Array.from(new Set(modules.map((m) => m.layer))).map((layer) => (
-                <div key={layer}>
-                  <p className="mb-1.5 font-inter text-[10px] font-medium uppercase tracking-[0.05em] text-tertiary-text">
-                    {layer}
-                  </p>
-                  <div className="flex gap-2">
-                    {modules
-                      .filter((m) => m.layer === layer)
-                      .map((m) => (
-                        <div
-                          key={m.id}
-                          className="flex flex-1 items-center gap-2 rounded-none border-l-[3px] bg-white px-3 py-2.5"
-                          style={{ borderLeftColor: m.color }}
-                        >
-                          <span className="h-[7px] w-[7px] shrink-0 rounded-full" style={{ backgroundColor: m.color }} />
-                          <span className="font-inter text-[12px] font-medium text-ink">
-                            {m.id} {m.name}
-                          </span>
-                          {m.desc && (
-                            <span className="font-inter text-[11px] text-tertiary-text">{m.desc}</span>
-                          )}
-                        </div>
-                      ))}
+            <div className="p-5">
+              {/* Legend */}
+              <div className="mb-3 flex flex-wrap gap-3.5">
+                {[
+                  { color: "#7F77DD", label: "Researcher-owned" },
+                  { color: "#1D9E75", label: "Task designer-owned" },
+                  { color: "#378ADD", label: "Annotator-facing" },
+                  { color: "#BA7517", label: "QA reviewer-owned" },
+                  { color: "#D4537E", label: "Automated + Researcher" },
+                ].map((l) => (
+                  <div key={l.label} className="flex items-center gap-1.5">
+                    <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: l.color }} />
+                    <span className="font-inter text-[12px] text-secondary-text">{l.label}</span>
                   </div>
+                ))}
+              </div>
+
+              {/* Orchestration layer */}
+              <ModuleSection label="Orchestration layer">
+                <ModuleCard color="#7F77DD" name="Project hub" num="M1"
+                  desc='The top-level container. A "project" = one client engagement (e.g., Anthropic&apos;s RLHF campaign). Contains iteration cycles, target metrics, data volume goals, and model version history. This is where the researcher defines "what are we trying to achieve this week" and tracks progress across iterations.'
+                  pain="Addresses pain: 1.2 (strategy feedback), 1.3 (cross-iteration memory)" />
+              </ModuleSection>
+
+              {/* Configuration layer */}
+              <ModuleSection label="Configuration layer">
+                <div className="grid grid-cols-2 gap-3">
+                  <ModuleCard color="#1D9E75" name="Task studio" num="M2"
+                    desc="Where task designers build annotation tasks: define guidelines, rubrics, evaluation dimensions, preference scales, risk categories, and attack vectors. Version-controlled — every guideline change is tracked and can be A/B tested."
+                    pain="Addresses pain: 1.1 (translation gap), 2.1 (versioning), 2.2 (rubric ambiguity), 2.3 (A/B testing)" />
+                  <ModuleCard color="#1D9E75" name="Workforce hub" num="M3"
+                    desc="Annotator lifecycle management: recruitment pipelines, multi-stage vetting (Meta's 4-test process), skill tiering, task routing, compensation tracking, communication channels, and demographics. Maps annotators to task types by capability."
+                    pain="Addresses pain: 4.2 (fatigue detection), 4.6 (feedback loops to annotators)" />
                 </div>
-              ))}
+              </ModuleSection>
+
+              <FlowArrow label="Task configs + annotator assignments flow down" />
+
+              {/* Generation layer */}
+              <ModuleSection label="Generation layer">
+                <div className="grid grid-cols-2 gap-3">
+                  <ModuleCard color="#D85A30" name="Model gateway" num="M4"
+                    desc="Connects to client model endpoints. Manages model variant deployment, temperature/sampling configs, response pair generation, and latency optimization. Tracks which model version generated each response for full provenance."
+                    pain="Addresses pain: 3.1 (infra), 4.4 (latency)" />
+                  <ModuleCard color="#D85A30" name="Prompt engine" num="M5"
+                    desc="Manages prompt sourcing and diversity: human-written prompts, model-generated synthetic prompts, adversarial seed prompts. Tracks topic/category coverage, detects distribution gaps, and ensures diversity targets are met per batch."
+                    pain="Addresses pain: 3.2 (diversity), 3.3 (quality gate)" />
+                </div>
+              </ModuleSection>
+
+              <FlowArrow label="Prompts + model responses flow into annotation" />
+
+              {/* Core execution layer */}
+              <ModuleSection label="Core execution layer">
+                <ModuleCard color="#378ADD" name="Annotation workbench" num="M6"
+                  desc="The annotator-facing interface. Supports multiple task modes: SFT demonstration writing, pairwise preference comparison with strength ratings, multi-turn conversational annotation, red-team adversarial probing, and safety labeling. Includes conversation branching, response editing (as Anthropic allowed for Upworkers), and real-time quality signals. This is the heart of the platform."
+                  pain="Addresses pain: 4.1 (cognitive load), 4.3 (signal degradation), 4.5 (multi-turn), 4.6 (real-time feedback)" />
+              </ModuleSection>
+
+              <FlowArrow label="Raw annotations flow into quality control" />
+
+              {/* Quality & processing layer */}
+              <ModuleSection label="Quality &amp; processing layer">
+                <div className="grid grid-cols-2 gap-3">
+                  <ModuleCard color="#BA7517" name="Quality control center" num="M7"
+                    desc="QA review workflows (approve/edit/reject), inter-annotator agreement monitoring, automated quality scoring using client reward models, drift detection over time, and calibration checks. Feeds quality signals back to Workforce Hub and Task Studio."
+                    pain="Addresses pain: 5.1 (QA bottleneck), 5.2 (rejection cost), 2.2 (ambiguity detection)" />
+                  <ModuleCard color="#D4537E" name="Data engine" num="M8"
+                    desc="Data processing pipeline: formatting for training, train/test splitting, cross-batch mixing with configurable ratios, deduplication, distribution analysis, coverage reporting. Exports to client training infrastructure in their required format."
+                    pain="Addresses pain: 5.3 (ad-hoc mixing), 5.4 (distribution analysis)" />
+                </div>
+              </ModuleSection>
+
+              <FlowArrow label="Processed data exports to client + results feed back" up />
+
+              {/* Intelligence layer */}
+              <ModuleSection label="Intelligence layer">
+                <ModuleCard color="#7F77DD" name="Analytics &amp; insights" num="M9"
+                  desc="Cross-iteration analytics: reward model accuracy trends, data quality over time, annotator performance, coverage gaps, false refusal rates, cost-per-annotation, throughput metrics. Generates actionable recommendations for next iteration strategy. Closes the loop back to Project Hub."
+                  pain="Addresses pain: 6.1 (RM accuracy visibility), 6.2 (slow feedback), 6.3 (eval cost)" />
+              </ModuleSection>
             </div>
           </div>
           <p className="mt-4 font-literata text-[15px] leading-[1.75] text-ink/85">
@@ -443,37 +524,160 @@ export default function ProductDirectionPage() {
             7. Core Module Deep Dives
           </h2>
           <p className="mb-6 font-literata text-[15px] leading-[1.75] text-ink/85">
-            Three modules represent the core differentiation — where the platform
-            wins or loses against manual processes. Together they address 15 of
-            the 19 pain points identified.
+            Three modules represent the core differentiation &mdash; where the
+            platform wins or loses against manual processes. Together they address
+            15 of the 19 pain points identified.
           </p>
-          <div className="flex flex-col gap-4">
-            {coreModules.map((mod) => (
-              <div key={mod.id} className="rounded-comfortable border border-level-2 p-5">
-                <div className="mb-3 flex items-center gap-2.5">
-                  <span className="h-2 w-2 rounded-full" style={{ backgroundColor: mod.color }} />
-                  <h3 className="font-inter text-[15px] font-semibold text-ink">
-                    {mod.id}: {mod.name}
-                  </h3>
-                  <span className="font-inter text-[12px] text-tertiary-text">{mod.subtitle}</span>
-                </div>
-                <p className="mb-4 font-literata text-[14px] leading-relaxed text-ink/80">
-                  {mod.description}
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {mod.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-tight px-2.5 py-1 font-inter text-[11px]"
-                      style={{ backgroundColor: mod.color + "1A", color: mod.color }}
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
+
+          {/* ── M2: Task Studio ── */}
+          <DeepDiveModule color="#1D9E75" id="M2" name="Task Studio" subtitle="The translation layer">
+            <DeepDiveGroup title="Task type builder" rationale="Both papers used multiple distinct task types. Rather than hard-coding these, the Task Studio provides composable building blocks that task designers assemble into task configurations.">
+              <Feat color="#1D9E75" name="Task templates" desc="Pre-built templates for four core RLHF task types: SFT demonstration writing, pairwise preference comparison, adversarial red-teaming, and model-comparison ranking. Each template includes default UX layout, required fields, and suggested rubrics." />
+              <Feat color="#1D9E75" name="Evaluation dimensions" desc="Configurable dimensions annotators evaluate on. Both papers used helpfulness and safety as primary dimensions. The designer defines each with: name, definition, examples, and a scale (binary, 4-point as Meta used, or continuous). Dimensions can be combined." tags={[{ label: "pain 2.2", type: "pain" }]} />
+              <Feat color="#1D9E75" name="Preference scale config" desc="Configure preference strength options. Meta used a 4-point scale and used it to add margin to their RM loss function. Anthropic filtered out weak preferences. The designer sets the scale, labels, and minimum threshold for inclusion." tags={[{ label: "differentiator", type: "new" }]} />
+              <Feat color="#1D9E75" name="Safety taxonomy builder" desc="Structured definition of risk categories (illicit activities, hateful content, unqualified advice) and attack vectors (psychological manipulation, logic manipulation, role-playing, non-English). Creates a coverage matrix the Prompt Engine uses to ensure all cells are represented." />
+            </DeepDiveGroup>
+
+            <DeepDiveGroup title="Guideline management" rationale="Anthropic amended guidelines via Slack. Meta had formal guidelines but no clear versioning story. This is where the platform adds structure to what was previously ad-hoc.">
+              <Feat color="#1D9E75" name="Version-controlled guidelines" desc={'Every guideline change creates a new version with a diff view, change rationale, and author. Annotations are tagged with the guideline version they were collected under. Enables: "did guideline v3 actually improve agreement?"'} tags={[{ label: "pain 2.1", type: "pain" }]} />
+              <Feat color="#1D9E75" name="Edge case library" desc="A living knowledge base of ambiguous examples with canonical decisions. When an annotator or QA reviewer flags a borderline case, it enters the library. Task designer adjudicates and adds the resolution. These automatically become calibration tasks AND guideline examples." tags={[{ label: "differentiator", type: "new" }, { label: "pain 2.2", type: "pain" }]} />
+              <Feat color="#1D9E75" name="Context-sensitive rubric delivery" desc='Instead of showing annotators a 10-page guideline document, the relevant rubric section is surfaced inline within the Annotation Workbench based on task type and context. If the annotator is evaluating medical advice, the "unqualified advice" rubric section appears automatically.' tags={[{ label: "pain 4.1", type: "pain" }]} />
+              <Feat color="#1D9E75" name="Guideline A/B testing" desc='Run two guideline variants simultaneously on comparable annotator pools. Measures: agreement rates, PM score alignment, annotation speed, and annotator-reported difficulty. Resolves debates like "should red-teamers choose the more harmful or least harmful response?" with data.' tags={[{ label: "pain 2.3", type: "pain" }]} />
+            </DeepDiveGroup>
+
+            <DeepDiveGroup title="Calibration & golden task system" rationale="Neither paper had a robust calibration system. Anthropic noted that standard gold-label approaches didn't work for open-ended conversations. We need a different model.">
+              <Feat color="#1D9E75" name="Golden task generator" desc="Task designers create golden comparison pairs with canonical preferences and detailed justifications. Mixed into annotator queues at a configurable rate (e.g., 5%). Annotator performance on golden tasks is tracked but invisible to them." />
+              <Feat color="#1D9E75" name="Consensus-based calibration" desc="For open-ended tasks where researcher-defined gold labels are impractical, the system uses consensus: a subset of tasks are shown to multiple annotators, and the majority preference becomes the soft calibration target." tags={[{ label: "differentiator", type: "new" }]} />
+            </DeepDiveGroup>
+
+            <DeepDiveConnections connections={[
+              { label: "Task Studio \u2192 Annotation Workbench", desc: "Task configs, guidelines, rubrics, and calibration tasks are pushed to the workbench. Changes propagate immediately." },
+              { label: "Quality Control Center \u2192 Task Studio", desc: 'QCC surfaces patterns: "Annotators disagree 40% of the time on medical advice safety tasks." This triggers rubric review. Edge cases flagged by QA flow into the edge case library.' },
+              { label: "Task Studio \u2192 Prompt Engine", desc: "The safety taxonomy (risk categories \u00d7 attack vectors) defines a coverage matrix. The Prompt Engine uses this to ensure prompt distribution hits all cells." },
+            ]} />
+          </DeepDiveModule>
+
+          {/* ── M6: Annotation Workbench ── */}
+          <DeepDiveModule color="#378ADD" id="M6" name="Annotation Workbench" subtitle="The heart">
+            <DeepDiveGroup title="Task modes" rationale="The workbench isn't a single interface — it's four distinct UX modes, each optimized for a different annotation type. The mode is determined by the task config from Task Studio.">
+              <div className="mb-2 grid grid-cols-2 gap-2.5">
+                {[
+                  { name: "SFT demonstration", desc: "Annotator writes prompt + ideal response. Rich text editor with tone/style guides inline. Auto-checks for guideline compliance before submission." },
+                  { name: "Preference comparison", desc: "Side-by-side response display. Preference selection + strength rating. Optional rationale field. Diff highlighting between responses." },
+                  { name: "Red-team / adversarial", desc: 'Prompt crafting with attack vector suggestions. Response evaluation with safety category labeling. Reframed as "which response better follows safety guidelines."' },
+                  { name: "Multi-turn conversation", desc: "Full conversation threading. Branching support. Per-turn preference comparison. Conversation-level quality rating." },
+                ].map((m) => (
+                  <div key={m.name} className="rounded-md border border-level-2 px-3 py-2.5">
+                    <p className="mb-1 font-inter text-[13px] font-medium text-ink">{m.name}</p>
+                    <p className="font-inter text-[12px] leading-snug text-secondary-text">{m.desc}</p>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </DeepDiveGroup>
+
+            <DeepDiveGroup title="Response comparison engine" rationale="This is the core UX for preference annotation — the task that produces 90%+ of RLHF training data. Every friction point here multiplies across millions of comparisons.">
+              <Feat color="#378ADD" name="Intelligent diff highlighting" desc="Automatically highlight key differences between response A and B — factual claims, tonal differences, structural differences. Not a character-level diff — a semantic one." tags={[{ label: "differentiator", type: "new" }]} />
+              <Feat color="#378ADD" name="Difficulty indicator" desc='Show the annotator a signal of how similar the two responses are (derived from embedding distance or PM score delta). A "these are very similar — take your time" indicator prepares for hard comparisons. Meta showed accuracy drops from 94% to 55% as similarity increases.' tags={[{ label: "pain 4.3", type: "pain" }, { label: "differentiator", type: "new" }]} />
+              <Feat color="#378ADD" name="Preference strength with anchor examples" desc='When an annotator selects "slightly better," show a tooltip with an example of what "slightly better" vs "significantly better" looks like from the calibration library. Reduces scale interpretation drift.' tags={[{ label: "pain 2.2", type: "pain" }]} />
+              <Feat color="#378ADD" name="Optional rationale capture" desc='An optional free-text field: "Why did you prefer this response?" Not required (would kill throughput), but incentivized. Rationales help QA understand disagreements, train better reward models, and improve guidelines. Can be made required for low-confidence comparisons only.' />
+            </DeepDiveGroup>
+
+            <DeepDiveGroup title="Cognitive load management" rationale="Pain 4.1 (task confusion) and 4.2 (annotator fatigue) are the biggest threats to data quality. The workbench must actively manage cognitive load rather than just displaying tasks.">
+              <Feat color="#378ADD" name="Red-team task reframing" desc='Anthropic found annotators got confused when asked to "choose the more harmful response" while trying to elicit harm. The workbench reframes this: instead of "which is more harmful?" it asks "which response better follows our safety guidelines?" — same data outcome, but cognitively coherent.' tags={[{ label: "critical fix", type: "critical" }, { label: "pain 4.1", type: "pain" }]} />
+              <Feat color="#378ADD" name="Context-sensitive inline guidelines" desc="Instead of a static guideline sidebar, show the relevant rubric section based on current task context. If the prompt mentions medical advice, surface the unqualified advice criteria. Powered by the safety taxonomy from Task Studio." tags={[{ label: "pain 4.1", type: "pain" }]} />
+              <Feat color="#378ADD" name="Fatigue management system" desc="Track session duration, task velocity, and quality signals. After N consecutive tasks or T minutes, suggest breaks. If quality metrics start declining within a session, proactively offer a break or task type switch. Alternate between helpfulness and safety tasks to prevent habituation." tags={[{ label: "pain 4.2", type: "pain" }]} />
+              <Feat color="#378ADD" name="Red-team attack vector suggestions" desc={'During adversarial tasks, suggest attack categories the annotator hasn\'t tried recently. "You\'ve done 12 role-playing attacks this session. Try a false-premise or logic-manipulation approach." Prevents prompt repetition and improves coverage.'} tags={[{ label: "pain 3.2", type: "pain" }]} />
+            </DeepDiveGroup>
+
+            <DeepDiveGroup title="Multi-turn conversation support" rationale="Meta's data averaged 3.9 turns per dialogue. Multi-turn is harder but more valuable. The workbench needs specific tooling for it.">
+              <Feat color="#378ADD" name="Conversation branching" desc='At any turn, the annotator can "branch" — go back to a previous turn and explore an alternative path. This creates a conversation tree rather than a single linear thread. Bad choices at turn 2 no longer ruin the entire trajectory. Both branches produce usable training data.' tags={[{ label: "pain 4.5", type: "pain" }, { label: "differentiator", type: "new" }]} />
+              <Feat color="#378ADD" name="Turn-level annotation" desc="Each turn gets its own preference annotation rather than only annotating at the conversation level. Anthropic collected per-turn preferences. This produces denser training signal from each conversation." />
+              <Feat color="#378ADD" name="Response editing" desc="Annotators can edit model responses before proceeding, as Anthropic allowed for Upworkers. The edit + original creates an additional high-quality comparison pair. Edited responses are flagged as human-modified." />
+            </DeepDiveGroup>
+
+            <DeepDiveGroup title="Real-time quality feedback">
+              <Feat color="#378ADD" name="Personal quality dashboard" desc={"Visible to the annotator: calibration score, agreement rate with peers, tasks completed, and quality trend. Not punitive \u2014 framed as a learning tool. \"You're at 78% alignment on safety tasks, up from 72% last week.\""} tags={[{ label: "pain 4.6", type: "pain" }]} />
+              <Feat color="#378ADD" name="Calibration nudges" desc="When an annotator's recent preferences diverge from consensus on a specific dimension, surface a calibration micro-task: a golden pair from the edge case library with a brief explanation. Not interruptive — offered between tasks." tags={[{ label: "pain 4.6", type: "pain" }, { label: "differentiator", type: "new" }]} />
+            </DeepDiveGroup>
+
+            <DeepDiveGroup title="Throughput optimization">
+              <Feat color="#378ADD" name="Response pre-generation" desc="While the annotator works on the current task, pre-generate response pairs for their next task via the Model Gateway. For multi-turn conversations, pre-generate for the most likely next turns." tags={[{ label: "pain 4.4", type: "pain" }]} />
+              <Feat color="#378ADD" name="Keyboard-first interaction" desc="Keyboard shortcuts for all common actions: select response A/B, set preference strength, submit, flag for QA review. Power annotators should never need the mouse for preference tasks." />
+            </DeepDiveGroup>
+
+            <DeepDiveConnections connections={[
+              { label: "Task Studio \u2192 Annotation Workbench", desc: "Task configs determine which mode loads, which guidelines appear, what preference scales are shown, and what calibration tasks are mixed in." },
+              { label: "Model Gateway \u2192 Annotation Workbench", desc: "Response pairs arrive with model provenance metadata (variant, temperature, version). The annotator never sees this, but it's stored for analysis." },
+              { label: "Annotation Workbench \u2192 Quality Control Center", desc: "Every annotation flows to QCC with metadata: annotator ID, time taken, guideline version, preference strength, difficulty signal, and optional rationale." },
+              { label: "Quality Control Center \u2192 Annotation Workbench", desc: "Real-time quality signals flow back: calibration scores, agreement alerts, and calibration nudge tasks. This is the inner feedback loop." },
+            ]} />
+
+            {/* Design note */}
+            <div className="mt-4 rounded-md border border-[#378ADD]/30 bg-[#378ADD]/5 px-4 py-3">
+              <p className="mb-1 font-inter text-[12px] font-medium text-[#378ADD]">Key design decision: the red-team reframing</p>
+              <p className="font-inter text-[13px] leading-relaxed text-secondary-text">
+                Anthropic&apos;s paper explicitly states that annotators got confused
+                choosing &ldquo;the more harmful response&rdquo; &mdash; it&apos;s
+                cognitively contradictory to simultaneously try to provoke harm AND
+                select for it. Our workbench reframes ALL preference tasks as
+                &ldquo;choose the better response according to the relevant
+                guidelines.&rdquo; For safety tasks, the &ldquo;better&rdquo;
+                response is the one that follows safety guidelines. One mental model,
+                four task types.
+              </p>
+            </div>
+          </DeepDiveModule>
+
+          {/* ── M7: Quality Control Center ── */}
+          <DeepDiveModule color="#BA7517" id="M7" name="Quality Control Center" subtitle="The intelligence layer">
+            <DeepDiveGroup title="Review workflows" rationale="Meta had content managers manually review annotations. Anthropic did spot-checks. The platform needs a tiered approach: automated screening catches obvious issues, human review focuses on ambiguous cases.">
+              <Feat color="#BA7517" name="Tiered review pipeline" desc="Three tiers: (1) Auto-approve — annotations where the annotator's choice aligns with the client's RM AND other annotators. (2) Spot-check — random sample from auto-approved for human QA. (3) Mandatory review — where the RM disagrees with the annotator, or annotators disagree with each other. Concentrates human QA effort where it matters most." tags={[{ label: "pain 5.1", type: "pain" }, { label: "differentiator", type: "new" }]} />
+              <Feat color="#BA7517" name="Structured rejection feedback" desc="When a QA reviewer rejects an annotation, they select a reason from a predefined taxonomy (guideline misapplication, insufficient evidence, safety label error, prompt quality issue) and optionally add a note. Feedback flows back to the annotator, creating a learning loop. Rejection patterns inform guideline improvements in Task Studio." tags={[{ label: "pain 5.2", type: "pain" }]} />
+              <Feat color="#BA7517" name="Reviewer calibration" desc='QA reviewers themselves get calibration tasks. A small percentage of their review queue contains "golden reviews" — annotations with known-correct quality judgments. Answers "who checks the checkers?" and prevents reviewer drift.' />
+            </DeepDiveGroup>
+
+            <DeepDiveGroup title="Automated quality signals" rationale="Quality can be estimated from multiple independent signals. No single signal is definitive, but their combination is powerful.">
+              <Feat color="#BA7517" name="Reward model alignment scoring" desc="Score each annotated pair using the client's current RM. Flag annotations where the annotator's preference disagrees with the RM. These disagreements aren't necessarily errors — the RM might be wrong — but they're high-value for review. The pattern of RM-annotator disagreements reveals where the RM has blind spots." tags={[{ label: "differentiator", type: "new" }]} />
+              <Feat color="#BA7517" name="Composite quality score" desc="For each annotation, compute a confidence score combining: golden task accuracy, agreement with other annotators, RM alignment, preference strength (higher = more decisive = typically higher quality), and time spent (too fast = not reading, too slow = confused). This score drives the tiered review pipeline." tags={[{ label: "differentiator", type: "new" }]} />
+              <Feat color="#BA7517" name="Near-duplicate detection" desc='Embedding-based similarity detection across prompts and responses within and across batches. Flag semantically identical but differently worded prompts. Prevents the dataset from being dominated by a small set of topics. Anthropic noted they "discouraged repetition" — this automates it.' tags={[{ label: "pain 5.4", type: "pain" }]} />
+            </DeepDiveGroup>
+
+            <DeepDiveGroup title="Agreement & calibration monitoring">
+              <Feat color="#BA7517" name="Overlap scheduling engine" desc="Automatically assign a configurable percentage (default: 10-15%) of tasks to multiple annotators. Smart overlap: higher rate for task types with historically lower agreement. Overlap pairs used for IAA computation but both annotations are potentially usable for training." />
+              <Feat color="#BA7517" name="Multi-dimensional agreement tracking" desc="Track agreement broken down by: evaluation dimension, task type, prompt category, preference strength bucket, and guideline version. Surfaces exactly where the rubric needs work. Anthropic's 63% overall agreement likely masked significant variation across categories." tags={[{ label: "pain 2.2", type: "pain" }]} />
+              <Feat color="#BA7517" name="Calibration drift detection" desc="Monitor agreement and golden-task accuracy over time within and across batches. Alert when an annotator's quality drops (fatigue), the whole cohort drops (guideline problem or model shift), or a new guideline version changes agreement patterns." tags={[{ label: "pain 4.2", type: "pain" }]} />
+            </DeepDiveGroup>
+
+            <DeepDiveGroup title="Distribution & coverage analysis" rationale="Neither paper had systematic coverage analysis. Meta defined a risk category × attack vector matrix, but there's no evidence they tracked coverage against it in real-time.">
+              <Feat color="#BA7517" name="Coverage heatmap" desc='Real-time visualization of the risk category × attack vector matrix. Shows annotation count in each cell with color indicating sufficiency. Highlights gaps: "300+ annotations for role-playing + illicit activities, but only 12 for logic manipulation + unqualified advice."' tags={[{ label: "pain 5.4", type: "pain" }, { label: "differentiator", type: "new" }]} />
+              <Feat color="#BA7517" name="Difficulty distribution monitor" desc='Track the distribution of comparison difficulty (based on RM score delta). As models improve, the distribution shifts toward harder comparisons. Alert when "negligibly better" comparisons exceed a threshold — a signal that response pair generation needs higher temperature or more diverse model variants. Directly addresses the degradation paradox.' tags={[{ label: "critical", type: "critical" }, { label: "pain 4.3", type: "pain" }]} />
+              <Feat color="#BA7517" name="Topic distribution tracker" desc="Cluster prompts by topic using embeddings. Detect when annotators gravitate toward familiar topics and diversity is declining. Feed gaps back to the Prompt Engine to generate targeted prompts in underrepresented areas." tags={[{ label: "pain 3.2", type: "pain" }]} />
+            </DeepDiveGroup>
+
+            <DeepDiveConnections connections={[
+              { label: "QCC \u2192 Annotation Workbench (real-time)", desc: "Quality scores, calibration nudges, difficulty indicators. The inner loop — latency target: under 1 minute." },
+              { label: "QCC \u2192 Workforce Hub (daily)", desc: 'Per-annotator quality reports, skill tier recommendations, retraining triggers, fatigue alerts. "Move annotator X from safety tasks to helpfulness — their safety agreement is declining."' },
+              { label: "QCC \u2192 Task Studio (weekly)", desc: 'Rubric ambiguity reports, edge cases, agreement breakdowns by category. "The medical advice rubric needs work — agreement is 20 points below average."' },
+              { label: "QCC \u2192 Prompt Engine (continuous)", desc: 'Coverage gap signals, topic distribution drift. "We need more prompts in the finance + psychological-manipulation cell."' },
+              { label: "QCC \u2192 Data Engine (batch)", desc: "Approved annotation batches with quality metadata. Each data point carries its composite quality score, enabling quality-weighted filtering during training data preparation." },
+              { label: "QCC \u2192 Analytics & Insights (batch)", desc: "Batch quality summary, coverage report, drift analysis. Feeds cross-iteration learning that informs next batch strategy." },
+            ]} />
+
+            {/* Insight callout */}
+            <div className="mt-4 rounded-md border border-[#BA7517]/30 bg-[#BA7517]/5 px-4 py-3">
+              <p className="mb-1 font-inter text-[12px] font-medium text-[#BA7517]">The degradation paradox solution</p>
+              <p className="font-inter text-[13px] leading-relaxed text-secondary-text">
+                Both papers observed that as models improve, preference data quality
+                degrades because responses become harder to distinguish. The QCC&apos;s
+                difficulty distribution monitor detects this in real-time. When it
+                triggers, the system can automatically: (1)&nbsp;increase response
+                generation temperature via the Model Gateway, (2)&nbsp;sample from more
+                diverse model variants, (3)&nbsp;route harder comparisons to higher-skill
+                annotators via the Workforce Hub, and (4)&nbsp;alert the researcher via
+                the Project Hub that the model may have reached a plateau.
+              </p>
+            </div>
+          </DeepDiveModule>
         </section>
 
         {/* Section 8: Feature Roadmap (link) */}
@@ -494,29 +698,6 @@ export default function ProductDirectionPage() {
           </Link>
         </section>
 
-        {/* Section 9: Strategic Patterns */}
-        <section id="section-9" className="scroll-mt-4 px-12 py-10">
-          <h2 className="mb-4 font-inter text-[12px] font-medium uppercase tracking-[0.04em] text-[#1D9E75]">
-            9. Strategic Patterns
-          </h2>
-          <p className="mb-6 font-literata text-[15px] leading-[1.75] text-ink/85">
-            Three cross-cutting patterns emerged from the research that should
-            shape every product decision:
-          </p>
-          <div className="flex flex-col gap-3">
-            {patterns.map((p) => (
-              <div key={p.num} className="rounded-comfortable bg-deep-teal p-5">
-                <div className="mb-2 flex items-baseline gap-2.5">
-                  <span className="font-mono text-[12px] font-medium text-[#5DCA7A]">{p.num}</span>
-                  <h3 className="font-inter text-[14px] font-semibold text-off-white">{p.title}</h3>
-                </div>
-                <p className="pl-7 font-literata text-[14px] leading-relaxed text-white/65">
-                  {p.body}
-                </p>
-              </div>
-            ))}
-          </div>
-        </section>
       </main>
     </div>
   );
