@@ -2,7 +2,6 @@
 
 import { useRef } from "react";
 import { PageHeader } from "@/components/admin/page-header";
-import { StatCard } from "@/components/ui/stat-card";
 import { cn } from "@/lib/cn";
 import { Download } from "lucide-react";
 
@@ -10,248 +9,440 @@ import { Download } from "lucide-react";
 /*  Types                                                              */
 /* ------------------------------------------------------------------ */
 
-type Tag = "high-impact" | "differentiator";
-
 interface Feature {
   name: string;
-  tags?: Tag[];
-  module: string;
+  module?: string;
 }
 
-interface FeatureGroup {
+interface Theme {
   name: string;
   features: Feature[];
 }
 
-interface Phase {
+interface Bucket {
   id: string;
   name: string;
-  shortName: string;
-  status: string;
-  featureCount: number;
   description: string;
   color: string;
-  dotFilled: boolean;
-  flex: number;
-  groups: FeatureGroup[];
+  themes: Theme[];
 }
 
 /* ------------------------------------------------------------------ */
 /*  Data                                                               */
 /* ------------------------------------------------------------------ */
 
-const phases: Phase[] = [
+const buckets: Bucket[] = [
   {
-    id: "phase-1",
-    name: "Phase 1: MVP Core Pipeline",
-    shortName: "Phase 1: MVP Core",
-    status: "Prototyped",
-    featureCount: 19,
+    id: "now",
+    name: "Now",
     description:
-      "Table stakes \u2014 the fundamental ability to collect RLHF training data from humans",
+      "Table stakes \u2014 the capabilities every competitive RLHF data platform must have",
     color: "#1D9E75",
-    dotFilled: true,
-    flex: 19,
-    groups: [
+    themes: [
       {
-        name: "TASK CONFIGURATION",
+        name: "THE ANNOTATION CORE",
         features: [
-          { name: "Task type templates (SFT, preference, red-team, ranking)", tags: [], module: "M2" },
-          { name: "Evaluation dimension builder", module: "M2" },
-          { name: "Preference scale configuration", module: "M2" },
-          { name: "Safety taxonomy builder", module: "M2" },
+          {
+            name: "Multi-mode annotation workbench (SFT, pairwise, red-team, ranking, rubric, chat, arena)",
+            module: "M6",
+          },
+          {
+            name: "Side-by-side response comparison with preference selector",
+            module: "M6",
+          },
+          {
+            name: "Multi-turn conversation threading",
+            module: "M6",
+          },
+          {
+            name: "Red-team adversarial probing with safety categorization",
+            module: "M6",
+          },
+          {
+            name: "Rubric-based dimensional scoring",
+            module: "M6",
+          },
+          {
+            name: "SFT demonstration writing",
+            module: "M6",
+          },
+          {
+            name: "Response editing & rewriting capability",
+            module: "M6",
+          },
+          {
+            name: "Model arena for head-to-head evaluation",
+            module: "M6",
+          },
+          {
+            name: "Keyboard-first interaction design",
+            module: "M6",
+          },
+          {
+            name: "Annotation skip & flag workflows",
+            module: "M6",
+          },
+        ],
+      },
+      {
+        name: "TASK DESIGN & CONFIGURATION",
+        features: [
+          {
+            name: "Task type templates with type-specific configuration",
+            module: "M2",
+          },
+          {
+            name: "Evaluation dimension builder",
+            module: "M2",
+          },
+          {
+            name: "Preference scale configuration (binary, Likert, margin-based)",
+            module: "M2",
+          },
+          {
+            name: "Safety taxonomy builder (risk categories & attack vectors)",
+            module: "M2",
+          },
           { name: "Guideline version control", module: "M2" },
+          {
+            name: "Annotator-facing task preview",
+            module: "M2",
+          },
         ],
       },
       {
-        name: "ANNOTATION INTERFACE",
+        name: "WORKFORCE & ONBOARDING",
         features: [
-          { name: "Multi-mode annotation workbench", tags: ["high-impact"], module: "M6" },
-          { name: "Side-by-side response comparison with preference selector", module: "M6" },
-          { name: "Multi-turn conversation threading", module: "M6" },
-          { name: "Red-team task reframing", tags: ["high-impact"], module: "M6" },
-          { name: "Response editing capability", module: "M6" },
-          { name: "Keyboard-first interaction design", module: "M6" },
+          {
+            name: "Annotator profiles & management",
+            module: "M3",
+          },
+          {
+            name: "Multi-stage qualification testing",
+            module: "M3",
+          },
+          {
+            name: "Qualification test builder",
+            module: "M3",
+          },
+          {
+            name: "Annotator onboarding flows",
+            module: "M3",
+          },
+          { name: "Basic skill & performance tracking", module: "M3" },
         ],
       },
       {
-        name: "MODEL INTEGRATION & DATA MANAGEMENT",
+        name: "PROJECT & ITERATION MANAGEMENT",
         features: [
-          { name: "Model endpoint registry with hot-swap", module: "M4" },
+          {
+            name: "Project creation & configuration",
+            module: "M1",
+          },
+          {
+            name: "Campaign management with batch rounds",
+            module: "M1",
+          },
+          {
+            name: "Iteration lifecycle tracking",
+            module: "M1",
+          },
+          {
+            name: "Project-level analytics dashboard",
+            module: "M1+M9",
+          },
+          { name: "Multi-tenant workspace isolation", module: "M1" },
+        ],
+      },
+      {
+        name: "MODEL & PROMPT INFRASTRUCTURE",
+        features: [
+          {
+            name: "Model endpoint registry",
+            module: "M4",
+          },
+          {
+            name: "Prompt pool management & curation",
+            module: "M5",
+          },
           { name: "Response pair generation strategies", module: "M4" },
-          { name: "Full response provenance tracking", module: "M4" },
-          { name: "Project \u2192 Iteration \u2192 Batch hierarchy", module: "M1" },
-          { name: "Multi-tenant isolation", module: "M1" },
-          { name: "Multi-format data export (JSONL, Parquet, custom)", module: "M8" },
+          { name: "Model hot-swap without session disruption", module: "M4" },
+        ],
+      },
+      {
+        name: "DATA & EXPORT PIPELINE",
+        features: [
+          {
+            name: "Multi-format data export (JSONL, Parquet, HuggingFace)",
+            module: "M8",
+          },
+          {
+            name: "Export configuration & preview",
+            module: "M8",
+          },
+          {
+            name: "Export analysis & statistics",
+            module: "M8",
+          },
           { name: "Train/test split management", module: "M8" },
-          { name: "Basic annotator management", module: "M3" },
+          { name: "Full data provenance tracking", module: "M8" },
+        ],
+      },
+      {
+        name: "REVIEW & QUALITY FOUNDATIONS",
+        features: [
+          {
+            name: "Review queue & assignment workflows",
+            module: "M7",
+          },
+          {
+            name: "Individual annotation review with approve/reject",
+            module: "M7",
+          },
+          {
+            name: "Quality analytics dashboard",
+            module: "M7+M9",
+          },
+          {
+            name: "Task experimentation framework",
+            module: "M2",
+          },
+          { name: "Inter-annotator agreement metrics", module: "M7" },
         ],
       },
     ],
   },
   {
-    id: "phase-2",
-    name: "Phase 2: Quality & Strategic Intelligence",
-    shortName: "Phase 2: Intelligence",
-    status: "In Progress",
-    featureCount: 16,
+    id: "next",
+    name: "Next",
     description:
-      'Where the platform moves from "tool" to "intelligent system"',
+      "Differentiation \u2014 where the platform moves from tool to intelligent system",
     color: "#7F77DD",
-    dotFilled: true,
-    flex: 16,
-    groups: [
+    themes: [
       {
-        name: "REAL-TIME QUALITY MONITORING",
+        name: "REAL-TIME QUALITY INTELLIGENCE",
         features: [
-          { name: "Tiered review pipeline (auto-approve / spot-check / mandatory)", tags: ["high-impact", "differentiator"], module: "M7" },
-          { name: "Reward model alignment scoring", tags: ["high-impact"], module: "M7" },
+          {
+            name: "Tiered review pipeline (auto-approve / spot-check / mandatory)",
+            module: "M7",
+          },
+          {
+            name: "Reward model alignment scoring",
+            module: "M7",
+          },
           { name: "Calibration drift detection", module: "M7" },
-          { name: "Difficulty distribution monitor", tags: ["high-impact"], module: "M7" },
+          {
+            name: "Difficulty distribution monitor",
+            module: "M7",
+          },
           { name: "Composite quality score per annotation", module: "M7" },
+          { name: "Golden task injection & tracking", module: "M7" },
         ],
       },
       {
-        name: "ANNOTATOR FEEDBACK & WORKFORCE",
+        name: "ANNOTATOR FEEDBACK LOOPS",
         features: [
-          { name: "Calibration nudge system", tags: ["differentiator"], module: "M6+M7" },
-          { name: "Intelligent task routing", tags: ["high-impact"], module: "M3" },
-          { name: "Fatigue management system", module: "M6+M3" },
-          { name: "Content exposure management for red-team work", module: "M3" },
-          { name: "Skill tier system with per-dimension scoring", module: "M3" },
+          {
+            name: "Real-time calibration nudge system",
+            module: "M6+M7",
+          },
+          {
+            name: "Intelligent task routing by skill & difficulty",
+            module: "M3",
+          },
+          { name: "Fatigue detection & session management", module: "M6+M3" },
+          {
+            name: "Content exposure management for red-team work",
+            module: "M3",
+          },
+          {
+            name: "Skill tier system with per-dimension scoring",
+            module: "M3",
+          },
+          {
+            name: "Preference strength signal capture (margin-based)",
+            module: "M6",
+          },
         ],
       },
       {
-        name: "DATA & STRATEGIC INTELLIGENCE",
+        name: "STRATEGIC DATA ANALYTICS",
         features: [
-          { name: "Coverage heatmap (risk category \u00d7 attack vector)", tags: ["differentiator"], module: "M7" },
-          { name: "Configurable data mixing engine", tags: ["differentiator"], module: "M8" },
-          { name: "Cross-iteration comparison dashboard", module: "M1+M9" },
-          { name: "Distribution shift detector", module: "M9" },
-          { name: "Coverage-driven prompt allocation", module: "M5" },
+          {
+            name: "Coverage heatmap (risk category \u00d7 attack vector)",
+            module: "M7",
+          },
+          {
+            name: "Cross-iteration comparison dashboard",
+            module: "M1+M9",
+          },
+          {
+            name: "Distribution shift detection across batches",
+            module: "M9",
+          },
           { name: "Cost & efficiency analytics", module: "M9" },
+          { name: "Annotator cohort performance analysis", module: "M9" },
+          { name: "Batch-over-batch quality trending", module: "M9" },
+        ],
+      },
+      {
+        name: "DATA MIXING & OPTIMIZATION",
+        features: [
+          {
+            name: "Configurable data mixing engine (cross-iteration blending)",
+            module: "M8",
+          },
+          { name: "Coverage-driven prompt allocation", module: "M5" },
+          { name: "Near-duplicate detection & deduplication", module: "M8" },
+          {
+            name: "Topic distribution analysis & gap detection",
+            module: "M8",
+          },
+          { name: "Data quality scoring & filtering", module: "M8" },
+        ],
+      },
+      {
+        name: "PLATFORM EXTENSIBILITY",
+        features: [
+          {
+            name: "API-first platform with programmatic access",
+            module: "M1",
+          },
+          {
+            name: "Webhook integrations for external systems",
+            module: "M1",
+          },
+          {
+            name: "SSO/SAML authentication",
+            module: "M1",
+          },
+          {
+            name: "Custom workflow builder",
+            module: "M1",
+          },
+          {
+            name: "Compliance & audit framework",
+            module: "M1",
+          },
+          {
+            name: "Training infrastructure integration (direct pipeline export)",
+            module: "M8",
+          },
         ],
       },
     ],
   },
   {
-    id: "phase-3",
-    name: "Phase 3: AI-Augmented Capabilities",
-    shortName: "Phase 3: AI Augmented",
-    status: "Planned",
-    featureCount: 12,
+    id: "later",
+    name: "Later",
     description:
-      "Using AI to improve the data collection process itself",
+      "Future bets \u2014 R&D-intensive capabilities that reshape the data collection paradigm",
     color: "#BA7517",
-    dotFilled: false,
-    flex: 12,
-    groups: [
+    themes: [
       {
-        name: "AI-ASSISTED ANNOTATION",
+        name: "AI-AUGMENTED ANNOTATION",
         features: [
-          { name: "Intelligent diff highlighting", tags: ["high-impact"], module: "M6" },
-          { name: "AI pre-labeling with human review", tags: ["high-impact"], module: "M6+M7" },
-          { name: "Automated rubric ambiguity detection", tags: ["differentiator"], module: "M7" },
+          {
+            name: "AI pre-labeling with human review",
+            module: "M6+M7",
+          },
+          {
+            name: "Intelligent diff highlighting between response pairs",
+            module: "M6",
+          },
+          {
+            name: "Automated rubric ambiguity detection",
+            module: "M7",
+          },
+          {
+            name: "Active learning comparison selection",
+            module: "M4+M7",
+          },
           { name: "Difficulty-aware comparison indicator", module: "M6" },
         ],
       },
       {
-        name: "ACTIVE LEARNING & DATA EFFICIENCY",
+        name: "AUTONOMOUS DATA STRATEGY",
         features: [
-          { name: "Active learning comparison selection", tags: ["high-impact", "differentiator"], module: "M4+M7" },
-          { name: "Data valuation engine", tags: ["high-impact"], module: "M9" },
-          { name: "Adversarial prompt auto-generation", module: "M5" },
-          { name: "Topic-guided synthetic prompt generation", module: "M5" },
-        ],
-      },
-      {
-        name: "AUTOMATED STRATEGIC PLANNING",
-        features: [
-          { name: "Iteration playbook generator", tags: ["differentiator"], module: "M9" },
-          { name: "Guideline A/B testing with automated analysis", module: "M2" },
+          {
+            name: "Data valuation engine (marginal value per category)",
+            module: "M9",
+          },
+          {
+            name: "Iteration playbook generator",
+            module: "M9",
+          },
           { name: "Workforce planning predictor", module: "M3+M9" },
-          { name: "Optimal temperature/sampling recommender", module: "M4+M9" },
+          {
+            name: "Optimal temperature/sampling recommender",
+            module: "M4+M9",
+          },
+          {
+            name: "Guideline A/B testing with automated analysis",
+            module: "M2",
+          },
         ],
       },
-    ],
-  },
-  {
-    id: "phase-4",
-    name: "Phase 4: Scale",
-    shortName: "Phase 4: Scale",
-    status: "Future",
-    featureCount: 8,
-    description: "",
-    color: "#D85A30",
-    dotFilled: false,
-    flex: 8,
-    groups: [
       {
-        name: "",
+        name: "MULTIMODAL & DOMAIN EXPANSION",
         features: [
-          { name: "Vision annotation workbench", module: "" },
-          { name: "Code execution annotation", module: "" },
-          { name: "Multi-lingual annotation support", module: "" },
-          { name: "Expert annotator marketplace", module: "" },
-          { name: "Conversation branching & tree annotation", module: "" },
-          { name: "Domain-specific evaluation rubrics", module: "" },
-          { name: "Tool-use annotation", module: "" },
-          { name: "Long-form content annotation", module: "" },
+          { name: "Vision annotation workbench", module: "M6" },
+          {
+            name: "Code execution annotation with sandboxed environments",
+            module: "M6",
+          },
+          {
+            name: "Tool-use annotation (function calling, API interactions)",
+            module: "M6",
+          },
+          { name: "Conversation branching & tree annotation", module: "M6" },
+          { name: "Long-form content annotation", module: "M6" },
+          {
+            name: "Domain-specific evaluation rubrics (medical, legal, financial)",
+            module: "M2",
+          },
         ],
       },
-    ],
-  },
-  {
-    id: "phase-5",
-    name: "Phase 5: Ecosystem",
-    shortName: "Phase 5",
-    status: "Future",
-    featureCount: 6,
-    description: "",
-    color: "#378ADD",
-    dotFilled: false,
-    flex: 6,
-    groups: [
       {
-        name: "",
+        name: "SYNTHETIC DATA GENERATION",
         features: [
-          { name: "Full audit trail", module: "" },
-          { name: "Data lineage & provenance chain", module: "" },
-          { name: "GDPR/privacy compliance framework", module: "" },
-          { name: "Custom workflow builder", module: "" },
-          { name: "Training infrastructure integration", module: "" },
-          { name: "API-first platform", module: "" },
+          { name: "Adversarial prompt auto-generation", module: "M5" },
+          {
+            name: "Topic-guided synthetic prompt generation",
+            module: "M5",
+          },
+          {
+            name: "Model-generated prompt curation & quality gating",
+            module: "M5",
+          },
+          {
+            name: "Red-team scenario generation from failure patterns",
+            module: "M5+M7",
+          },
+        ],
+      },
+      {
+        name: "SCALE & MARKETPLACE",
+        features: [
+          {
+            name: "Expert annotator marketplace",
+            module: "M3",
+          },
+          {
+            name: "Multi-lingual annotation support with locale management",
+            module: "M6",
+          },
+          { name: "GDPR/privacy compliance framework", module: "M1" },
+          { name: "Full audit trail & data lineage chain", module: "M8" },
+          {
+            name: "Federated annotation across distributed teams",
+            module: "M3",
+          },
         ],
       },
     ],
   },
 ];
-
-/* ------------------------------------------------------------------ */
-/*  Tag pill                                                           */
-/* ------------------------------------------------------------------ */
-
-const tagStyles: Record<Tag, string> = {
-  "high-impact": "bg-[#FCEBEB] text-[#791F1F]",
-  differentiator: "bg-[#E6F2F2] text-[#005151]",
-};
-const tagLabels: Record<Tag, string> = {
-  "high-impact": "HIGH IMPACT",
-  differentiator: "DIFFERENTIATOR",
-};
-
-function TagPill({ tag }: { tag: Tag }) {
-  return (
-    <span
-      className={cn(
-        "rounded-tight px-2 py-0.5 font-mono text-[10px] font-medium tracking-wide whitespace-nowrap",
-        tagStyles[tag]
-      )}
-    >
-      {tagLabels[tag]}
-    </span>
-  );
-}
 
 /* ------------------------------------------------------------------ */
 /*  Page                                                               */
@@ -267,14 +458,11 @@ export default function RoadmapPage() {
     });
   };
 
-  const total = phases.reduce((s, p) => s + p.featureCount, 0);
-
   return (
     <div>
       {/* Header */}
       <PageHeader
         title="Product Roadmap"
-        subtitle={`${total} features across 5 themes`}
         action={
           <button className="flex items-center gap-2 rounded-standard border border-level-2 bg-white px-3 py-1.5 font-inter text-body-md text-secondary-text transition-colors hover:bg-level-1">
             <Download className="h-4 w-4" />
@@ -283,142 +471,76 @@ export default function RoadmapPage() {
         }
       />
 
-      {/* Stat cards */}
-      <div className="mt-4 grid grid-cols-5 gap-3">
-        <StatCard
-          label="Total Features"
-          value={total}
-          trend={{ value: "5 themes, 9 modules", direction: "neutral" }}
-          className="p-4"
-        />
-        <StatCard
-          label="Prototyped"
-          value={phases[0].featureCount}
-          trend={{ value: "Core pipeline", direction: "neutral" }}
-          className="p-4"
-        />
-        <StatCard
-          label="In Progress"
-          value={phases[1].featureCount}
-          trend={{ value: "Intelligence layer", direction: "neutral" }}
-          className="p-4"
-        />
-        <StatCard
-          label="Planned"
-          value={phases[2].featureCount}
-          trend={{ value: "AI augmentation", direction: "neutral" }}
-          className="p-4"
-        />
-        <StatCard
-          label="Future"
-          value={phases[3].featureCount + phases[4].featureCount}
-          trend={{ value: "Scale + ecosystem", direction: "neutral" }}
-          className="p-4"
-        />
-      </div>
-
-      {/* Phase timeline bar */}
+      {/* Now / Next / Later navigation */}
       <div className="mt-6">
         <div className="flex gap-1 overflow-hidden rounded-featured">
-          {phases.map((p) => (
+          {buckets.map((b) => (
             <button
-              key={p.id}
-              onClick={() => scrollTo(p.id)}
-              className="py-2.5 font-inter text-[13px] font-medium text-white transition-opacity hover:opacity-90"
-              style={{ backgroundColor: p.color, flex: p.flex }}
+              key={b.id}
+              onClick={() => scrollTo(b.id)}
+              className="flex-1 py-2.5 font-inter text-[13px] font-medium text-white transition-opacity hover:opacity-90"
+              style={{ backgroundColor: b.color }}
             >
-              {p.shortName}
+              {b.name}
             </button>
           ))}
         </div>
-        <div className="mt-2 flex">
-          {phases.map((p) => (
-            <span
-              key={p.id}
-              className="text-center font-inter text-[12px] font-medium italic"
-              style={{ flex: p.flex, color: p.color }}
-            >
-              {p.status}
-            </span>
-          ))}
-        </div>
       </div>
 
-      {/* Phases 1-3: full detail */}
-      {phases.slice(0, 3).map((phase) => (
+      {/* Bucket sections */}
+      {buckets.map((bucket) => (
         <section
-          key={phase.id}
+          key={bucket.id}
           ref={(el) => {
-            sectionRefs.current[phase.id] = el;
+            sectionRefs.current[bucket.id] = el;
           }}
           className="mt-10 scroll-mt-20"
         >
-          {/* Phase header */}
-          <div className="mb-5 flex items-center gap-3">
+          {/* Bucket header */}
+          <div className="mb-5 flex items-baseline gap-3">
             <span
-              className="h-3 w-3 shrink-0 rounded-full"
-              style={{ backgroundColor: phase.color }}
+              className="relative top-[1px] h-3 w-3 shrink-0 rounded-full"
+              style={{ backgroundColor: bucket.color }}
             />
             <h2 className="font-literata text-[20px] font-semibold text-ink">
-              {phase.name}
+              {bucket.name}
             </h2>
-            <span
-              className="rounded-tight px-2.5 py-0.5 font-mono text-[11px] font-medium"
-              style={{
-                backgroundColor: phase.color + "1A",
-                color: phase.color,
-              }}
-            >
-              {phase.featureCount} features {phase.status.toLowerCase()}
-            </span>
-            <span className="ml-auto font-inter text-[13px] italic text-tertiary-text">
-              {phase.description}
+            <span className="font-inter text-[13px] italic text-tertiary-text">
+              {bucket.description}
             </span>
           </div>
 
-          {/* Feature groups */}
+          {/* Theme groups */}
           <div className="space-y-5">
-            {phase.groups.map((group) => (
-              <div key={group.name}>
+            {bucket.themes.map((theme) => (
+              <div key={theme.name}>
                 <h3 className="mb-2 pl-1 font-inter text-[11px] font-medium uppercase tracking-[0.06em] text-tertiary-text">
-                  {group.name}
+                  {theme.name}
                 </h3>
                 <div className="overflow-hidden rounded-comfortable border border-level-2 bg-white">
-                  {group.features.map((f, i) => (
+                  {theme.features.map((f, i) => (
                     <div
                       key={i}
                       className={cn(
                         "flex items-center justify-between px-4 py-2.5",
-                        i < group.features.length - 1 &&
-                          "border-b border-level-2"
+                        i < theme.features.length - 1 &&
+                          "border-b border-level-2",
                       )}
                     >
                       <div className="flex items-center gap-3 min-w-0">
-                        {phase.dotFilled ? (
-                          <span
-                            className="h-2 w-2 shrink-0 rounded-full"
-                            style={{ backgroundColor: phase.color }}
-                          />
-                        ) : (
-                          <span
-                            className="h-2 w-2 shrink-0 rounded-full border-[1.5px]"
-                            style={{ borderColor: phase.color }}
-                          />
-                        )}
+                        <span
+                          className="h-2 w-2 shrink-0 rounded-full"
+                          style={{ backgroundColor: bucket.color }}
+                        />
                         <span className="font-inter text-[13px] text-ink">
                           {f.name}
                         </span>
                       </div>
-                      <div className="ml-4 flex shrink-0 items-center gap-2">
-                        {f.tags?.map((t) => (
-                          <TagPill key={t} tag={t} />
-                        ))}
-                        {f.module && (
-                          <span className="w-14 text-right font-mono text-[11px] text-tertiary-text">
-                            {f.module}
-                          </span>
-                        )}
-                      </div>
+                      {f.module && (
+                        <span className="ml-4 shrink-0 w-14 text-right font-mono text-[11px] text-tertiary-text">
+                          {f.module}
+                        </span>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -427,58 +549,6 @@ export default function RoadmapPage() {
           </div>
         </section>
       ))}
-
-      {/* Phases 4 + 5: compressed two-column layout */}
-      <div className="mt-10 grid grid-cols-2 gap-6">
-        {phases.slice(3).map((phase) => (
-          <section
-            key={phase.id}
-            ref={(el) => {
-              sectionRefs.current[phase.id] = el;
-            }}
-            className="scroll-mt-20"
-          >
-            <div className="mb-3 flex items-center gap-2">
-              <span
-                className="h-2.5 w-2.5 shrink-0 rounded-full"
-                style={{ backgroundColor: phase.color }}
-              />
-              <h2 className="font-literata text-[18px] font-semibold text-ink">
-                {phase.name}
-              </h2>
-              <span
-                className="rounded-tight px-2 py-0.5 font-mono text-[11px] font-medium"
-                style={{
-                  backgroundColor: phase.color + "1A",
-                  color: phase.color,
-                }}
-              >
-                {phase.featureCount} features
-              </span>
-            </div>
-            <div className="overflow-hidden rounded-comfortable border border-level-2 bg-white">
-              {phase.groups[0].features.map((f, i) => (
-                <div
-                  key={i}
-                  className={cn(
-                    "flex items-center gap-2.5 px-4 py-2",
-                    i < phase.groups[0].features.length - 1 &&
-                      "border-b border-level-2"
-                  )}
-                >
-                  <span
-                    className="h-1.5 w-1.5 shrink-0 rounded-full opacity-50"
-                    style={{ backgroundColor: phase.color }}
-                  />
-                  <span className="font-inter text-[13px] text-secondary-text">
-                    {f.name}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </section>
-        ))}
-      </div>
     </div>
   );
 }
