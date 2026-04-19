@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Activity, GitBranch, BookOpen, Brain } from "lucide-react";
+import { Activity, GitBranch, BookOpen } from "lucide-react";
 import { PageHeader } from "@/components/admin/page-header";
 import { StatCard } from "@/components/ui/stat-card";
 import { ProgressBar } from "@/components/ui/progress-bar";
@@ -214,47 +214,6 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Platform Intelligence Summary */}
-      <div className="mt-4 rounded-[8px] bg-[#F0F4F8] p-5">
-        <div className="flex items-center gap-2">
-          <Brain className="h-4 w-4 text-[#005151]" />
-          <h3 className="font-literata text-[11px] font-semibold uppercase tracking-[0.08em] text-ink">
-            Platform Intelligence
-          </h3>
-        </div>
-        <div className="mt-4 grid grid-cols-3 gap-6">
-          <div>
-            <p className="font-inter text-[14px] font-semibold text-ink">
-              Signal Strength: 72%
-            </p>
-            <p className="mt-1 font-inter text-[12px] text-[#D97706]">
-              (declining — 34% negligible comparisons)
-            </p>
-          </div>
-          <div>
-            <p className="font-inter text-[14px] font-semibold text-ink">
-              Data Efficiency: 2.3x
-            </p>
-            <p className="mt-1 font-inter text-[12px] text-tertiary-text">
-              improvement vs. random assignment
-            </p>
-          </div>
-          <div>
-            <p className="font-inter text-[14px] font-semibold text-ink">
-              Iteration Readiness: 78%
-            </p>
-            <p className="mt-1 font-inter text-[12px] text-tertiary-text">
-              Round 6 preparation
-            </p>
-            <Link
-              href="/analytics"
-              className="mt-1 inline-block font-inter text-[12px] font-medium text-[#005151] hover:underline"
-            >
-              See Playbook &rarr;
-            </Link>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

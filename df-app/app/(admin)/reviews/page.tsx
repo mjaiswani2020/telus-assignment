@@ -106,7 +106,7 @@ export default function ReviewsPage() {
   const tabs = [
     { id: "all", label: "All", count: counts.total },
     { id: "flagged", label: "Flagged", count: counts.flaggedByAnnotator },
-    { id: "auto", label: "Auto-flagged", count: counts.autoFlagged },
+    { id: "auto", label: "Rule-flagged", count: counts.autoFlagged },
     { id: "escalated", label: "Escalated", count: counts.escalated },
   ];
 
@@ -146,13 +146,13 @@ export default function ReviewsPage() {
       header: "Source",
       render: (item) => (
         <Badge variant={item.source === "Annotator" ? "flagged" : "caution"}>
-          {item.source === "Annotator" ? "Flagged" : "Auto"}
+          {item.source === "Annotator" ? "Flagged" : "Rule"}
         </Badge>
       ),
     },
     {
       key: "autoChecks",
-      header: "Auto-Checks",
+      header: "Quality Checks",
       render: (item) => <AutoCheckDots checks={item.autoChecks} />,
     },
     {
@@ -213,7 +213,7 @@ export default function ReviewsPage() {
             <div className="flex items-center gap-2">
               <CheckCircle2 className="h-5 w-5 text-[#059669]" />
               <span className="font-inter text-label-sm uppercase tracking-[0.5px] text-[#059669] font-medium">
-                Auto-Screened
+                Quality Checks Passed
               </span>
             </div>
             <p className="mt-2 font-literata text-[28px] font-semibold leading-[34px] tracking-[-0.02em] text-[#059669]">
@@ -276,7 +276,7 @@ export default function ReviewsPage() {
         transition={{ duration: 0.2, delay: 0.05 }}
       >
         <p className="mb-3 font-inter text-label-sm uppercase tracking-[0.5px] text-secondary-text">
-          Auto-Screening Results (Today)
+          Quality Check Results (Today)
         </p>
         <div className="grid grid-cols-4 gap-3">
           <div className="flex items-center gap-3 rounded-standard bg-level-1 px-3 py-2.5">
@@ -303,7 +303,7 @@ export default function ReviewsPage() {
           <div className="flex items-center gap-3 rounded-standard bg-level-1 px-3 py-2.5">
             <Sparkles className="h-4 w-4 text-[#059669] shrink-0" />
             <div>
-              <p className="font-inter text-[11px] text-tertiary-text">Auto-Approved</p>
+              <p className="font-inter text-[11px] text-tertiary-text">Checks Passed</p>
               <p className="font-inter text-body-md font-semibold text-[#059669]">{autoSummary.autoApproved.toLocaleString()}</p>
             </div>
           </div>
@@ -314,7 +314,7 @@ export default function ReviewsPage() {
       <div className="stagger-children mt-4 grid grid-cols-4 gap-3">
         <StatCard label="Pending" value={counts.total} />
         <StatCard label="Flagged" value={counts.flaggedByAnnotator} />
-        <StatCard label="Auto-flagged" value={counts.autoFlagged} />
+        <StatCard label="Rule-flagged" value={counts.autoFlagged} />
         <StatCard label="Resolved Today" value={counts.resolvedToday} />
       </div>
 
