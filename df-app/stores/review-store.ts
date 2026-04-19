@@ -3,8 +3,26 @@ import {
   type ReviewItem,
   type ReviewItemSource,
   type ReviewItemStatus,
+  type ReviewTier,
   seedReviewItems,
 } from '@/data/seed';
+
+export type { ReviewTier };
+
+interface PipelineCounts {
+  autoScreened: number;
+  humanReview: number;
+  escalated: number;
+  routedToHuman: number;
+  routedToEscalation: number;
+}
+
+interface AutoScreeningSummary {
+  goldFailures: number;
+  timeViolations: number;
+  iaaOutliers: number;
+  autoApproved: number;
+}
 
 interface ReviewStore {
   items: ReviewItem[];
@@ -14,6 +32,7 @@ interface ReviewStore {
   getItem: (id: string) => ReviewItem | undefined;
   getItemsByStatus: (status: ReviewItemStatus) => ReviewItem[];
   getItemsBySource: (source: ReviewItemSource) => ReviewItem[];
+  getItemsByTier: (tier: ReviewTier) => ReviewItem[];
   getFlaggedByAnnotator: () => ReviewItem[];
   getAutoFlagged: () => ReviewItem[];
   getEscalated: () => ReviewItem[];
@@ -25,6 +44,8 @@ interface ReviewStore {
     escalated: number;
     resolvedToday: number;
   };
+  getPipelineCounts: () => PipelineCounts;
+  getAutoScreeningSummary: () => AutoScreeningSummary;
 
   // Actions
   selectItem: (id: string | null) => void;
@@ -45,6 +66,9 @@ export const useReviewStore = create<ReviewStore>((set, get) => ({
   getItemsByStatus: (status) => get().items.filter((i) => i.status === status),
 
   getItemsBySource: (source) => get().items.filter((i) => i.source === source),
+
+  getItemsByTier: (tier) =>
+    get().items.filter((i) => i.tier === tier && (i.status === 'Flagged' || i.status === 'Escalated')),
 
   getFlaggedByAnnotator: () =>
     get().items.filter((i) => i.source === 'Annotator' && i.status === 'Flagged'),
@@ -74,6 +98,27 @@ export const useReviewStore = create<ReviewStore>((set, get) => ({
       resolvedToday: state.getResolvedToday().length,
     };
   },
+
+  getPipelineCounts: () => {
+    const state = get();
+    const pending = state.items.filter((i) => i.status === 'Flagged' || i.status === 'Escalated');
+    const humanReview = pending.filter((i) => i.tier === 'human-review').length;
+    const escalated = pending.filter((i) => i.tier === 'escalated').length;
+    return {
+      autoScreened: 847,
+      humanReview,
+      escalated,
+      routedToHuman: humanReview,
+      routedToEscalation: escalated,
+    };
+  },
+
+  getAutoScreeningSummary: () => ({
+    goldFailures: 12,
+    timeViolations: 8,
+    iaaOutliers: 3,
+    autoApproved: 847,
+  }),
 
   // Actions
   selectItem: (id) => set({ selectedItemId: id }),

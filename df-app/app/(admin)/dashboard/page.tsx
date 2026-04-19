@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { Activity, GitBranch, BookOpen } from "lucide-react";
 import { PageHeader } from "@/components/admin/page-header";
 import { StatCard } from "@/components/ui/stat-card";
 import { ProgressBar } from "@/components/ui/progress-bar";
@@ -137,6 +139,81 @@ export default function DashboardPage() {
       <div className="mt-4">
         <AnnotationVolumeChart />
       </div>
+
+      {/* Feedback Loop Health */}
+      <div className="mt-6">
+        <h3 className="font-literata text-[11px] font-semibold uppercase tracking-[0.08em] text-tertiary-text">
+          Feedback Loop Health
+        </h3>
+        <div className="mt-3 grid grid-cols-3 gap-3">
+          {/* Inner Loop */}
+          <div className="flex flex-col rounded-[8px] border border-[#EBEEED] bg-white p-5">
+            <div className="flex items-center gap-2.5">
+              <span className="inline-block h-[10px] w-[10px] rounded-full bg-[#059669]" />
+              <Activity className="h-4 w-4 text-[#005151]" />
+            </div>
+            <p className="mt-3 font-inter text-[14px] font-semibold text-ink">
+              Annotator Quality Loop
+            </p>
+            <p className="mt-0.5 font-inter text-[12px] text-tertiary-text">
+              Active — 24 annotators receiving real-time feedback
+            </p>
+            <div className="mt-3 space-y-1.5">
+              <p className="font-inter text-[12px] text-secondary-text">
+                3 calibration nudges triggered today
+              </p>
+              <p className="font-inter text-[12px] text-secondary-text">
+                Avg response to nudge: 12 min
+              </p>
+            </div>
+          </div>
+
+          {/* Calibration Loop */}
+          <div className="flex flex-col rounded-[8px] border border-[#EBEEED] bg-white p-5">
+            <div className="flex items-center gap-2.5">
+              <span className="inline-block h-[10px] w-[10px] rounded-full bg-[#D97706]" />
+              <GitBranch className="h-4 w-4 text-[#005151]" />
+            </div>
+            <p className="mt-3 font-inter text-[14px] font-semibold text-ink">
+              Routing &amp; Calibration Loop
+            </p>
+            <p className="mt-0.5 font-inter text-[12px] text-tertiary-text">
+              2 routing adjustments this week
+            </p>
+            <div className="mt-3 space-y-1.5">
+              <p className="font-inter text-[12px] text-secondary-text">
+                4 annotators reassigned: safety &rarr; helpfulness
+              </p>
+              <p className="font-inter text-[12px] text-secondary-text">
+                Avg calibration score: 87%
+              </p>
+            </div>
+          </div>
+
+          {/* Evolution Loop */}
+          <div className="flex flex-col rounded-[8px] border border-[#EBEEED] bg-white p-5">
+            <div className="flex items-center gap-2.5">
+              <span className="inline-block h-[10px] w-[10px] rounded-full bg-[#059669]" />
+              <BookOpen className="h-4 w-4 text-[#005151]" />
+            </div>
+            <p className="mt-3 font-inter text-[14px] font-semibold text-ink">
+              Guideline Evolution Loop
+            </p>
+            <p className="mt-0.5 font-inter text-[12px] text-tertiary-text">
+              Guidelines v2.3 deployed 3 days ago
+            </p>
+            <div className="mt-3 space-y-1.5">
+              <p className="font-inter text-[12px] text-secondary-text">
+                Triggered by: 23% disagreement on borderline safety
+              </p>
+              <p className="font-inter text-[12px] text-secondary-text">
+                Impact: disagreement dropped to 14%
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   );
 }

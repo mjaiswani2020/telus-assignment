@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { TaskHeader } from "@/components/annotator/task-header";
 import { GuidelinesDrawer } from "@/components/guidelines-drawer";
+import { QualityFeedbackPanel } from "@/components/annotator/quality-feedback-panel";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
@@ -81,6 +82,10 @@ export default function RankPage() {
       annotationId: `ann-${Date.now()}`,
       campaignId: "camp-llama-align",
       priority: "Medium",
+      tier: "human-review",
+      autoChecks: { gold: true, time: true, iaa: true, consistency: true },
+      confidence: 80,
+      routingReason: "Annotator-flagged ranking task for review",
     });
     setProgress((p) => p + 1);
     setItems([...initialItems]);
@@ -223,6 +228,7 @@ export default function RankPage() {
       </div>
 
       <GuidelinesDrawer open={guidelinesOpen} onClose={() => setGuidelinesOpen(false)} />
+      <QualityFeedbackPanel />
     </>
   );
 }

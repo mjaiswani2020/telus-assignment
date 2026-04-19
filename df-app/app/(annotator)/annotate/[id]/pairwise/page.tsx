@@ -4,6 +4,8 @@ import { useState, useEffect, useCallback } from "react";
 import { TaskHeader } from "@/components/annotator/task-header";
 import { ResponsePanel } from "@/components/annotator/response-panel";
 import { GuidelinesDrawer } from "@/components/guidelines-drawer";
+import { GuidelineUpdateBanner } from "@/components/guideline-update-banner";
+import { QualityFeedbackPanel } from "@/components/annotator/quality-feedback-panel";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
@@ -95,6 +97,7 @@ export default function PairwisePage() {
   const [preference, setPreference] = useState<PreferenceKey | null>(null);
   const [justification, setJustification] = useState("");
   const [guidelinesOpen, setGuidelinesOpen] = useState(false);
+  const [bannerDismissed, setBannerDismissed] = useState(false);
   const [progress, setProgress] = useState(47);
   const { toast } = useToast();
   const addReviewItem = useReviewStore((s) => s.addItem);
@@ -127,6 +130,10 @@ export default function PairwisePage() {
       annotationId: `ann-${Date.now()}`,
       campaignId: "camp-llama-align",
       priority: "Medium",
+      tier: "human-review",
+      autoChecks: { gold: true, time: true, iaa: true, consistency: true },
+      confidence: 80,
+      routingReason: "Annotator-flagged pairwise task for review",
     });
     setProgress((p) => p + 1);
     setPreference(null);
@@ -163,6 +170,14 @@ export default function PairwisePage() {
       />
 
       <div className="stagger-children mx-auto max-w-[1440px] space-y-4 px-8 py-6">
+        {/* Guideline Update Banner */}
+        {!bannerDismissed && (
+          <GuidelineUpdateBanner
+            onDismiss={() => setBannerDismissed(true)}
+            onReview={() => setGuidelinesOpen(true)}
+          />
+        )}
+
         {/* Prompt */}
         <div>
           <p className="mb-2 font-inter text-label-sm uppercase tracking-[0.5px] text-secondary-text">
@@ -181,6 +196,7 @@ export default function PairwisePage() {
             content={RESPONSE_A}
             tokenCount={235}
             selected={preference === "a-better" || preference === "a-slightly"}
+            latencyMs={3200}
           />
           <ResponsePanel
             label="B"
@@ -188,6 +204,7 @@ export default function PairwisePage() {
             content={RESPONSE_B}
             tokenCount={189}
             selected={preference === "b-better" || preference === "b-slightly"}
+            latencyMs={2800}
           />
         </div>
 
@@ -250,6 +267,7 @@ export default function PairwisePage() {
       </div>
 
       <GuidelinesDrawer open={guidelinesOpen} onClose={() => setGuidelinesOpen(false)} />
+      <QualityFeedbackPanel />
     </>
   );
 }

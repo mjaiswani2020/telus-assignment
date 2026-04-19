@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/cn";
 import { Badge } from "@/components/ui/badge";
+import { Clock } from "lucide-react";
 
 interface ResponsePanelProps {
   label: string;
@@ -11,6 +12,7 @@ interface ResponsePanelProps {
   selected?: boolean;
   className?: string;
   children?: React.ReactNode;
+  latencyMs?: number;
 }
 
 function renderContent(content: string) {
@@ -45,7 +47,10 @@ export function ResponsePanel({
   selected = false,
   className,
   children,
+  latencyMs,
 }: ResponsePanelProps) {
+  const latencySeconds = latencyMs != null ? (latencyMs / 1000).toFixed(1) : null;
+  const isSlowLatency = latencyMs != null && latencyMs > 8000;
   return (
     <div
       className={cn(
@@ -73,6 +78,22 @@ export function ResponsePanel({
       <div className="max-h-[400px] overflow-y-auto p-4 font-inter text-body-md leading-relaxed text-ink">
         {renderContent(content)}
       </div>
+
+      {/* Latency indicator */}
+      {latencySeconds != null && (
+        <div className="px-4 pb-3">
+          <span
+            className={cn(
+              "inline-flex items-center gap-1.5 font-inter text-[12px]",
+              isSlowLatency ? "text-[#D97706]" : "text-[#6F7A77]"
+            )}
+          >
+            {isSlowLatency && <Clock className="h-3.5 w-3.5" />}
+            Generated in {latencySeconds}s
+            {isSlowLatency && " — longer than usual"}
+          </span>
+        </div>
+      )}
 
       {/* Optional children for extra elements like warnings */}
       {children && <div className="border-t border-level-2 px-4 py-3">{children}</div>}

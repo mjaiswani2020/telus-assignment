@@ -4,7 +4,7 @@ import { HeaderBar } from "@/components/annotator/header-bar";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, ArrowRight, Clock } from "lucide-react";
+import { AlertTriangle, ArrowRight, Clock, Target, Zap } from "lucide-react";
 import Link from "next/link";
 
 export default function AnnotatorHomePage() {
@@ -56,6 +56,85 @@ export default function AnnotatorHomePage() {
               <p className="font-literata text-display-lg text-ink">0.76</p>
               <p className="font-inter text-label-md text-tertiary-text">Peer IAA</p>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Overdue Calibration Banner */}
+      <div className="flex items-center justify-between rounded-comfortable border border-[#D97706] bg-[#FEF3C7] px-5 py-3">
+        <div className="flex items-center gap-2.5">
+          <AlertTriangle className="h-5 w-5 shrink-0 text-[#D97706]" />
+          <span className="font-inter text-body-md font-medium text-[#92400E]">
+            Complete your safety calibration to unlock safety task assignments
+          </span>
+        </div>
+        <Link
+          href="/annotate/calibration/safety"
+          className="inline-flex items-center gap-1 font-inter text-label-md font-semibold text-[#D97706] transition-colors hover:text-[#B45309]"
+        >
+          Start Now
+          <ArrowRight className="h-4 w-4" />
+        </Link>
+      </div>
+
+      {/* Calibration Cards */}
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+        {/* Triggered Calibration Card */}
+        <div className="rounded-comfortable border border-level-2 border-l-[4px] border-l-[#D97706] bg-[#FFFBEB] px-5 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Target className="h-5 w-5 text-[#D97706]" />
+              <span className="font-inter text-body-lg font-semibold text-ink">
+                Calibration Exercise
+              </span>
+            </div>
+            <Badge variant="caution" dot>Required</Badge>
+          </div>
+          <p className="mt-2 font-inter text-body-md text-secondary-text">
+            Your safety task accuracy dropped below 70%. Complete this calibration to
+            continue safety assignments.
+          </p>
+          <p className="mt-1.5 font-inter text-label-md text-tertiary-text">
+            5 pre-adjudicated safety comparisons with expert feedback
+          </p>
+          <div className="mt-4 flex items-center justify-between">
+            <span className="font-inter text-label-md text-tertiary-text">
+              Due: Before next safety task assignment
+            </span>
+            <Link href="/annotate/calibration/safety">
+              <Button variant="primary" size="default">
+                Start Calibration
+              </Button>
+            </Link>
+          </div>
+        </div>
+
+        {/* Scheduled Calibration Card */}
+        <div className="rounded-comfortable border border-level-2 bg-white px-5 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Clock className="h-5 w-5 text-secondary-text" />
+              <span className="font-inter text-body-lg font-medium text-ink">
+                Weekly Calibration
+              </span>
+            </div>
+            <Badge variant="neutral">3 tasks</Badge>
+          </div>
+          <p className="mt-2 font-inter text-label-md text-tertiary-text">
+            Last completed: Apr 11, 2026 &middot; Next due: Apr 18, 2026
+          </p>
+          <div className="mt-3 flex items-center justify-between">
+            <div className="flex items-center gap-1.5">
+              <Zap className="h-4 w-4 text-[#D97706]" />
+              <span className="font-inter text-label-md font-medium text-[#D97706]">
+                Streak: 12 weeks
+              </span>
+            </div>
+            <Link href="/annotate/calibration/weekly">
+              <Button variant="ghost" size="default">
+                Start
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

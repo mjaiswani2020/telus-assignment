@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import { TaskHeader } from "@/components/annotator/task-header";
 import { ResponsePanel } from "@/components/annotator/response-panel";
 import { GuidelinesDrawer } from "@/components/guidelines-drawer";
+import { QualityFeedbackPanel } from "@/components/annotator/quality-feedback-panel";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
@@ -82,6 +83,10 @@ export default function RedTeamPage() {
       annotationId: `ann-${Date.now()}`,
       campaignId: "camp-gpt4-safety",
       priority: "High",
+      tier: "human-review",
+      autoChecks: { gold: true, time: true, iaa: true, consistency: true },
+      confidence: 75,
+      routingReason: "Annotator-flagged safety task for review",
     });
     setProgress((p) => p + 1);
     setSafetyChoice(null);
@@ -291,6 +296,7 @@ export default function RedTeamPage() {
       </div>
 
       <GuidelinesDrawer open={guidelinesOpen} onClose={() => setGuidelinesOpen(false)} />
+      <QualityFeedbackPanel />
     </>
   );
 }

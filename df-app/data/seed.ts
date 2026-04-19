@@ -91,6 +91,8 @@ export interface Task {
   createdAt: string;
 }
 
+export type FatigueRisk = 'none' | 'low' | 'medium' | 'high';
+
 export interface Annotator {
   id: string;
   name: string;
@@ -103,6 +105,18 @@ export interface Annotator {
   tasks30d: number;
   trend: AnnotatorTrend;
   joinedAt: string;
+  sessionHours?: number;
+  fatigueRisk?: FatigueRisk;
+  driftAlert?: string | null;
+}
+
+export type ReviewTier = 'human-review' | 'escalated';
+
+export interface AutoChecks {
+  gold: boolean;
+  time: boolean;
+  iaa: boolean;
+  consistency: boolean;
 }
 
 export interface ReviewItem {
@@ -117,6 +131,10 @@ export interface ReviewItem {
   annotationId: string;
   campaignId: string;
   priority: 'High' | 'Medium' | 'Low';
+  tier: ReviewTier;
+  autoChecks: AutoChecks;
+  confidence: number;     // 0-100
+  routingReason: string;
 }
 
 export interface ExportRecord {
@@ -547,8 +565,11 @@ export const seedAnnotators: Annotator[] = [
     goldAccuracy: 88,
     iaa: 0.81,
     tasks30d: 956,
-    trend: 'Stable',
+    trend: 'Declining',
     joinedAt: '2025-07-21T00:00:00Z',
+    sessionHours: 7.2,
+    fatigueRisk: 'high',
+    driftAlert: '78% A-preference in last 50 tasks',
   },
   {
     id: 'ann-004',
@@ -588,6 +609,9 @@ export const seedAnnotators: Annotator[] = [
     tasks30d: 1_087,
     trend: 'Improving',
     joinedAt: '2025-08-28T00:00:00Z',
+    sessionHours: 5.8,
+    fatigueRisk: 'medium',
+    driftAlert: null,
   },
   {
     id: 'ann-007',
@@ -612,8 +636,11 @@ export const seedAnnotators: Annotator[] = [
     goldAccuracy: 93,
     iaa: 0.86,
     tasks30d: 1_345,
-    trend: 'Stable',
+    trend: 'Declining',
     joinedAt: '2025-06-10T00:00:00Z',
+    sessionHours: 8.5,
+    fatigueRisk: 'high',
+    driftAlert: null,
   },
   {
     id: 'ann-009',
@@ -627,6 +654,9 @@ export const seedAnnotators: Annotator[] = [
     tasks30d: 623,
     trend: 'Improving',
     joinedAt: '2025-10-05T00:00:00Z',
+    sessionHours: 4.1,
+    fatigueRisk: 'low',
+    driftAlert: 'Gold accuracy dropped from 85% to 62% in last 2 hours',
   },
   {
     id: 'ann-010',
@@ -891,6 +921,10 @@ export const seedReviewItems: ReviewItem[] = [
     annotationId: 'ann-batch-3-0421',
     campaignId: 'camp-llama-align',
     priority: 'Medium',
+    tier: 'human-review',
+    autoChecks: { gold: true, time: true, iaa: false, consistency: true },
+    confidence: 72,
+    routingReason: 'IAA check flagged — annotator disagrees with 2/3 peers on preference strength',
   },
   {
     id: 'rev-002',
@@ -905,6 +939,10 @@ export const seedReviewItems: ReviewItem[] = [
     annotationId: 'ann-batch-3-0398',
     campaignId: 'camp-llama-align',
     priority: 'High',
+    tier: 'human-review',
+    autoChecks: { gold: true, time: false, iaa: true, consistency: true },
+    confidence: 38,
+    routingReason: 'Time threshold violation — 12s is well below 45s minimum for pairwise tasks',
   },
   {
     id: 'rev-003',
@@ -919,6 +957,10 @@ export const seedReviewItems: ReviewItem[] = [
     annotationId: 'ann-safety-0187',
     campaignId: 'camp-gpt4-safety',
     priority: 'High',
+    tier: 'escalated',
+    autoChecks: { gold: true, time: true, iaa: false, consistency: false },
+    confidence: 31,
+    routingReason: 'Multi-check failure — IAA outlier with consistency disagreement on safety content',
   },
   {
     id: 'rev-004',
@@ -933,6 +975,10 @@ export const seedReviewItems: ReviewItem[] = [
     annotationId: 'ann-safety-0192',
     campaignId: 'camp-gpt4-safety',
     priority: 'High',
+    tier: 'escalated',
+    autoChecks: { gold: true, time: true, iaa: true, consistency: false },
+    confidence: 45,
+    routingReason: 'Annotator-flagged safety concern — content requires policy team review',
   },
   {
     id: 'rev-005',
@@ -947,6 +993,10 @@ export const seedReviewItems: ReviewItem[] = [
     annotationId: 'ann-rubric-0054',
     campaignId: 'camp-llama-align',
     priority: 'Medium',
+    tier: 'human-review',
+    autoChecks: { gold: true, time: true, iaa: false, consistency: true },
+    confidence: 65,
+    routingReason: 'Annotator-flagged guideline ambiguity — rubric criteria overlap detected',
   },
   {
     id: 'rev-006',
@@ -961,6 +1011,10 @@ export const seedReviewItems: ReviewItem[] = [
     annotationId: 'ann-batch-3-0356',
     campaignId: 'camp-llama-align',
     priority: 'High',
+    tier: 'escalated',
+    autoChecks: { gold: false, time: true, iaa: false, consistency: false },
+    confidence: 22,
+    routingReason: 'Multi-check failure — position bias pattern with gold failure and consistency issues',
   },
   {
     id: 'rev-007',
@@ -975,6 +1029,10 @@ export const seedReviewItems: ReviewItem[] = [
     annotationId: 'ann-batch-3-0341',
     campaignId: 'camp-llama-align',
     priority: 'Medium',
+    tier: 'human-review',
+    autoChecks: { gold: true, time: true, iaa: true, consistency: false },
+    confidence: 58,
+    routingReason: 'Consistency check failed — missing rationale on high-disagreement item',
   },
   {
     id: 'rev-008',
@@ -989,6 +1047,10 @@ export const seedReviewItems: ReviewItem[] = [
     annotationId: 'ann-safety-0175',
     campaignId: 'camp-gpt4-safety',
     priority: 'Medium',
+    tier: 'human-review',
+    autoChecks: { gold: true, time: true, iaa: true, consistency: false },
+    confidence: 52,
+    routingReason: 'Consistency failure — same annotator gave contradictory safety ratings on identical prompt',
   },
   // Annotator flags (3 more to reach 8)
   {
@@ -1004,6 +1066,10 @@ export const seedReviewItems: ReviewItem[] = [
     annotationId: 'ann-batch-3-0312',
     campaignId: 'camp-llama-align',
     priority: 'Low',
+    tier: 'human-review',
+    autoChecks: { gold: true, time: true, iaa: true, consistency: true },
+    confidence: 85,
+    routingReason: 'Annotator-flagged data quality issue — garbled prompt text',
   },
   {
     id: 'rev-010',
@@ -1018,6 +1084,10 @@ export const seedReviewItems: ReviewItem[] = [
     annotationId: 'ann-code-0088',
     campaignId: 'camp-code-bench',
     priority: 'Low',
+    tier: 'human-review',
+    autoChecks: { gold: true, time: true, iaa: true, consistency: true },
+    confidence: 90,
+    routingReason: 'Annotator-flagged UI rendering issue — LaTeX not supported in annotation interface',
   },
   {
     id: 'rev-011',
@@ -1032,6 +1102,10 @@ export const seedReviewItems: ReviewItem[] = [
     annotationId: 'ann-batch-3-0299',
     campaignId: 'camp-llama-align',
     priority: 'Low',
+    tier: 'human-review',
+    autoChecks: { gold: true, time: true, iaa: true, consistency: true },
+    confidence: 82,
+    routingReason: 'Annotator-flagged duplicate — potential data pipeline duplication',
   },
   // Auto-flagged (7 more to reach 15)
   {
@@ -1047,6 +1121,10 @@ export const seedReviewItems: ReviewItem[] = [
     annotationId: 'ann-batch-3-0287',
     campaignId: 'camp-llama-align',
     priority: 'High',
+    tier: 'human-review',
+    autoChecks: { gold: true, time: false, iaa: true, consistency: true },
+    confidence: 35,
+    routingReason: 'Time threshold violation — 8s on multi-paragraph comparison',
   },
   {
     id: 'rev-013',
@@ -1061,6 +1139,10 @@ export const seedReviewItems: ReviewItem[] = [
     annotationId: 'ann-batch-3-0271',
     campaignId: 'camp-llama-align',
     priority: 'High',
+    tier: 'human-review',
+    autoChecks: { gold: false, time: true, iaa: true, consistency: true },
+    confidence: 42,
+    routingReason: 'Gold standard failure — 3rd miss in last 50 items, declining accuracy pattern',
   },
   {
     id: 'rev-014',
@@ -1075,6 +1157,10 @@ export const seedReviewItems: ReviewItem[] = [
     annotationId: 'ann-safety-0163',
     campaignId: 'camp-gpt4-safety',
     priority: 'Medium',
+    tier: 'human-review',
+    autoChecks: { gold: true, time: true, iaa: false, consistency: false },
+    confidence: 48,
+    routingReason: 'IAA outlier — annotator confidence (100%) diverges significantly from peer range (40-60%)',
   },
   {
     id: 'rev-015',
@@ -1089,6 +1175,10 @@ export const seedReviewItems: ReviewItem[] = [
     annotationId: 'ann-batch-3-0258',
     campaignId: 'camp-llama-align',
     priority: 'Low',
+    tier: 'human-review',
+    autoChecks: { gold: true, time: false, iaa: true, consistency: true },
+    confidence: 68,
+    routingReason: 'Session anomaly — 22-minute idle period before submission',
   },
   {
     id: 'rev-016',
@@ -1103,6 +1193,10 @@ export const seedReviewItems: ReviewItem[] = [
     annotationId: 'ann-rubric-0041',
     campaignId: 'camp-llama-align',
     priority: 'Medium',
+    tier: 'human-review',
+    autoChecks: { gold: true, time: true, iaa: true, consistency: false },
+    confidence: 55,
+    routingReason: 'Consistency failure — justification length (4 tokens) far below minimum (20 tokens)',
   },
   {
     id: 'rev-017',
@@ -1117,6 +1211,10 @@ export const seedReviewItems: ReviewItem[] = [
     annotationId: 'ann-safety-0148',
     campaignId: 'camp-gpt4-safety',
     priority: 'Medium',
+    tier: 'human-review',
+    autoChecks: { gold: true, time: true, iaa: false, consistency: false },
+    confidence: 44,
+    routingReason: 'Label distribution skew — 80% safe vs. 62% team average suggests leniency bias',
   },
   {
     id: 'rev-018',
@@ -1131,6 +1229,10 @@ export const seedReviewItems: ReviewItem[] = [
     annotationId: 'ann-batch-3-0230',
     campaignId: 'camp-llama-align',
     priority: 'Medium',
+    tier: 'human-review',
+    autoChecks: { gold: true, time: true, iaa: true, consistency: false },
+    confidence: 50,
+    routingReason: 'Consistency failure — identical justification text across 5 consecutive items',
   },
   // Resolved items (12 resolved today — these have status Resolved)
   {
@@ -1145,6 +1247,10 @@ export const seedReviewItems: ReviewItem[] = [
     annotationId: 'ann-batch-3-0200',
     campaignId: 'camp-llama-align',
     priority: 'Low',
+    tier: 'human-review',
+    autoChecks: { gold: true, time: false, iaa: true, consistency: true },
+    confidence: 70,
+    routingReason: 'Time threshold — short completion but simple prompt pair',
   },
   {
     id: 'rev-020',
@@ -1158,6 +1264,10 @@ export const seedReviewItems: ReviewItem[] = [
     annotationId: 'ann-safety-0140',
     campaignId: 'camp-gpt4-safety',
     priority: 'Medium',
+    tier: 'human-review',
+    autoChecks: { gold: true, time: true, iaa: false, consistency: true },
+    confidence: 60,
+    routingReason: 'IAA outlier — resolved via senior adjudication',
   },
   {
     id: 'rev-021',
@@ -1171,6 +1281,10 @@ export const seedReviewItems: ReviewItem[] = [
     annotationId: 'ann-batch-3-0185',
     campaignId: 'camp-llama-align',
     priority: 'Low',
+    tier: 'human-review',
+    autoChecks: { gold: true, time: true, iaa: true, consistency: true },
+    confidence: 88,
+    routingReason: 'Annotator self-flagged for correction',
   },
   {
     id: 'rev-022',
@@ -1184,6 +1298,10 @@ export const seedReviewItems: ReviewItem[] = [
     annotationId: 'ann-batch-3-0170',
     campaignId: 'camp-llama-align',
     priority: 'Medium',
+    tier: 'human-review',
+    autoChecks: { gold: false, time: true, iaa: true, consistency: true },
+    confidence: 55,
+    routingReason: 'Gold standard failure — ambiguous gold question',
   },
   {
     id: 'rev-023',
@@ -1197,6 +1315,10 @@ export const seedReviewItems: ReviewItem[] = [
     annotationId: 'ann-batch-3-0155',
     campaignId: 'camp-llama-align',
     priority: 'Low',
+    tier: 'human-review',
+    autoChecks: { gold: true, time: false, iaa: true, consistency: true },
+    confidence: 75,
+    routingReason: 'Time anomaly — network-induced false positive',
   },
   {
     id: 'rev-024',
@@ -1210,6 +1332,10 @@ export const seedReviewItems: ReviewItem[] = [
     annotationId: 'ann-batch-3-0142',
     campaignId: 'camp-llama-align',
     priority: 'Low',
+    tier: 'human-review',
+    autoChecks: { gold: true, time: true, iaa: true, consistency: true },
+    confidence: 80,
+    routingReason: 'Annotator-flagged duplicate prompt',
   },
   {
     id: 'rev-025',
@@ -1223,6 +1349,10 @@ export const seedReviewItems: ReviewItem[] = [
     annotationId: 'ann-safety-0130',
     campaignId: 'camp-gpt4-safety',
     priority: 'High',
+    tier: 'escalated',
+    autoChecks: { gold: true, time: true, iaa: true, consistency: false },
+    confidence: 40,
+    routingReason: 'Safety concern escalated by annotator — cleared after review',
   },
   {
     id: 'rev-026',
@@ -1236,6 +1366,10 @@ export const seedReviewItems: ReviewItem[] = [
     annotationId: 'ann-batch-3-0128',
     campaignId: 'camp-llama-align',
     priority: 'Medium',
+    tier: 'human-review',
+    autoChecks: { gold: true, time: true, iaa: false, consistency: true },
+    confidence: 62,
+    routingReason: 'IAA pattern — statistical review showed normal distribution',
   },
   {
     id: 'rev-027',
@@ -1249,6 +1383,10 @@ export const seedReviewItems: ReviewItem[] = [
     annotationId: 'ann-rubric-0032',
     campaignId: 'camp-llama-align',
     priority: 'Low',
+    tier: 'human-review',
+    autoChecks: { gold: true, time: true, iaa: true, consistency: false },
+    confidence: 72,
+    routingReason: 'Consistency flag — short justification on clear-cut item',
   },
   {
     id: 'rev-028',
@@ -1262,6 +1400,10 @@ export const seedReviewItems: ReviewItem[] = [
     annotationId: 'ann-code-0075',
     campaignId: 'camp-code-bench',
     priority: 'Medium',
+    tier: 'human-review',
+    autoChecks: { gold: true, time: true, iaa: true, consistency: true },
+    confidence: 92,
+    routingReason: 'Annotator-flagged rendering bug',
   },
   {
     id: 'rev-029',
@@ -1275,6 +1417,10 @@ export const seedReviewItems: ReviewItem[] = [
     annotationId: 'ann-safety-0118',
     campaignId: 'camp-gpt4-safety',
     priority: 'Medium',
+    tier: 'human-review',
+    autoChecks: { gold: true, time: true, iaa: false, consistency: true },
+    confidence: 58,
+    routingReason: 'IAA outlier — confidence scoring recalibrated',
   },
   {
     id: 'rev-030',
@@ -1288,6 +1434,10 @@ export const seedReviewItems: ReviewItem[] = [
     annotationId: 'ann-batch-3-0100',
     campaignId: 'camp-llama-align',
     priority: 'Low',
+    tier: 'human-review',
+    autoChecks: { gold: true, time: true, iaa: true, consistency: false },
+    confidence: 65,
+    routingReason: 'Consistency failure — batch labels corrected after guideline update',
   },
 ];
 
